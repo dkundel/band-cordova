@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="co.kundel.band" version="1.0.0">
+	<name>Band SDK</name>
+	<description>Cordova plug-in for Microsoft Band SDK</description>
+	<license>MIT</license>
+	<keywords>Microsoft,Band</keywords>
+	<repo>https://github.com/dkundel/band-cordova.git</repo>
+	<issue>https://github.com/dkundel/band-cordova/issues</issue>
+	<js-module src="www/band.js" name="band">
+		<clobbers target="cordova.plugins.band" />
+	</js-module>
+	<!-- android -->
+	<platform name="android">
+		<config-file target="res/xml/config.xml" parent="/*">
+			<feature name="Band">
+				<param name="android-package" value="co.kundel.band.Band" />
+				<param name="onload" value="true" />
+			</feature>
+		</config-file>
+		<source-file src="src/android/Band.java" target-dir="src/co/kundel/band" />
+	</platform>
+</plugin>
