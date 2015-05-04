@@ -5,7 +5,7 @@
  * All the enums
  */
 
-declare enum ConnectionState {
+enum ConnectionState {
   BINDING,
   BOUND,
   CONNECTED,
@@ -15,34 +15,34 @@ declare enum ConnectionState {
   UNBOUND
 }
 
-declare enum UserConsent {
+enum UserConsent {
   GRANTED,
   DECLINED,
   UNSPECEFIED
 }
 
-declare enum MessageFlags {
+enum MessageFlags {
   SHOW_DIALOG,
   NONE
 }
 
-declare enum HorizontalAlignment {
+enum HorizontalAlignment {
   LEFT,
   RIGHT,
   CENTERED
 }
 
-declare enum VerticalAlignment {
+enum VerticalAlignment {
   TOP,
   BOTTOM,
   CENTERED
 }
 
-declare enum Color {
+enum Color {
   
 }
 
-declare enum ElementColorSource {
+enum ElementColorSource {
   BAND_BASE,
   BAND_HIGH_CONTRAST,
   BAND_HIGHLIGHT,
@@ -58,12 +58,12 @@ declare enum ElementColorSource {
   TILE_SECONDARY_TEXT
 }
 
-declare enum WrappedTextBlockFont {
+enum WrappedTextBlockFont {
   SMALL,
   MEDIUM
 }
 
-declare enum TextBlockFont {
+enum TextBlockFont {
   EXTRA_LARGE_NUMBERS,
   EXTRA_LARGE_NUMBERS_BOLD,
   LARGE,
@@ -71,24 +71,24 @@ declare enum TextBlockFont {
   SMALL
 }
 
-declare enum TextBlockBaselineAlignment {
+enum TextBlockBaselineAlignment {
   AUTOMATIC,
   RELATIVE,
   ABSOLUTE
 }
 
-declare enum Orientation {
+enum Orientation {
   HORIZONTAL,
   VERTICAL
 }
 
-declare enum BandContactState {
+enum BandContactState {
   NOT_WORN,
   UNKNOWN,
   WORN
 }
 
-declare enum BandErrorType {
+enum BandErrorType {
   BAND_FULL_ERROR,
   DEVICE_ERROR,
   INVALID_PAGE_DATA_ERROR,
@@ -101,17 +101,17 @@ declare enum BandErrorType {
   UNSUPPORTED_SDK_VERSION_ERROR
 }
 
-declare enum BarcodeType {
+enum BarcodeType {
   CODE39,
   PDF417
 }
 
-declare enum HeartRateQuality {
+enum HeartRateQuality {
   AQUIRING,
   LOCKED
 }
 
-declare enum MotionType {
+enum MotionType {
   IDLE,
   JOGGING,
   RUNNING,
@@ -119,13 +119,13 @@ declare enum MotionType {
   WALKING
 }
 
-declare enum SampleRate {
+enum SampleRate {
   MS128,
   MS16,
   MS32
 }
 
-declare enum UVIndexLevel {
+enum UVIndexLevel {
   HIGH,
   LOW,
   MEDIUM,
@@ -133,7 +133,7 @@ declare enum UVIndexLevel {
   VERY_HIGH
 }
 
-declare enum VibrationType {
+enum VibrationType {
   NOTIFICATION_ALARM,
   NOTIFICATION_ONE_TONE,
   NOTIFICATION_TIMER,
@@ -152,7 +152,7 @@ declare enum VibrationType {
 class BandSensorEvent {
   private timestamp: Date;
   
-  constructor(eventObj: SensorEventData) {
+  constructor(eventObj: ISensorEvent) {
     this.timestamp = new Date(eventObj.timestamp);
   }
 }
@@ -164,7 +164,7 @@ class BandAccelerometerEvent extends BandSensorEvent {
     z: number;
   }
   
-  constructor(eventObj: AccelerometerEventData) {
+  constructor(eventObj: IAccelerometerEvent) {
     this.acceleration = eventObj.acceleration;
     super(eventObj);
   }
@@ -185,7 +185,7 @@ class BandAccelerometerEvent extends BandSensorEvent {
 class BandCaloriesEvent extends BandSensorEvent {
   private calories: number;
   
-  constructor(eventObj: CaloriesEventData) {
+  constructor(eventObj: ICaloriesEvent) {
     this.calories = eventObj.calories;
     super(eventObj);
   }
@@ -198,7 +198,7 @@ class BandCaloriesEvent extends BandSensorEvent {
 class BandContactEvent extends BandSensorEvent {
   private contactState: BandContactState;
   
-  constructor(eventObj: ContactEventData) {
+  constructor(eventObj: IContactEvent) {
     this.contactState = BandContactState[eventObj.contactState];
     super(eventObj);
   }
@@ -214,7 +214,7 @@ class BandDistanceEvent extends BandSensorEvent {
   private speed: number;
   private totalDistance: number;
   
-  constructor(eventObj: DistanceEventData) {
+  constructor(eventObj: IDistanceEvent) {
     this.motionType = MotionType[eventObj.motionType];
     this.pace = eventObj.pace;
     this.speed = eventObj.speed;
@@ -252,7 +252,7 @@ class BandGyroscopeEvent extends BandSensorEvent {
     z: number;
   }
   
-  constructor(eventObj: GyroscopeEventData) {
+  constructor(eventObj: IGyroscopeEvent) {
     this.acceleration = eventObj.acceleration;
     this.angularVelocity = eventObj.angularVelocity;
     super(eventObj);
@@ -288,7 +288,7 @@ class BandHeartRateEvent extends BandSensorEvent {
   private heartRate: number;
   private quality: HeartRateQuality;
   
-  constructor(eventObj: HeartRateEventData) {
+  constructor(eventObj: IHeartRateEvent) {
     this.heartRate = eventObj.heartRate;
     this.quality = HeartRateQuality[eventObj.quality];
     super(eventObj);
@@ -306,7 +306,7 @@ class BandHeartRateEvent extends BandSensorEvent {
 class BandPedometerEvent extends BandSensorEvent {
   private totalSteps: number;
   
-  constructor(eventObj: PedometerEventData) {
+  constructor(eventObj: IPedometerEvent) {
     this.totalSteps = eventObj.totalSteps;
     super(eventObj);
   }
@@ -319,7 +319,7 @@ class BandPedometerEvent extends BandSensorEvent {
 class BandSkinTemperatureEvent extends BandSensorEvent {
   private skinTemperature: number;
   
-  constructor(eventObj: SkinTemperatureEventData) {
+  constructor(eventObj: ISkinTemperatureEvent) {
     this.skinTemperature = eventObj.skinTemperature;
     super(eventObj);
   }
@@ -332,7 +332,7 @@ class BandSkinTemperatureEvent extends BandSensorEvent {
 class BandUVEvent extends BandSensorEvent {
   private uvIndexLevel: UVIndexLevel;
   
-  constructor(eventObj: UVEventData) {
+  constructor(eventObj: IUVEvent) {
     this.uvIndexLevel = UVIndexLevel[eventObj.uvIndexLevel];
     super(eventObj);
   }

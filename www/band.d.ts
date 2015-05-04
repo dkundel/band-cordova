@@ -35,10 +35,6 @@ declare enum VerticalAlignment {
   CENTERED
 }
 
-declare enum Color {
-  
-}
-
 declare enum ElementColorSource {
   BAND_BASE,
   BAND_HIGH_CONTRAST,
@@ -210,57 +206,57 @@ interface Margins {
 }
 
 interface BasePageElementAttributes {
-  ElementId: number,
-  Rect: PageRect;
-  Margins: Margins;
-  HorizontalAlignment: HorizontalAlignment,
-  VerticalAlignment: VerticalAlignment
+  elementId: number,
+  rect: PageRect;
+  margins: Margins;
+  horizontalAlignment: HorizontalAlignment,
+  verticalAlignment: VerticalAlignment
 }
 
 interface FilledPanelAttributes extends BasePageElementAttributes {
-  BackgroundColor: Color,
-  BackgroundColorSource: ElementColorSource
+  backgroundColor: string,
+  backgroundColorSource: ElementColorSource
 }
 
 interface TextBlockAttributes extends BasePageElementAttributes {
-  ColorSource: ElementColorSource,
-  Color: Color,
-  Font: TextBlockFont,
-  BaselineAlignment: TextBlockBaselineAlignment,
-  Baseline: number,
-  AutoWidth: boolean
+  colorSource: ElementColorSource,
+  color: string,
+  font: TextBlockFont,
+  baselineAlignment: TextBlockBaselineAlignment,
+  baseline: number,
+  autoWidth: boolean
 }
 
 interface WrappedTextBlockAttributes extends BasePageElementAttributes {
-  ColorSource: ElementColorSource,
-  Color: Color,
-  Font: WrappedTextBlockFont,
-  AutoHeight: boolean
+  colorSource: ElementColorSource,
+  color: string,
+  font: WrappedTextBlockFont,
+  autoHeight: boolean
 }
 
 interface IconAttributes extends BasePageElementAttributes {
-  ColorSource: ElementColorSource,
-  Color: Color
+  colorSource: ElementColorSource,
+  color: string
 }
 
 interface TextButtonAttributes extends BasePageElementAttributes {
-  ColorSource: ElementColorSource,
-  Color: Color
+  colorSource: ElementColorSource,
+  color: string
 }
 
 interface FilledButtonAttributes extends BasePageElementAttributes {
-  ColorSource: ElementColorSource,
-  Color: Color
+  colorSource: ElementColorSource,
+  color: string
 }
 
 interface ScrollFlowPanelAttributes extends BasePageElementAttributes {
-  ColorSource: ElementColorSource,
-  Color: Color,
-  Orientation: Orientation
+  colorSource: ElementColorSource,
+  color: string,
+  orientation: Orientation
 }
 
 interface FlowPanelAttributes extends BasePageElementAttributes {
-  Orientation: Orientation
+  orientation: Orientation
 }
 
 
@@ -307,9 +303,9 @@ interface FilledButton extends PageElement {
 }
  
 interface FilledButtonData extends PageElementData {
-  new (id: number, color: number): FilledButtonData;
-  getPressedColor(): number;
-  setPressedColor(color: number): void;
+  new (id: number, color: string): FilledButtonData;
+  getPressedColor(): string;
+  setPressedColor(color: string): void;
 }
  
 interface PagePanel extends PageElement {
@@ -456,20 +452,20 @@ interface BandTile {
 }
 
 interface BandTheme {
-  new (base: number, highlights: number, lowlights: number, secondary: number, highContrast: number, muted: number): BandTheme;
-  getBaseColor(): number;
-  getHighContrastColor(): number;
-  getHighlightColor(): number;
-  getLowlightColor(): number;
-  getMutedColor(): number;
-  getSecondaryTextColor(): number;
-  hashCode(): number;
-  setBaseColor(color: number): BandTheme;
-  setHighContrastColor(color: number): BandTheme;
-  setHighlightColor(color: number): BandTheme;
-  setLowlightColor(color: number): BandTheme;
-  setMutedColor(color: number): BandTheme;
-  setSecondaryTextColor(color: number): BandTheme;
+  new (base: string, highlights: string, lowlights: string, secondary: string, highContrast: string, muted: string): BandTheme;
+  getBaseColor(): string;
+  getHighContrastColor(): string;
+  getHighlightColor(): string;
+  getLowlightColor(): string;
+  getMutedColor(): string;
+  getSecondaryTextColor(): string;
+  hashCode(): string;
+  setBaseColor(color: string): BandTheme;
+  setHighContrastColor(color: string): BandTheme;
+  setHighlightColor(color: string): BandTheme;
+  setLowlightColor(color: string): BandTheme;
+  setMutedColor(color: string): BandTheme;
+  setSecondaryTextColor(color: string): BandTheme;
 }
 
 interface PageLayout {
