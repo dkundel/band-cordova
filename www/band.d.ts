@@ -138,6 +138,10 @@ declare enum VibrationType {
   TWO_TONE_HIGH
 }
 
+interface BandErrorMessage {
+  message: string;
+}
+
 /**
  * Sensor Events
  */
@@ -388,7 +392,6 @@ interface TextButtonEvent extends TileEvent {
   getTileName(): string;
   getTimestamp(): Date;
   toString(): string;
-  
 }
 
  
@@ -403,35 +406,34 @@ interface BandInfo {
 
 interface BandSensorManager {
   getCurrentgetCurrentHeartRateConsent(): UserConsent;
-  unregisterHeartRateEventListener(callback: (event: BandHeartRateEvent) => void): void;
-  registerAccelerometerEventListener(reportingInterval: SampleRate, callback: (event: BandAccelerometerEvent) => void): void;
-  registerCaloriesEventListener(callback: (event: BandCaloriesEvent) => void): void;
-  registerContactEventListener(callback: (event: BandContactEvent) => void): void;
-  registerDistanceEventListener(callback: (event: BandDistanceEvent) => void): void;
-  registerGyroscopeEventListener(reportingInterval: SampleRate, callback: (event: BandGyroscopeEvent) => void): void;
-  registerHeartRateEventListener(callback: (event: BandHeartRateEvent) => void): void;
-  registerPedometerEventListener(callback: (event: BandPedometerEvent) => void): void;
-  registerSkinTemperatureEventListener(callback: (event: BandSkinTemperatureEvent) => void): void;
-  registerUVEventListener(callback: (event: BandUVEvent) => void): void;
+  registerAccelerometerEventListener(reportingInterval: SampleRate, callback: (error: BandErrorMessage, event?: BandAccelerometerEvent) => void): void;
+  registerCaloriesEventListener(callback: (error: BandErrorMessage, event?: BandCaloriesEvent) => void): void;
+  registerContactEventListener(callback: (error: BandErrorMessage, event?: BandContactEvent) => void): void;
+  registerDistanceEventListener(callback: (error: BandErrorMessage, event?: BandDistanceEvent) => void): void;
+  registerGyroscopeEventListener(reportingInterval: SampleRate, callback: (error: BandErrorMessage, event?: BandGyroscopeEvent) => void): void;
+  registerHeartRateEventListener(callback: (error: BandErrorMessage, event?: BandHeartRateEvent) => void): void;
+  registerPedometerEventListener(callback: (error: BandErrorMessage, event?: BandPedometerEvent) => void): void;
+  registerSkinTemperatureEventListener(callback: (error: BandErrorMessage, event?: BandSkinTemperatureEvent) => void): void;
+  registerUVEventListener(callback: (error: BandErrorMessage, event?: BandUVEvent) => void): void;
   requestHeartRateConsent(callback: (consentGiven: boolean) => void): void;
-  unregisterAccelerometerEventListener(callback: (event: BandAccelerometerEvent) => void): void;
+  unregisterAccelerometerEventListener(callback: (error: BandErrorMessage, event?: BandAccelerometerEvent) => void): void;
   unregisterAccelerometerEventListeners(): void;
   unregisterAllListeners(): void;
-  unregisterCaloriesEventListener(callback: (event: BandCaloriesEvent) => void): void;
+  unregisterCaloriesEventListener(callback: (error: BandErrorMessage, event?: BandCaloriesEvent) => void): void;
   unregisterCaloriesEventListeners(): void;
-  unregisterContactEventListener(callback: (event: BandContactEvent) => void): void;
+  unregisterContactEventListener(callback: (error: BandErrorMessage, event?: BandContactEvent) => void): void;
   unregisterContactEventListeners(): void;
-  unregisterDistanceEventListener(callback: (event: BandDistanceEvent) => void): void;
+  unregisterDistanceEventListener(callback: (error: BandErrorMessage, event?: BandDistanceEvent) => void): void;
   unregisterDistanceEventListeners(): void;
-  unregisterGyroscopeEventListener(callback: (event: BandGyroscopeEvent) => void): void;
+  unregisterGyroscopeEventListener(callback: (error: BandErrorMessage, event?: BandGyroscopeEvent) => void): void;
   unregisterGyroscopeEventListeners(): void;
-  unregisterHeartRateEventListener(callback: (event: BandHeartRateEvent) => void): void;
+  unregisterHeartRateEventListener(callback: (error: BandErrorMessage, event?: BandHeartRateEvent) => void): void;
   unregisterHeartRateEventListeners(): void;
-  unregisterPedometerEventListener(callback: (event: BandPedometerEvent) => void): void;
+  unregisterPedometerEventListener(callback: (error: BandErrorMessage, event?: BandPedometerEvent) => void): void;
   unregisterPedometerEventListeners(): void;
-  unregisterSkinTemperatureEventListener(callback: (event: BandSkinTemperatureEvent) => void): void;
+  unregisterSkinTemperatureEventListener(callback: (error: BandErrorMessage, event?: BandSkinTemperatureEvent) => void): void;
   unregisterSkinTemperatureEventListeners(): void;
-  unregisterUVEventListener(callback: (event: BandUVEvent) => void): void;
+  unregisterUVEventListener(callback: (error: BandErrorMessage, event?: BandUVEvent) => void): void;
   unregisterUVEventListeners(): void;
 }
 
@@ -514,7 +516,7 @@ interface BandNotificationManager {
 interface BandPersonalizationManager {
   getMeTileImage(callback: (base64Image: string) => void): void;
   getTheme(callback: (theme: BandTheme) => void): void;
-  setMeTileImage(base64Image: string, callback: () => void): void;
+  setMeTileImage(icon: BandIcon, callback: () => void): void;
   setTheme(theme: BandTheme, callback: () => void): void;
 }
 
@@ -534,7 +536,7 @@ interface BandClient {
 }
 
 interface BandClientManager {
-  getInstance() : BandClient;
-  getPairedBands(): BandInfo[];
-  create(activity, pairedBand: BandInfo): BandClient;
+  getInstance() : BandClientManager;
+  getPairedBands(callback: (bands: BandInfo[]) => void): void;
+  create(index: number, callback: (bandClient: BandClient) => void): BandClient;
 }

@@ -1,8 +1,12 @@
+/// <reference path="enums" />
+
+
 /**
  * Event data
  */
 interface ISensorEvent {
   timestamp: number;
+  id: number;
 }
 
 interface IAccelerometerEvent extends ISensorEvent {
@@ -143,4 +147,79 @@ interface IFilledButtonData extends IPageElementData {
   color: string;
 }
 
-//TODO
+interface IIconData extends IPageElementData {
+  iconIndex: number;
+}
+
+interface ITextBlockData extends IPageElementData {
+  text: string;
+}
+
+interface IWrappedTextBlockData extends IPageElementData {
+  text: string;
+}
+
+
+/**
+ * Tile event data
+ */
+ 
+interface ITileEvent {
+   
+}
+ 
+interface ITextButtonEvent extends ITileEvent {
+  tileId: string;
+  tileName: string;
+  timestamp: number;
+}
+
+/**
+ * BandInfo
+ */
+
+interface IBandInfo {
+  macAddress: string;
+  name: string;
+}
+
+
+/**
+ * BandTile data
+ */
+ 
+interface IPageLayout {
+  root: IPageElement;
+}
+
+interface IBandIcon {
+  iconBase64: string;
+}
+
+interface IBandTheme {
+  
+}
+
+
+/**
+ * Band data
+ */
+
+interface IBandClient {
+  connectionState: ConnectionState;
+}
+
+
+interface IBandTile {
+  pageIcons: IBandIcon[];
+  pageLayouts: IPageLayout[];
+  theme: IBandTheme[];
+  tileId: string;
+  tileName: string;
+  tileSmallIcon: IBandIcon;
+  badingEnabled: boolean;
+}
+
+interface BandErrorMessage {
+  message: string;
+}

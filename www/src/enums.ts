@@ -1,0 +1,143 @@
+/**
+ * All the enums
+ */
+
+enum ConnectionState {
+  BINDING,
+  BOUND,
+  CONNECTED,
+  DISPOSED,
+  INVALID_SDK_VERSION,
+  UNBINDING,
+  UNBOUND
+}
+
+enum UserConsent {
+  GRANTED,
+  DECLINED,
+  UNSPECEFIED
+}
+
+enum MessageFlags {
+  SHOW_DIALOG,
+  NONE
+}
+
+enum HorizontalAlignment {
+  LEFT,
+  RIGHT,
+  CENTERED
+}
+
+enum VerticalAlignment {
+  TOP,
+  BOTTOM,
+  CENTERED
+}
+
+enum Color {
+  
+}
+
+enum ElementColorSource {
+  BAND_BASE,
+  BAND_HIGH_CONTRAST,
+  BAND_HIGHLIGHT,
+  BAND_LOWLIGHT,
+  BAND_MUTED,
+  BAND_SECONDARY_TEXT,
+  CUSTOM,
+  TILE_BASE,
+  TILE_HIGH_CONTRAST,
+  TILE_HIGHLIGHT,
+  TILE_LOWLIGHT,
+  TILE_MUTED,
+  TILE_SECONDARY_TEXT
+}
+
+enum WrappedTextBlockFont {
+  SMALL,
+  MEDIUM
+}
+
+enum TextBlockFont {
+  EXTRA_LARGE_NUMBERS,
+  EXTRA_LARGE_NUMBERS_BOLD,
+  LARGE,
+  MEDIUM,
+  SMALL
+}
+
+enum TextBlockBaselineAlignment {
+  AUTOMATIC,
+  RELATIVE,
+  ABSOLUTE
+}
+
+enum Orientation {
+  HORIZONTAL,
+  VERTICAL
+}
+
+enum BandContactState {
+  NOT_WORN,
+  UNKNOWN,
+  WORN
+}
+
+enum BandErrorType {
+  BAND_FULL_ERROR,
+  DEVICE_ERROR,
+  INVALID_PAGE_DATA_ERROR,
+  PERMISSION_ERROR,
+  SERVICE_ERROR,
+  TILE_ALREADY_EXISTS_ERROR,
+  TILE_NOT_FOUND_ERROR,
+  TOO_MANY_CONCURRENT_COMMANDS_ERROR,
+  UNKNOWN_ERROR,
+  UNSUPPORTED_SDK_VERSION_ERROR
+}
+
+enum BarcodeType {
+  CODE39,
+  PDF417
+}
+
+enum HeartRateQuality {
+  AQUIRING,
+  LOCKED
+}
+
+enum MotionType {
+  IDLE,
+  JOGGING,
+  RUNNING,
+  UNKNOWN,
+  WALKING
+}
+
+enum SampleRate {
+  MS128,
+  MS16,
+  MS32
+}
+
+enum UVIndexLevel {
+  HIGH,
+  LOW,
+  MEDIUM,
+  NONE,
+  VERY_HIGH
+}
+
+enum VibrationType {
+  NOTIFICATION_ALARM,
+  NOTIFICATION_ONE_TONE,
+  NOTIFICATION_TIMER,
+  NOTIFICATION_TWO_TONE,
+  ONE_TONE_HIGH,
+  RAMP_DOWN,
+  RAMP_UP,
+  THREE_TONE_HIGH,
+  TWO_TONE_HIGH
+}
