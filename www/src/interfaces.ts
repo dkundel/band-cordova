@@ -197,7 +197,12 @@ interface IBandIcon {
 }
 
 interface IBandTheme {
-  
+  base: string;
+  highlights: string;
+  lowlights: string;
+  secondary: string;
+  highContrast: string;
+  muted: string;
 }
 
 
