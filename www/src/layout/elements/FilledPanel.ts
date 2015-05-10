@@ -4,9 +4,8 @@ interface FilledPanelAttributes extends PagePanelAttributes {
 }
 
 class FilledPanel extends PagePanel<FilledPanelAttributes> {
-  constructor(elementId: number, rect: PageRect, backgroundColorSource?: ElementColorSource, backgroundColor?: string, ...elements: PageElement<PageElementAttributes>[]) {
-    var margins: Margins = {top: 0, left: 0, right: 0, bottom: 0};
-    super(elementId, rect, margins, HorizontalAlignment.CENTERED, VerticalAlignment.CENTERED, true);
+  constructor(elementId: number, rect: PageRect, backgroundColorSource: ElementColorSource, backgroundColor: string, ...elements: PageElement<PageElementAttributes>[]) {
+    super(elementId, rect, ...elements);
     this.attributes.backgroundColorSource = backgroundColorSource;
     this.attributes.backgroundColor = backgroundColor;
   }

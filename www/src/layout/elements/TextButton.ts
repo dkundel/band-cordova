@@ -1,9 +1,9 @@
-interface IconAttributes extends PageElementAttributes {
+interface TextButtonAttributes extends PageElementAttributes {
   color: string;
   colorSource: ElementColorSource;
 }
 
-class Icon extends PageElement<IconAttributes> {
+class TextButton extends PageElement<TextButtonAttributes> {
   constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: string) {
     var margins: Margins = {top: 0, left: 0, right: 0, bottom: 0};
     super(elementId, rect, margins, HorizontalAlignment.CENTERED, VerticalAlignment.CENTERED, true);
@@ -11,19 +11,19 @@ class Icon extends PageElement<IconAttributes> {
     this.attributes.color = color;
   }
   
-  toJson(): IIconElement {
-    var json = <IIconElement> super.toJson()
+  toJson(): ITextButtonElement {
+    var json = <ITextButtonElement> super.toJson()
     json.color = this.attributes.color;
     json.colorSource = ElementColorSource[this.attributes.colorSource];
     
     return json;
   }
   
-  static fromJson(json: IIconElement) {
-    var icon: Icon = <Icon> PageElement.fromJson(json);
-    icon.attributes.color = json.color;
-    icon.attributes.colorSource = ElementColorSource[json.colorSource];
+  static fromJson(json: ITextButtonElement) {
+    var button: TextButton = <TextButton> PageElement.fromJson(json);
+    button.attributes.color = json.color;
+    button.attributes.colorSource = ElementColorSource[json.colorSource];
     
-    return icon;
+    return button;
   }
 }

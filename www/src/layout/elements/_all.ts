@@ -7,4 +7,5 @@
 /// <reference path="Icon" />
 /// <reference path="ScrollFlowPanel" />
 /// <reference path="TextBlock" />
+/// <reference path="TextButton" />
 /// <reference path="WrappedTextBlock" />

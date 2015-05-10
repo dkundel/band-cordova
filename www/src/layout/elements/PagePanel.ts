@@ -3,13 +3,18 @@ interface PagePanelAttributes extends PageElementAttributes {
 }
 
 class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAttributes> {
-  private elements: PageElement<TAttributes>[] = [];
+  protected elements: PageElement<PageElementAttributes>[] = [];
   
-  addElements(...elements: PageElement<TAttributes>[]) {
+  constructor(elementId: number, rect: PageRect, ...elements: PageElement<PageElementAttributes>[]) {
+    super(elementId, rect, {top: 0, left: 0, right: 0, bottom: 0}, HorizontalAlignment.CENTERED, VerticalAlignment.CENTERED, true);
+    this.addElements(...elements);
+  }
+  
+  addElements(...elements: PageElement<PageElementAttributes>[]) {
     this.elements = this.elements.concat(elements);
   } 
   
-  getElements(): PageElement<TAttributes>[] {
+  getElements(): PageElement<PageElementAttributes>[] {
     return this.elements;
   }
   
@@ -26,7 +31,7 @@ class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAt
   }
   
   static fromJson(json: IPagePanel): PagePanel<PagePanelAttributes> {
-    var panel = new PagePanel<PagePanelAttributes>();
+    var panel = new PagePanel<PagePanelAttributes>(json.elementId, json.rect);
     panel.attributes = {
       elementId: json.elementId,
       rect: json.rect,
@@ -39,7 +44,42 @@ class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAt
     var elements: PageElement<PageElementAttributes>[] = [];
     for (let element of json.elements) {
       switch (element.type) {
-        // TODO
+        case PageElementTypes.PAGE_ELEMENT:
+          elements.push(PageElement.fromJson(<IPageElement> element));
+          break;
+        case PageElementTypes.BARCODE:
+          elements.push(Barcode.fromJson(<IBarcode> element));
+          break;
+        case PageElementTypes.FILLED_BUTTON:
+          elements.push(FilledButton.fromJson(<IFilledButtonElement> element));
+          break;
+        case PageElementTypes.PAGE_PANEL:
+          elements.push(PagePanel.fromJson(<IPagePanel> element));
+          break;
+        case PageElementTypes.FILLED_PANEL:
+          elements.push(FilledPanel.fromJson(<IFilledPanelElement> element));
+          break;
+        case PageElementTypes.FLOW_PANEL:
+          elements.push(FlowPanel.fromJson(<IFlowPanelElement> element));
+          break;
+        case PageElementTypes.ICON:
+          elements.push(Icon.fromJson(<IIconElement> element));
+          break;
+        case PageElementTypes.SCROLL_FLOW_PANEL:
+          elements.push(ScrollFlowPanel.fromJson(<IScrollFlowPanelElement> element));
+          break;
+        case PageElementTypes.TEXT_BLOCK:
+          elements.push(TextBlock.fromJson(<ITextBlockElement> element));
+          break;
+        case PageElementTypes.TEXT_BUTTON:
+          elements.push(TextButton.fromJson(<ITextButtonElement> element));
+          break;
+        case PageElementTypes.WRAPPED_TEXT_BLOCK:
+          elements.push(WrappedTextBlock.fromJson(<IWrappedTextBlockElement> element));
+          break;
+        default:
+          elements.push(PageElement.fromJson(element));
+          break;
       }
     }
     

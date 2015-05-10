@@ -116,7 +116,7 @@ interface IWrappedTextBlockElement extends IPageElement {
   colorSource: string;
   color: string;
   font: string;
-  autoHeight: string;
+  autoHeight: boolean;
 }
 
 interface IIconElement extends IPageElement {
@@ -201,20 +201,6 @@ interface IBandInfo {
 /**
  * BandTile data
  */
- 
-enum PageElementTypes {
-  PAGE_ELEMENT,
-  BARCODE,
-  FILLED_BUTTON,
-  PAGE_PANEL,
-  FILLED_PANEL,
-  FLOW_PANEL,
-  ICON,
-  SCROLL_FLOW_PANEL,
-  TEXT_BLOCK,
-  TEXT_BUTTON,
-  WRAPPED_TEXT_BLOCK
-}
  
 interface IPageLayout {
   root: IPageElement;
