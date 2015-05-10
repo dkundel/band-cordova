@@ -204,7 +204,6 @@ interface IBandInfo {
  
 interface IPageLayout {
   root: IPageElement;
-  type: PageElementTypes;
 }
 
 interface IBandIcon {
@@ -228,7 +227,6 @@ interface IBandTheme {
 interface IBandClient {
   connectionState: ConnectionState;
 }
-
 
 interface IBandTile {
   pageIcons: IBandIcon[];
