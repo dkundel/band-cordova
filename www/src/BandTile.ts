@@ -14,12 +14,12 @@ module BandCordova {
     private badgingEnabled: boolean;
     
     constructor(json: IBandTile) {
-      let icons = [];
+      let icons: BandIcon[] = [];
       for (let icon of json.pageIcons) {
         icons.push(BandIcon.fromJson(icon));
       }
       
-      let layouts = [];
+      let layouts: PageLayout[] = [];
       for (let layout of json.pageLayouts) {
         layouts.push(PageLayout.fromJson(layout))
       }
@@ -35,17 +35,24 @@ module BandCordova {
     }
     
     toJson(): IBandTile {
-      let icons = [], layouts = [];
+      let icons: IBandIcon[] = [], layouts: IPageLayout[] = [];
       for (let icon of this.pageIcons) {
-        icons.push(icon.toJson())
+        icons.push(icon.toJson());
       }
       
       for (let layout of this.pageLayouts) {
-        
+        layouts.push(layout.toJson());
       }
       
       return {
-        pageIcons: 
+        pageIcons: icons,
+        pageLayouts: layouts,
+        theme: this.theme.toJson(),
+        tileIcon: this.tileIcon.toJson(),
+        tileId: this.tileId,
+        tileName: this.tileName,
+        tileSmallIcon: this.tileSmallIcon.toJson(),
+        badingEnabled: this.badgingEnabled
       };
     }
     

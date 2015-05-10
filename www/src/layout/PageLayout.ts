@@ -14,6 +14,12 @@ class PageLayout {
     return this;
   }
   
+  toJson(): IPageLayout {
+    return {
+      root: this.root.toJson()
+    }
+  }
+  
   static fromJson(json: IPageLayout): PageLayout {
     var root;
     switch (json.root.type) {

@@ -32,7 +32,7 @@ module BandCordova {
     
     getTiles(callback: (error: BandErrorMessage, tiles?: BandTile[]) => void): void {
       var success = (tiles: IBandTile[]) => {
-        var bandTiles = [];
+        var bandTiles: BandTile[] = [];
         for (let tile of tiles) {
           bandTiles.push(new BandTile(tile));
         }

@@ -1,3 +1,7 @@
+interface WebGLRenderingContext {
+  drawImage(image: HTMLImageElement, x: number, y: number): void;
+}
+
 module BandCordova {
   export class BandIcon {
     private path: string;
