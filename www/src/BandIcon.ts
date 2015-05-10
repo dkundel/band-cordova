@@ -3,11 +3,15 @@ module BandCordova {
     private path: string;
     private base64: string = '';
     
-    constructor(path: string) {
-      this.path = path;
+    constructor(content: string, type?: string) {
+      if (type === 'base64') {
+        this.base64 = content;
+      } else {
+        this.path = content;
+      }
     } 
     
-    toBandIcon(callback(base64Icon: string) => void): void {
+    toBandIcon(callback: (base64Icon: string) => void): void {
       if (this.base64.length !== 0) {
         callback(this.base64);
         return;
@@ -25,6 +29,16 @@ module BandCordova {
         callback(this.base64);
         canvas = null;
       }
+    }
+   
+   toJson(): IBandIcon {
+     return {
+       iconBase64: this.base64
+     }
+   }
+    
+    static fromJson(json: IBandIcon): BandIcon {
+      return new BandIcon(json.iconBase64, 'base64');
     }
   }
 }

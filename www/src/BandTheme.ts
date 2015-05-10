@@ -18,7 +18,7 @@ module BandCordova {
       this.mutedColor = muted;
     }
     
-    static parseJson(json: IBandTheme): BandTheme {
+    static fromJson(json: IBandTheme): BandTheme {
       return new BandTheme(json.base, json.highlights, json.lowlights, json.secondary, json.highContrast, json.muted);
     }
     

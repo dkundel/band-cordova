@@ -12,5 +12,12 @@ class PageLayout {
   setRoot(root: PagePanel): PageLayout {
     this.root = root;
     return this;
-  } 
+  }
+  
+  static fromJson(json: IPageLayout): PageLayout {
+    var root = new PagePanel();
+    //TODO
+    var layout = new PageLayout(root);
+    return layout;
+  }
 }

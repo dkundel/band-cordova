@@ -65,26 +65,40 @@ interface IUVEvent extends ISensorEvent {
 /**
  * Page elements
  */
+ 
+interface PageRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface Margins {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+}
 
 interface IPageElement {
   elementId: number;
-  rect: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  margins: {
-    top: number;
-    left: number;
-    right: number;
-    bottom: number;
-  };
+  rect: PageRect;
+  margins: Margins;
   horizontalAlignment: string;
   verticalAlignment: string;
+  isVisible: boolean;
+  type: PageElementTypes;
 }
 
-interface IFilledPanelElement extends IPageElement {
+interface IPagePanel extends IPageElement {
+  elements: IPageElement[];
+}
+
+interface IBarcode extends IPageElement {
+  barcodeType: string;
+}
+
+interface IFilledPanelElement extends IPagePanel {
   backgroundColor: string;
   backgroundColorSource: string;
 }
@@ -120,13 +134,13 @@ interface IFilledButtonElement extends IPageElement {
   color: string;
 }
 
-interface IScrollFlowPanelElement extends IPageElement {
+interface IScrollFlowPanelElement extends IPagePanel {
   colorSource: string;
   color: string;
   orientation: string;
 }
 
-interface IFlowPanelElement extends IPageElement {
+interface IFlowPanelElement extends IPagePanel {
   orientation: string;
 }
 
@@ -188,8 +202,23 @@ interface IBandInfo {
  * BandTile data
  */
  
+enum PageElementTypes {
+  PAGE_ELEMENT,
+  BARCODE,
+  FILLED_BUTTON,
+  PAGE_PANEL,
+  FILLED_PANEL,
+  FLOW_PANEL,
+  ICON,
+  SCROLL_FLOW_PANEL,
+  TEXT_BLOCK,
+  TEXT_BUTTON,
+  WRAPPED_TEXT_BLOCK
+}
+ 
 interface IPageLayout {
   root: IPageElement;
+  type: PageElementTypes;
 }
 
 interface IBandIcon {
@@ -218,7 +247,8 @@ interface IBandClient {
 interface IBandTile {
   pageIcons: IBandIcon[];
   pageLayouts: IPageLayout[];
-  theme: IBandTheme[];
+  theme: IBandTheme;
+  tileIcon: IBandIcon;
   tileId: string;
   tileName: string;
   tileSmallIcon: IBandIcon;
@@ -227,4 +257,8 @@ interface IBandTile {
 
 interface BandErrorMessage {
   message: string;
+}
+
+interface IBandTile {
+  
 }

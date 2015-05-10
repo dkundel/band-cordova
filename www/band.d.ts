@@ -213,22 +213,23 @@ interface BasePageElementAttributes {
   elementId: number,
   rect: PageRect;
   margins: Margins;
-  horizontalAlignment: HorizontalAlignment,
-  verticalAlignment: VerticalAlignment
+  horizontalAlignment: HorizontalAlignment;
+  verticalAlignment: VerticalAlignment;
+  visible: boolean
 }
 
 interface FilledPanelAttributes extends BasePageElementAttributes {
-  backgroundColor: string,
-  backgroundColorSource: ElementColorSource
+  backgroundColor: string;
+  backgroundColorSource: ElementColorSource;
 }
 
 interface TextBlockAttributes extends BasePageElementAttributes {
-  colorSource: ElementColorSource,
-  color: string,
-  font: TextBlockFont,
-  baselineAlignment: TextBlockBaselineAlignment,
-  baseline: number,
-  autoWidth: boolean
+  colorSource: ElementColorSource;
+  color: string;
+  font: TextBlockFont;
+  baselineAlignment: TextBlockBaselineAlignment;
+  baseline: number;
+  autoWidth: boolean;
 }
 
 interface WrappedTextBlockAttributes extends BasePageElementAttributes {
