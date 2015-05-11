@@ -150,11 +150,12 @@ interface IFlowPanelElement extends IPagePanel {
  
 interface IPageElementData {
    id: number;
+   type: PageElementDataTypes;
  }
  
 interface IBarcodeData extends IPageElementData {
   barcodeText: string;
-  type: string;
+  barcodeType: string;
 }
 
 interface IFilledButtonData extends IPageElementData {
@@ -206,6 +207,12 @@ interface IPageLayout {
   root: IPageElement;
 }
 
+interface IPageData {
+  pageUuid: string;
+  layoutId: number;
+  values: IPageElementData[];
+}
+
 interface IBandIcon {
   iconBase64: string;
 }
@@ -229,6 +236,7 @@ interface IBandClient {
 }
 
 interface IBandTile {
+  uuid: string;
   pageIcons: IBandIcon[];
   pageLayouts: IPageLayout[];
   theme: IBandTheme;

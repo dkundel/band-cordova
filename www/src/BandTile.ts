@@ -1,9 +1,11 @@
 /// <reference path="BandIcon" />
 /// <reference path="BandTheme" />
+/// <reference path="BandTileBuilder" />
 
 
 module BandCordova {
   export class BandTile {
+    private uuid: string;
     private pageIcons: BandIcon[];
     private pageLayouts: PageLayout[];
     private theme: BandTheme;
@@ -12,6 +14,8 @@ module BandCordova {
     private tileName: string;
     private tileSmallIcon: BandIcon;
     private badgingEnabled: boolean;
+    
+    static BandTileBuilder: BandTileBuilder;
     
     constructor(json: IBandTile) {
       let icons: BandIcon[] = [];
@@ -24,6 +28,7 @@ module BandCordova {
         layouts.push(PageLayout.fromJson(layout))
       }
       
+      this.uuid = json.uuid;
       this.pageIcons = icons;
       this.pageLayouts = layouts;
       this.theme = BandTheme.fromJson(json.theme);
@@ -45,6 +50,7 @@ module BandCordova {
       }
       
       return {
+        uuid: this.uuid,
         pageIcons: icons,
         pageLayouts: layouts,
         theme: this.theme.toJson(),
