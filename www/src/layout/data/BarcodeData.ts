@@ -20,6 +20,7 @@ class BarcodeData extends PageElementData {
     var data = <IBarcodeData> super.toJson();
     data.barcodeText = this.barcodeText;
     data.barcodeType = BarcodeType[this.barcodeType];
+    data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
     
     return data;
   }

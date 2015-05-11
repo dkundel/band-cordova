@@ -12,6 +12,7 @@ class Barcode extends PageElement<BarcodeAttributes> {
   toJson(): IBarcode {
     var json = <IBarcode> super.toJson()
     json.barcodeType = BarcodeType[this.attributes.barcodeType];
+    json.type = PageElementTypes[PageElementTypes.BARCODE];
     
     return json;
   }
