@@ -13,6 +13,7 @@ class WrappedTextBlockData extends PageElementData {
   toJson(): IWrappedTextBlockData {
     var data = <IWrappedTextBlockData> super.toJson();
     data.text = this.text;
+    data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
     
     return data;
   }

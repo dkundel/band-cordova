@@ -154,6 +154,15 @@ var PageElementTypes;
     PageElementTypes[PageElementTypes["TEXT_BUTTON"] = 9] = "TEXT_BUTTON";
     PageElementTypes[PageElementTypes["WRAPPED_TEXT_BLOCK"] = 10] = "WRAPPED_TEXT_BLOCK";
 })(PageElementTypes || (PageElementTypes = {}));
+var PageElementDataTypes;
+(function (PageElementDataTypes) {
+    PageElementDataTypes[PageElementDataTypes["BARCODE_DATA"] = 0] = "BARCODE_DATA";
+    PageElementDataTypes[PageElementDataTypes["FILLED_BUTTON_DATA"] = 1] = "FILLED_BUTTON_DATA";
+    PageElementDataTypes[PageElementDataTypes["ICON_DATA"] = 2] = "ICON_DATA";
+    PageElementDataTypes[PageElementDataTypes["PAGE_ELEMENT_DATA"] = 3] = "PAGE_ELEMENT_DATA";
+    PageElementDataTypes[PageElementDataTypes["TEXT_BLOCK_DATA"] = 4] = "TEXT_BLOCK_DATA";
+    PageElementDataTypes[PageElementDataTypes["WRAPPED_TEXT_BLOCK_DATA"] = 5] = "WRAPPED_TEXT_BLOCK_DATA";
+})(PageElementDataTypes || (PageElementDataTypes = {}));
 /// <reference path="enums" />
 /// <reference path="../enums" />
 /// <reference path="../interfaces" />
@@ -373,7 +382,7 @@ var PageElement = (function () {
             horizontalAlignment: HorizontalAlignment[this.attributes.horizontalAlignment],
             verticalAlignment: VerticalAlignment[this.attributes.verticalAlignment],
             isVisible: this.attributes.isVisible,
-            type: PageElementTypes.PAGE_ELEMENT
+            type: PageElementTypes[PageElementTypes.PAGE_ELEMENT]
         };
     };
     PageElement.prototype.toString = function () {
@@ -421,6 +430,7 @@ var PagePanel = (function (_super) {
         }
         var panel = _super.prototype.toJson.call(this);
         panel.elements = elements;
+        panel.type = PageElementTypes[PageElementTypes.PAGE_PANEL];
         return panel;
     };
     PagePanel.fromJson = function (json) {
@@ -436,7 +446,7 @@ var PagePanel = (function (_super) {
         var elements = [];
         for (var _i = 0, _a = json.elements; _i < _a.length; _i++) {
             var element = _a[_i];
-            switch (element.type) {
+            switch (PageElementTypes[element.type]) {
                 case PageElementTypes.PAGE_ELEMENT:
                     elements.push(PageElement.fromJson(element));
                     break;
@@ -510,6 +520,7 @@ var FilledButton = (function (_super) {
         var json = _super.prototype.toJson.call(this);
         json.color = this.attributes.color;
         json.colorSource = ElementColorSource[this.attributes.colorSource];
+        json.type = PageElementTypes[PageElementTypes.FILLED_BUTTON];
         return json;
     };
     FilledButton.fromJson = function (json) {
@@ -535,6 +546,7 @@ var FilledPanel = (function (_super) {
         var json = _super.prototype.toJson.call(this);
         json.backgroundColor = this.attributes.backgroundColor;
         json.backgroundColorSource = ElementColorSource[this.attributes.backgroundColorSource];
+        json.type = PageElementTypes[PageElementTypes.FILLED_PANEL];
         return json;
     };
     FilledPanel.fromJson = function (json) {
@@ -558,6 +570,7 @@ var FlowPanel = (function (_super) {
     FlowPanel.prototype.toJson = function () {
         var json = _super.prototype.toJson.call(this);
         json.orientation = Orientation[this.attributes.orientation];
+        json.type = PageElementTypes[PageElementTypes.FLOW_PANEL];
         return json;
     };
     FlowPanel.fromJson = function (json) {
@@ -579,6 +592,7 @@ var Icon = (function (_super) {
         var json = _super.prototype.toJson.call(this);
         json.color = this.attributes.color;
         json.colorSource = ElementColorSource[this.attributes.colorSource];
+        json.type = PageElementTypes[PageElementTypes.ICON];
         return json;
     };
     Icon.fromJson = function (json) {
@@ -606,6 +620,7 @@ var ScrollFlowPanel = (function (_super) {
         json.color = this.attributes.color;
         json.colorSource = ElementColorSource[this.attributes.colorSource];
         json.orientation = Orientation[this.attributes.orientation];
+        json.type = PageElementTypes[PageElementTypes.SCROLL_FLOW_PANEL];
         return json;
     };
     ScrollFlowPanel.fromJson = function (json) {
@@ -637,6 +652,7 @@ var TextBlock = (function (_super) {
         json.baselineAlignment = TextBlockBaselineAlignment[this.attributes.baselineAlignment];
         json.baseline = this.attributes.baseline;
         json.autoWidth = this.attributes.autoWidth;
+        json.type = PageElementTypes[PageElementTypes.TEXT_BLOCK];
         return json;
     };
     TextBlock.fromJson = function (json) {
@@ -663,6 +679,7 @@ var TextButton = (function (_super) {
         var json = _super.prototype.toJson.call(this);
         json.color = this.attributes.color;
         json.colorSource = ElementColorSource[this.attributes.colorSource];
+        json.type = PageElementTypes[PageElementTypes.TEXT_BUTTON];
         return json;
     };
     TextButton.fromJson = function (json) {
@@ -689,6 +706,7 @@ var WrappedTextBlock = (function (_super) {
         json.colorSource = ElementColorSource[this.attributes.colorSource];
         json.font = WrappedTextBlockFont[this.attributes.font];
         json.autoHeight = this.attributes.autoHeight;
+        json.type = PageElementTypes[PageElementTypes.WRAPPED_TEXT_BLOCK];
         return json;
     };
     WrappedTextBlock.fromJson = function (json) {
@@ -712,6 +730,153 @@ var WrappedTextBlock = (function (_super) {
 /// <reference path="TextBlock" />
 /// <reference path="TextButton" />
 /// <reference path="WrappedTextBlock" />
+var PageElementData = (function () {
+    function PageElementData(id) {
+        this.id = id;
+    }
+    PageElementData.prototype.getId = function () {
+        return this.id;
+    };
+    PageElementData.prototype.toJson = function () {
+        return {
+            id: this.id,
+            type: PageElementDataTypes[PageElementDataTypes.PAGE_ELEMENT_DATA]
+        };
+    };
+    PageElementData.prototype.toString = function () {
+        return JSON.stringify(this.toJson());
+    };
+    PageElementData.fromJson = function (json) {
+        return new PageElementData(json.id);
+    };
+    return PageElementData;
+})();
+var BarcodeData = (function (_super) {
+    __extends(BarcodeData, _super);
+    function BarcodeData(id, barcodeText, type) {
+        _super.call(this, id);
+        this.barcodeText = barcodeText;
+        this.barcodeType = type;
+    }
+    BarcodeData.prototype.getBarCode = function () {
+        return this.barcodeText;
+    };
+    BarcodeData.prototype.getBarcodeType = function () {
+        return this.barcodeType;
+    };
+    BarcodeData.prototype.toJson = function () {
+        var data = _super.prototype.toJson.call(this);
+        data.barcodeText = this.barcodeText;
+        data.barcodeType = BarcodeType[this.barcodeType];
+        return data;
+    };
+    BarcodeData.fromJson = function (json) {
+        var data = _super.fromJson.call(this, json);
+        data.barcodeText = json.barcodeText;
+        data.barcodeType = BarcodeData[json.barcodeType];
+        return data;
+    };
+    return BarcodeData;
+})(PageElementData);
+var FilledButtonData = (function (_super) {
+    __extends(FilledButtonData, _super);
+    function FilledButtonData(id, color) {
+        _super.call(this, id);
+        this.pressedColor = color;
+    }
+    FilledButtonData.prototype.getPressedColor = function () {
+        return this.pressedColor;
+    };
+    FilledButtonData.prototype.setPressedColor = function (color) {
+        this.pressedColor = color;
+    };
+    FilledButtonData.prototype.toJson = function () {
+        var data = _super.prototype.toJson.call(this);
+        data.color = this.pressedColor;
+        data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+        return data;
+    };
+    FilledButtonData.fromJson = function (json) {
+        var data = _super.fromJson.call(this, json);
+        data.pressedColor = json.color;
+        return data;
+    };
+    return FilledButtonData;
+})(PageElementData);
+var IconData = (function (_super) {
+    __extends(IconData, _super);
+    function IconData(id, iconIndex) {
+        _super.call(this, id);
+        this.iconIndex = iconIndex;
+    }
+    IconData.prototype.getIconIndex = function () {
+        return this.iconIndex;
+    };
+    IconData.prototype.toJson = function () {
+        var data = _super.prototype.toJson.call(this);
+        data.iconIndex = this.iconIndex;
+        data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+        return data;
+    };
+    IconData.fromJson = function (json) {
+        var data = _super.fromJson.call(this, json);
+        data.iconIndex = json.iconIndex;
+        return data;
+    };
+    return IconData;
+})(PageElementData);
+var TextBlockData = (function (_super) {
+    __extends(TextBlockData, _super);
+    function TextBlockData(id, text) {
+        _super.call(this, id);
+        this.text = text;
+    }
+    TextBlockData.prototype.getText = function () {
+        return this.text;
+    };
+    TextBlockData.prototype.toJson = function () {
+        var data = _super.prototype.toJson.call(this);
+        data.text = this.text;
+        data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+        return data;
+    };
+    TextBlockData.fromJson = function (json) {
+        var data = _super.fromJson.call(this, json);
+        data.text = json.text;
+        return data;
+    };
+    return TextBlockData;
+})(PageElementData);
+var WrappedTextBlockData = (function (_super) {
+    __extends(WrappedTextBlockData, _super);
+    function WrappedTextBlockData(id, text) {
+        _super.call(this, id);
+        this.text = text;
+    }
+    WrappedTextBlockData.prototype.getText = function () {
+        return this.text;
+    };
+    WrappedTextBlockData.prototype.toJson = function () {
+        var data = _super.prototype.toJson.call(this);
+        data.text = this.text;
+        data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+        return data;
+    };
+    WrappedTextBlockData.fromJson = function (json) {
+        var data = _super.fromJson.call(this, json);
+        data.text = json.text;
+        return data;
+    };
+    return WrappedTextBlockData;
+})(PageElementData);
+/// <reference path="../../enums" />
+/// <reference path="../../interfaces" />
+/// <reference path="PageElementData" />
+/// <reference path="BarcodeData" />
+/// <reference path="FilledButtonData" />
+/// <reference path="IconData" />
+/// <reference path="TextBlockData" />
+/// <reference path="WrappedTextBlockData" />
 var PageLayout = (function () {
     function PageLayout(root) {
         this.root = root;
@@ -730,7 +895,7 @@ var PageLayout = (function () {
     };
     PageLayout.fromJson = function (json) {
         var root;
-        switch (json.root.type) {
+        switch (PageElementTypes[json.root.type]) {
             case PageElementTypes.FILLED_PANEL:
                 root = FilledPanel.fromJson(json.root);
                 break;
@@ -751,13 +916,81 @@ var PageLayout = (function () {
     return PageLayout;
 })();
 var PageData = (function () {
-    function PageData() {
+    function PageData(pageUuid, layoutId) {
+        this.pageUuid = pageUuid;
+        this.layoutId = layoutId;
     }
+    PageData.prototype.update = function (data) {
+        this.values.push(data);
+        return this;
+    };
+    PageData.prototype.getValues = function () {
+        return this.values;
+    };
+    PageData.prototype.toJson = function () {
+        var values = [];
+        for (var _i = 0, _a = this.values; _i < _a.length; _i++) {
+            var v = _a[_i];
+            values.push(v.toJson());
+        }
+        return {
+            pageUuid: this.pageUuid,
+            layoutId: this.layoutId,
+            values: values
+        };
+    };
+    PageData.fromJson = function (json) {
+        var data = new PageData(json.pageUuid, json.layoutId);
+        for (var _i = 0, _a = json.values; _i < _a.length; _i++) {
+            var value = _a[_i];
+            switch (PageElementDataTypes[value.type]) {
+                case PageElementDataTypes.BARCODE_DATA:
+                    data.update(BarcodeData.fromJson(value));
+                    break;
+                case PageElementDataTypes.FILLED_BUTTON_DATA:
+                    data.update(FilledButtonData.fromJson(value));
+                    break;
+                case PageElementDataTypes.ICON_DATA:
+                    data.update(IconData.fromJson(value));
+                    break;
+                case PageElementDataTypes.TEXT_BLOCK_DATA:
+                    data.update(TextBlockData.fromJson(value));
+                    break;
+                case PageElementDataTypes.WRAPPED_TEXT_BLOCK_DATA:
+                    data.update(WrappedTextBlockData.fromJson(value));
+                    break;
+                case PageElementDataTypes.PAGE_ELEMENT_DATA:
+                default:
+                    data.update(PageElementData.fromJson(value));
+                    break;
+            }
+        }
+        return data;
+    };
     return PageData;
 })();
 /// <reference path="elements/_all" />
+/// <reference path="data/_all" />
 /// <reference path="PageLayout" />
 /// <reference path="PageData" />
+var BandCordova;
+(function (BandCordova) {
+    var BandClient = (function () {
+        function BandClient() {
+        }
+        return BandClient;
+    })();
+    BandCordova.BandClient = BandClient;
+})(BandCordova || (BandCordova = {}));
+var BandCordova;
+(function (BandCordova) {
+    var BandClientManager = (function () {
+        function BandClientManager() {
+        }
+        return BandClientManager;
+    })();
+    BandCordova.BandClientManager = BandClientManager;
+})(BandCordova || (BandCordova = {}));
 var BandCordova;
 (function (BandCordova) {
     var BandIcon = (function () {
@@ -817,6 +1050,24 @@ var BandCordova;
         return BandInfo;
     })();
     BandCordova.BandInfo = BandInfo;
+})(BandCordova || (BandCordova = {}));
+var BandCordova;
+(function (BandCordova) {
+    var BandNotificationManager = (function () {
+        function BandNotificationManager() {
+        }
+        return BandNotificationManager;
+    })();
+    BandCordova.BandNotificationManager = BandNotificationManager;
+})(BandCordova || (BandCordova = {}));
+var BandCordova;
+(function (BandCordova) {
+    var BandPersonalizationManager = (function () {
+        function BandPersonalizationManager() {
+        }
+        return BandPersonalizationManager;
+    })();
+    BandCordova.BandPersonalizationManager = BandPersonalizationManager;
 })(BandCordova || (BandCordova = {}));
 /// <reference path="types/cordova" />
 /// <reference path="enums" />
@@ -1069,8 +1320,64 @@ var BandCordova;
     })();
     BandCordova.BandTheme = BandTheme;
 })(BandCordova || (BandCordova = {}));
+var BandCordova;
+(function (BandCordova) {
+    var BandTileBuilder = (function () {
+        function BandTileBuilder(uuid, tileName, tileIcon) {
+            this.tile.uuid = uuid;
+            this.tile.tileName = tileName;
+            this.tile.tileIcon = tileIcon.toJson();
+        }
+        BandTileBuilder.prototype.addPageLayout = function (pageLayout) {
+            this.tile.pageLayouts = !this.tile.pageLayouts ? [] : this.tile.pageLayouts;
+            this.tile.pageLayouts.push(pageLayout.toJson());
+            return this;
+        };
+        BandTileBuilder.prototype.setPageIcons = function () {
+            var icons = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                icons[_i - 0] = arguments[_i];
+            }
+            var iconJsons = [];
+            for (var _a = 0; _a < icons.length; _a++) {
+                var icon = icons[_a];
+                iconJsons.push(icon.toJson());
+            }
+            this.tile.pageIcons = iconJsons;
+            return this;
+        };
+        BandTileBuilder.prototype.setPageLayouts = function () {
+            var pageLayouts = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                pageLayouts[_i - 0] = arguments[_i];
+            }
+            var layouts = [];
+            for (var _a = 0; _a < pageLayouts.length; _a++) {
+                var layout = pageLayouts[_a];
+                layouts.push(layout.toJson());
+            }
+            this.tile.pageLayouts = layouts;
+            return this;
+        };
+        BandTileBuilder.prototype.setTheme = function (theme) {
+            this.tile.theme = theme.toJson();
+            return this;
+        };
+        BandTileBuilder.prototype.setTileSmallIcon = function (icon, badgingEnabled) {
+            this.tile.badingEnabled = badgingEnabled;
+            this.tile.tileSmallIcon = icon.toJson();
+            return this;
+        };
+        BandTileBuilder.prototype.build = function () {
+            return new BandCordova.BandTile(this.tile);
+        };
+        return BandTileBuilder;
+    })();
+    BandCordova.BandTileBuilder = BandTileBuilder;
+})(BandCordova || (BandCordova = {}));
 /// <reference path="BandIcon" />
 /// <reference path="BandTheme" />
+/// <reference path="BandTileBuilder" />
 var BandCordova;
 (function (BandCordova) {
     var BandTile = (function () {
@@ -1085,6 +1392,7 @@ var BandCordova;
                 var layout = _c[_b];
                 layouts.push(PageLayout.fromJson(layout));
             }
+            this.uuid = json.uuid;
             this.pageIcons = icons;
             this.pageLayouts = layouts;
             this.theme = BandCordova.BandTheme.fromJson(json.theme);
@@ -1105,6 +1413,7 @@ var BandCordova;
                 layouts.push(layout.toJson());
             }
             return {
+                uuid: this.uuid,
                 pageIcons: icons,
                 pageLayouts: layouts,
                 theme: this.theme.toJson(),
@@ -1198,11 +1507,16 @@ var BandCordova;
 /// <reference path="interfaces" />
 /// <reference path="events/_all" />
 /// <reference path="layout/_all" />
+/// <reference path="BandClient" />
+/// <reference path="BandClientManager" />
 /// <reference path="BandIcon" />
 /// <reference path="BandInfo" />
+/// <reference path="BandNotificationManager" />
+/// <reference path="BandPersonalizationManager" />
 /// <reference path="BandSensorManager" />
 /// <reference path="BandTheme" />
 /// <reference path="BandTile" />
+/// <reference path="BandTileBuilder" />
 /// <reference path="BandTileManager" />
 /// <reference path="src/_all" />
 //# sourceMappingURL=band.js.map

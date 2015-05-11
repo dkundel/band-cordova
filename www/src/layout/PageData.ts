@@ -34,7 +34,7 @@ class PageData {
     var data = new PageData(json.pageUuid, json.layoutId);
     
     for (let value of json.values) {
-      switch (value.type) {
+      switch (PageElementDataTypes[value.type]) {
         case PageElementDataTypes.BARCODE_DATA:
           data.update(BarcodeData.fromJson(<IBarcodeData> value));
           break;

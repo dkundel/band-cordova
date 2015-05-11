@@ -11,6 +11,7 @@ class FlowPanel extends PagePanel<FlowPanelAttributes> {
   toJson(): IFlowPanelElement {
     var json = <IFlowPanelElement> super.toJson()
     json.orientation = Orientation[this.attributes.orientation];
+    json.type = PageElementTypes[PageElementTypes.FLOW_PANEL];
     
     return json;
   }

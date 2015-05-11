@@ -22,6 +22,7 @@ class WrappedTextBlock extends PageElement<WrappedTextBlockAttributes> {
     json.colorSource = ElementColorSource[this.attributes.colorSource];
     json.font = WrappedTextBlockFont[this.attributes.font];
     json.autoHeight = this.attributes.autoHeight;
+    json.type = PageElementTypes[PageElementTypes.WRAPPED_TEXT_BLOCK];
     
     return json;
   }

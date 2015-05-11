@@ -17,6 +17,7 @@ class FilledButtonData extends PageElementData {
   toJson(): IFilledButtonData {
     var data = <IFilledButtonData> super.toJson();
     data.color = this.pressedColor;
+    data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
     
     return data;
   }

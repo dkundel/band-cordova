@@ -13,6 +13,7 @@ class TextBlockData extends PageElementData {
   toJson(): ITextBlockData {
     var data = <ITextBlockData> super.toJson();
     data.text = this.text;
+    data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
     
     return data;
   }

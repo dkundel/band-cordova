@@ -48,7 +48,7 @@ class PageElement<TPageElementAttributes extends PageElementAttributes> {
       horizontalAlignment: HorizontalAlignment[this.attributes.horizontalAlignment],
       verticalAlignment: VerticalAlignment[this.attributes.verticalAlignment],
       isVisible: this.attributes.isVisible,
-      type: PageElementTypes.PAGE_ELEMENT
+      type: PageElementTypes[PageElementTypes.PAGE_ELEMENT]
     };
   }
   

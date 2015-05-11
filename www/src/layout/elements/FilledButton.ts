@@ -15,6 +15,7 @@ class FilledButton extends PageElement<FilledButtonAttributes> {
     var json = <IFilledButtonElement> super.toJson()
     json.color = this.attributes.color;
     json.colorSource = ElementColorSource[this.attributes.colorSource];
+    json.type = PageElementTypes[PageElementTypes.FILLED_BUTTON];
     
     return json;
   }

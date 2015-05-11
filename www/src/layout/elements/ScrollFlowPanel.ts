@@ -17,6 +17,7 @@ class ScrollFlowPanel extends PagePanel<ScrollFlowPanelAttributes> {
     json.color = this.attributes.color;
     json.colorSource = ElementColorSource[this.attributes.colorSource];
     json.orientation = Orientation[this.attributes.orientation];
+    json.type = PageElementTypes[PageElementTypes.SCROLL_FLOW_PANEL];
     
     return json;
   }

@@ -15,6 +15,7 @@ class Icon extends PageElement<IconAttributes> {
     var json = <IIconElement> super.toJson()
     json.color = this.attributes.color;
     json.colorSource = ElementColorSource[this.attributes.colorSource];
+    json.type = PageElementTypes[PageElementTypes.ICON];
     
     return json;
   }

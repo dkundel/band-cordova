@@ -87,7 +87,7 @@ interface IPageElement {
   horizontalAlignment: string;
   verticalAlignment: string;
   isVisible: boolean;
-  type: PageElementTypes;
+  type: string;
 }
 
 interface IPagePanel extends IPageElement {
@@ -150,7 +150,7 @@ interface IFlowPanelElement extends IPagePanel {
  
 interface IPageElementData {
    id: number;
-   type: PageElementDataTypes;
+   type: string;
  }
  
 interface IBarcodeData extends IPageElementData {

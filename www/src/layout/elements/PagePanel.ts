@@ -26,6 +26,7 @@ class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAt
     
     var panel = <IPagePanel> super.toJson();
     panel.elements = elements;
+    panel.type = PageElementTypes[PageElementTypes.PAGE_PANEL];
     
     return panel;
   }
@@ -43,7 +44,7 @@ class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAt
     
     var elements: PageElement<PageElementAttributes>[] = [];
     for (let element of json.elements) {
-      switch (element.type) {
+      switch (PageElementTypes[element.type]) {
         case PageElementTypes.PAGE_ELEMENT:
           elements.push(PageElement.fromJson(<IPageElement> element));
           break;

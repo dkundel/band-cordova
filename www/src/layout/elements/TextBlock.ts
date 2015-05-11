@@ -29,6 +29,7 @@ class TextBlock extends PageElement<TextBlockAttributes> {
     json.baselineAlignment = TextBlockBaselineAlignment[this.attributes.baselineAlignment];
     json.baseline = this.attributes.baseline;
     json.autoWidth = this.attributes.autoWidth;
+    json.type = PageElementTypes[PageElementTypes.TEXT_BLOCK];
     
     return json;
   }

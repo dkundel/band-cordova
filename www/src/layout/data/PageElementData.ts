@@ -11,7 +11,8 @@ class PageElementData {
   
   toJson(): IPageElementData {
     return {
-      id: this.id
+      id: this.id,
+      type: PageElementDataTypes[PageElementDataTypes.PAGE_ELEMENT_DATA]
     };
   }
   

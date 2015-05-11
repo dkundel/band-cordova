@@ -15,6 +15,7 @@ class TextButton extends PageElement<TextButtonAttributes> {
     var json = <ITextButtonElement> super.toJson()
     json.color = this.attributes.color;
     json.colorSource = ElementColorSource[this.attributes.colorSource];
+    json.type = PageElementTypes[PageElementTypes.TEXT_BUTTON];
     
     return json;
   }

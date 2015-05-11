@@ -14,6 +14,7 @@ class FilledPanel extends PagePanel<FilledPanelAttributes> {
     var json = <IFilledPanelElement> super.toJson()
     json.backgroundColor = this.attributes.backgroundColor;
     json.backgroundColorSource = ElementColorSource[this.attributes.backgroundColorSource];
+    json.type = PageElementTypes[PageElementTypes.FILLED_PANEL];
     
     return json;
   }

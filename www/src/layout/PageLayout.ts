@@ -22,7 +22,7 @@ class PageLayout {
   
   static fromJson(json: IPageLayout): PageLayout {
     var root;
-    switch (json.root.type) {
+    switch (PageElementTypes[json.root.type]) {
       case PageElementTypes.FILLED_PANEL:
         root = FilledPanel.fromJson(<IFilledPanelElement> json.root)
         break;

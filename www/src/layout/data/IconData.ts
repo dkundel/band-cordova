@@ -13,6 +13,7 @@ class IconData extends PageElementData {
   toJson(): IIconData {
     var data = <IIconData> super.toJson();
     data.iconIndex = this.iconIndex;
+    data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
     
     return data;
   }
