@@ -34,12 +34,20 @@ module BandCordova {
         canvas = null;
       }
     }
+    
+    getBase64(): string {
+      return this.base64;
+    }
    
-   toJson(): IBandIcon {
-     return {
-       iconBase64: this.base64
-     }
-   }
+    toJson(): IBandIcon {
+      return {
+        iconBase64: this.base64
+      }
+    }
+   
+    toString(): string {
+      return JSON.stringify(this.toJson());
+    }
     
     static fromJson(json: IBandIcon): BandIcon {
       return new BandIcon(json.iconBase64, 'base64');

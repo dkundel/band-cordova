@@ -515,7 +515,7 @@ interface BandNotificationManager {
 }
 
 interface BandPersonalizationManager {
-  getMeTileImage(callback: (base64Image: string) => void): void;
+  getMeTileImage(callback: (icon: BandIcon) => void): void;
   getTheme(callback: (theme: BandTheme) => void): void;
   setMeTileImage(icon: BandIcon, callback: () => void): void;
   setTheme(theme: BandTheme, callback: () => void): void;

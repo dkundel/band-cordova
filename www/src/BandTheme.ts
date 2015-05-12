@@ -33,6 +33,10 @@ module BandCordova {
       };
     }
     
+    toString(): string {
+      return JSON.stringify(this.toJson());
+    }
+    
     getBaseColor(): string {
       return this.baseColor;
     }

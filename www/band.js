@@ -1109,10 +1109,16 @@ var BandCordova;
                 canvas = null;
             };
         };
+        BandIcon.prototype.getBase64 = function () {
+            return this.base64;
+        };
         BandIcon.prototype.toJson = function () {
             return {
                 iconBase64: this.base64
             };
+        };
+        BandIcon.prototype.toString = function () {
+            return JSON.stringify(this.toJson());
         };
         BandIcon.fromJson = function (json) {
             return new BandIcon(json.iconBase64, 'base64');
@@ -1143,6 +1149,33 @@ var BandCordova;
     var BandNotificationManager = (function () {
         function BandNotificationManager() {
         }
+        BandNotificationManager.prototype.showDialog = function (tileUuid, dialogTitle, dialogBody, callback) {
+            var success = function () {
+                callback(null);
+            };
+            var error = function (errorMsg) {
+                callback(errorMsg);
+            };
+            cordova.exec(success, error, 'Band', 'showDialog', [tileUuid, dialogTitle, dialogBody]);
+        };
+        BandNotificationManager.prototype.sendMessage = function (tileUuid, messageTitle, messageBody, date, flags, callback) {
+            var success = function () {
+                callback(null);
+            };
+            var error = function (errorMsg) {
+                callback(errorMsg);
+            };
+            cordova.exec(success, error, 'Band', 'vibrate', [tileUuid, messageTitle, messageBody, date.toISOString(), MessageFlags[flags]]);
+        };
+        BandNotificationManager.prototype.vibrate = function (type, callback) {
+            var success = function () {
+                callback(null);
+            };
+            var error = function (errorMsg) {
+                callback(errorMsg);
+            };
+            cordova.exec(success, error, 'Band', 'vibrate', [VibrationType[type]]);
+        };
         return BandNotificationManager;
     })();
     BandCordova.BandNotificationManager = BandNotificationManager;
@@ -1152,6 +1185,49 @@ var BandCordova;
     var BandPersonalizationManager = (function () {
         function BandPersonalizationManager() {
         }
+        BandPersonalizationManager.prototype.getMeTileImage = function (callback) {
+            var success = function (iconData) {
+                callback(null, BandCordova.BandIcon.fromJson(iconData));
+            };
+            var error = function (errorMsg) {
+                callback(errorMsg);
+            };
+            cordova.exec(success, error, 'Band', 'getMeTileImage', []);
+        };
+        BandPersonalizationManager.prototype.getTheme = function (callback) {
+            var success = function (themeData) {
+                callback(null, BandCordova.BandTheme.fromJson(themeData));
+            };
+            var error = function (errorMsg) {
+                callback(errorMsg);
+            };
+            cordova.exec(success, error, 'Band', 'getMeTileImage', []);
+        };
+        BandPersonalizationManager.prototype.setMeTileImage = function (icon, callback) {
+            var success = function () {
+                callback();
+            };
+            var error = function (errorMsg) {
+                callback(errorMsg);
+            };
+            if (icon.getBase64().length === 0) {
+                icon.toBandIcon(function () {
+                    cordova.exec(success, error, 'Band', 'setMeTileImage', [icon.toString()]);
+                });
+            }
+            else {
+                cordova.exec(success, error, 'Band', 'setMeTileImage', [icon.toString()]);
+            }
+        };
+        BandPersonalizationManager.prototype.setTheme = function (theme, callback) {
+            var success = function () {
+                callback();
+            };
+            var error = function (errorMsg) {
+                callback(errorMsg);
+            };
+            cordova.exec(success, error, 'Band', 'setTheme', [theme.toString()]);
+        };
         return BandPersonalizationManager;
     })();
     BandCordova.BandPersonalizationManager = BandPersonalizationManager;
@@ -1357,6 +1433,9 @@ var BandCordova;
                 highContrast: this.highContrastColor,
                 muted: this.mutedColor
             };
+        };
+        BandTheme.prototype.toString = function () {
+            return JSON.stringify(this.toJson());
         };
         BandTheme.prototype.getBaseColor = function () {
             return this.baseColor;

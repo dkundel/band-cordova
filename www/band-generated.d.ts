@@ -134,6 +134,14 @@ declare enum PageElementTypes {
     TEXT_BUTTON = 9,
     WRAPPED_TEXT_BLOCK = 10,
 }
+declare enum PageElementDataTypes {
+    BARCODE_DATA = 0,
+    FILLED_BUTTON_DATA = 1,
+    ICON_DATA = 2,
+    PAGE_ELEMENT_DATA = 3,
+    TEXT_BLOCK_DATA = 4,
+    WRAPPED_TEXT_BLOCK_DATA = 5,
+}
 /**
  * Event data
  */
@@ -207,7 +215,7 @@ interface IPageElement {
     horizontalAlignment: string;
     verticalAlignment: string;
     isVisible: boolean;
-    type: PageElementTypes;
+    type: string;
 }
 interface IPagePanel extends IPageElement {
     elements: IPageElement[];
@@ -258,10 +266,11 @@ interface IFlowPanelElement extends IPagePanel {
  */
 interface IPageElementData {
     id: number;
+    type: string;
 }
 interface IBarcodeData extends IPageElementData {
     barcodeText: string;
-    type: string;
+    barcodeType: string;
 }
 interface IFilledButtonData extends IPageElementData {
     color: string;
@@ -298,6 +307,11 @@ interface IBandInfo {
 interface IPageLayout {
     root: IPageElement;
 }
+interface IPageData {
+    pageUuid: string;
+    layoutId: number;
+    values: IPageElementData[];
+}
 interface IBandIcon {
     iconBase64: string;
 }
@@ -313,9 +327,10 @@ interface IBandTheme {
  * Band data
  */
 interface IBandClient {
-    connectionState: ConnectionState;
+    connectionState: string;
 }
 interface IBandTile {
+    uuid: string;
     pageIcons: IBandIcon[];
     pageLayouts: IPageLayout[];
     theme: IBandTheme;
@@ -512,6 +527,52 @@ declare class WrappedTextBlock extends PageElement<WrappedTextBlockAttributes> {
     toJson(): IWrappedTextBlockElement;
     static fromJson(json: IWrappedTextBlockElement): WrappedTextBlock;
 }
+declare class PageElementData {
+    protected id: number;
+    constructor(id: number);
+    getId(): number;
+    toJson(): IPageElementData;
+    toString(): string;
+    static fromJson(json: IPageElementData): PageElementData;
+}
+declare class BarcodeData extends PageElementData {
+    private barcodeText;
+    private barcodeType;
+    constructor(id: number, barcodeText: string, type: BarcodeType);
+    getBarCode(): string;
+    getBarcodeType(): BarcodeType;
+    toJson(): IBarcodeData;
+    static fromJson(json: IBarcodeData): BarcodeData;
+}
+declare class FilledButtonData extends PageElementData {
+    private pressedColor;
+    constructor(id: number, color: string);
+    getPressedColor(): string;
+    setPressedColor(color: string): void;
+    toJson(): IFilledButtonData;
+    static fromJson(json: IFilledButtonData): FilledButtonData;
+}
+declare class IconData extends PageElementData {
+    private iconIndex;
+    constructor(id: number, iconIndex: number);
+    getIconIndex(): number;
+    toJson(): IIconData;
+    static fromJson(json: IIconData): IconData;
+}
+declare class TextBlockData extends PageElementData {
+    private text;
+    constructor(id: number, text: string);
+    getText(): string;
+    toJson(): ITextBlockData;
+    static fromJson(json: ITextBlockData): TextBlockData;
+}
+declare class WrappedTextBlockData extends PageElementData {
+    private text;
+    constructor(id: number, text: string);
+    getText(): string;
+    toJson(): IWrappedTextBlockData;
+    static fromJson(json: IWrappedTextBlockData): WrappedTextBlockData;
+}
 declare class PageLayout {
     private root;
     constructor(root: PagePanel<PagePanelAttributes>);
@@ -521,6 +582,46 @@ declare class PageLayout {
     static fromJson(json: IPageLayout): PageLayout;
 }
 declare class PageData {
+    private pageUuid;
+    private layoutId;
+    private values;
+    constructor(pageUuid: string, layoutId: number);
+    update(data: PageElementData): PageData;
+    getValues(): PageElementData[];
+    toJson(): IPageData;
+    static fromJson(json: IPageData): PageData;
+}
+declare module BandCordova {
+    class BandClient {
+        private index;
+        private firmware;
+        private hardware;
+        private connectionState;
+        private sensorManager;
+        private tileManager;
+        private notificationManager;
+        private personalizationManager;
+        constructor(data: IBandClient);
+        getFirmwareVersion(callback: (error: BandErrorMessage, version?: string) => void): void;
+        getHardwareVersion(callback: (error: BandErrorMessage, version?: string) => void): void;
+        getConnectionState(): ConnectionState;
+        getSensorManager(): BandSensorManager;
+        getBandTileManager(): BandTileManager;
+        getNotificationManager(): BandNotificationManager;
+        getPersonalizationManager(): BandPersonalizationManager;
+        connect(callback: (error: BandErrorMessage, state?: ConnectionState) => void): void;
+        disconnect(callback: (error?: BandErrorMessage) => void): void;
+        isConnected(): boolean;
+    }
+}
+declare module BandCordova {
+    class BandClientManager {
+        private pairedBands;
+        constructor();
+        getPairedBands(callback: (error: BandErrorMessage, bands?: BandInfo[]) => void): void;
+        create(index: number, callback: (error: BandErrorMessage, bandClient?: BandClient) => void): void;
+        static getInstance(): BandClientManager;
+    }
 }
 interface WebGLRenderingContext {
     drawImage(image: HTMLImageElement, x: number, y: number): void;
@@ -531,7 +632,9 @@ declare module BandCordova {
         private base64;
         constructor(content: string, type?: string);
         toBandIcon(callback: (base64Icon: string) => void): void;
+        getBase64(): string;
         toJson(): IBandIcon;
+        toString(): string;
         static fromJson(json: IBandIcon): BandIcon;
     }
 }
@@ -542,6 +645,21 @@ declare module BandCordova {
         constructor(bandInfo: IBandInfo);
         getMacAddress(): string;
         getName(): string;
+    }
+}
+declare module BandCordova {
+    class BandNotificationManager {
+        showDialog(tileUuid: string, dialogTitle: string, dialogBody: string, callback: (error?: BandErrorMessage) => void): void;
+        sendMessage(tileUuid: string, messageTitle: string, messageBody: string, date: Date, flags: MessageFlags, callback: (error?: BandErrorMessage) => void): void;
+        vibrate(type: VibrationType, callback: (error?: BandErrorMessage) => void): void;
+    }
+}
+declare module BandCordova {
+    class BandPersonalizationManager {
+        getMeTileImage(callback: (error: BandErrorMessage, icon?: BandIcon) => void): void;
+        getTheme(callback: (error: BandErrorMessage, theme?: BandTheme) => void): void;
+        setMeTileImage(icon: BandIcon, callback: (error?: BandErrorMessage) => void): void;
+        setTheme(theme: BandTheme, callback: (error?: BandErrorMessage) => void): void;
     }
 }
 // Type definitions for Apache Cordova
@@ -688,6 +806,7 @@ declare module BandCordova {
         constructor(base: string, highlights: string, lowlights: string, secondary: string, highContrast: string, muted: string);
         static fromJson(json: IBandTheme): BandTheme;
         toJson(): IBandTheme;
+        toString(): string;
         getBaseColor(): string;
         getHighContrastColor(): string;
         getHighlightColor(): string;
@@ -704,7 +823,20 @@ declare module BandCordova {
     }
 }
 declare module BandCordova {
+    class BandTileBuilder {
+        private tile;
+        constructor(uuid: string, tileName: string, tileIcon: BandIcon);
+        addPageLayout(pageLayout: PageLayout): BandTileBuilder;
+        setPageIcons(...icons: BandIcon[]): BandTileBuilder;
+        setPageLayouts(...pageLayouts: PageLayout[]): BandTileBuilder;
+        setTheme(theme: BandTheme): BandTileBuilder;
+        setTileSmallIcon(icon: BandIcon, badgingEnabled: boolean): BandTileBuilder;
+        build(): BandTile;
+    }
+}
+declare module BandCordova {
     class BandTile {
+        private uuid;
         private pageIcons;
         private pageLayouts;
         private theme;
@@ -713,6 +845,7 @@ declare module BandCordova {
         private tileName;
         private tileSmallIcon;
         private badgingEnabled;
+        static BandTileBuilder: BandTileBuilder;
         constructor(json: IBandTile);
         toJson(): IBandTile;
         toString(): string;
