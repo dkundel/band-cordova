@@ -499,6 +499,7 @@ var Barcode = (function (_super) {
     Barcode.prototype.toJson = function () {
         var json = _super.prototype.toJson.call(this);
         json.barcodeType = BarcodeType[this.attributes.barcodeType];
+        json.type = PageElementTypes[PageElementTypes.BARCODE];
         return json;
     };
     Barcode.fromJson = function (json) {
@@ -768,6 +769,7 @@ var BarcodeData = (function (_super) {
         var data = _super.prototype.toJson.call(this);
         data.barcodeText = this.barcodeText;
         data.barcodeType = BarcodeType[this.barcodeType];
+        data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
         return data;
     };
     BarcodeData.fromJson = function (json) {
@@ -976,8 +978,67 @@ var PageData = (function () {
 var BandCordova;
 (function (BandCordova) {
     var BandClient = (function () {
-        function BandClient() {
+        function BandClient(data) {
+            this.connectionState = ConnectionState[data.connectionState];
         }
+        BandClient.prototype.getFirmwareVersion = function (callback) {
+            var _this = this;
+            var success = function (version) {
+                _this.firmware = version;
+                callback(null, version);
+            };
+            var error = function (error) {
+                callback(error);
+            };
+            cordova.exec(success, error, 'Band', 'getFirmwareVersion', []);
+        };
+        BandClient.prototype.getHardwareVersion = function (callback) {
+            var _this = this;
+            var success = function (version) {
+                _this.hardware = version;
+                callback(null, version);
+            };
+            var error = function (error) {
+                callback(error);
+            };
+            cordova.exec(success, error, 'Band', 'getHardwareVersion', []);
+        };
+        BandClient.prototype.getConnectionState = function () {
+            return this.connectionState;
+        };
+        BandClient.prototype.getSensorManager = function () {
+            return !this.sensorManager ? new BandCordova.BandSensorManager() : this.sensorManager;
+        };
+        BandClient.prototype.getBandTileManager = function () {
+            return !this.tileManager ? new BandCordova.BandTileManager() : this.tileManager;
+        };
+        BandClient.prototype.getNotificationManager = function () {
+            return !this.notificationManager ? new BandCordova.BandNotificationManager() : this.notificationManager;
+        };
+        BandClient.prototype.getPersonalizationManager = function () {
+            return !this.personalizationManager ? new BandCordova.BandPersonalizationManager() : this.personalizationManager;
+        };
+        BandClient.prototype.connect = function (callback) {
+            var success = function (state) {
+                callback(null, ConnectionState[state]);
+            };
+            var error = function (error) {
+                callback(error);
+            };
+            cordova.exec(success, error, 'Band', 'connect', []);
+        };
+        BandClient.prototype.disconnect = function (callback) {
+            var success = function (state) {
+                callback(null);
+            };
+            var error = function (error) {
+                callback(error);
+            };
+            cordova.exec(success, error, 'Band', 'disconnect', []);
+        };
+        BandClient.prototype.isConnected = function () {
+            return this.connectionState === ConnectionState.CONNECTED;
+        };
         return BandClient;
     })();
     BandCordova.BandClient = BandClient;
@@ -987,6 +1048,32 @@ var BandCordova;
     var BandClientManager = (function () {
         function BandClientManager() {
         }
+        BandClientManager.prototype.getPairedBands = function (callback) {
+            var success = function (bandList) {
+                var bandInfo = [];
+                for (var _i = 0; _i < bandList.length; _i++) {
+                    var band = bandList[_i];
+                    bandInfo.push(new BandCordova.BandInfo(band));
+                }
+                callback(null, bandInfo);
+            };
+            var error = function (error) {
+                callback(error);
+            };
+            cordova.exec(success, error, 'Band', 'getPairedBands', []);
+        };
+        BandClientManager.prototype.create = function (index, callback) {
+            var success = function (bandClient) {
+                callback(null, new BandCordova.BandClient(bandClient));
+            };
+            var error = function (error) {
+                callback(error);
+            };
+            cordova.exec(success, error, 'Band', 'create', [index.toString()]);
+        };
+        BandClientManager.getInstance = function () {
+            return new BandClientManager();
+        };
         return BandClientManager;
     })();
     BandCordova.BandClientManager = BandClientManager;

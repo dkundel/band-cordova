@@ -232,7 +232,7 @@ interface IBandTheme {
  */
 
 interface IBandClient {
-  connectionState: ConnectionState;
+  connectionState: string;
 }
 
 interface IBandTile {

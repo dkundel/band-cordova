@@ -523,7 +523,7 @@ interface BandPersonalizationManager {
 
 interface BandClient {
   getFirmwareVersion(callback: (version: string) => void): void;
-  getHarwareVersion(callback: (version: string) => void): void;
+  getHardwareVersion(callback: (version: string) => void): void;
   getSensorManager(): BandSensorManager;
   getBandTileManager(): BandTileManager;
   getNotificationManager(): BandNotificationManager;
