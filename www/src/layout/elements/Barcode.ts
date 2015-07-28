@@ -12,14 +12,14 @@ module cordova.plugins.band {
     
     toJson(): IBarcode {
       return util.extend(super.toJson(), {
-        barcodeType: BarcodeType[this.attributes.barcodeType],
-        type: PageElementTypes[PageElementTypes.BARCODE]
+        barcodeType: this.attributes.barcodeType,
+        type: PageElementTypes.BARCODE
       });
     }
     
     static fromJson(json: IBarcode) {
       var barcode: Barcode = <Barcode> PageElement.fromJson(json);
-      barcode.attributes.barcodeType = BarcodeType[json.barcodeType];
+      barcode.attributes.barcodeType = json.barcodeType;
       
       return barcode;
     }

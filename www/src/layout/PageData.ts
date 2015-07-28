@@ -35,7 +35,7 @@ module cordova.plugins.band {
       var data = new PageData(json.pageUuid, json.layoutId);
       
       for (let value of json.values) {
-        switch (PageElementDataTypes[value.type]) {
+        switch (value.type) {
           case PageElementDataTypes.BARCODE_DATA:
             data.update(BarcodeData.fromJson(<IBarcodeData> value));
             break;

@@ -46,10 +46,10 @@ module cordova.plugins.band {
         elementId: this.attributes.elementId,
         rect: this.attributes.rect,
         margins: this.attributes.margins,
-        horizontalAlignment: HorizontalAlignment[this.attributes.horizontalAlignment],
-        verticalAlignment: VerticalAlignment[this.attributes.verticalAlignment],
+        horizontalAlignment: this.attributes.horizontalAlignment,
+        verticalAlignment: this.attributes.verticalAlignment,
         isVisible: this.attributes.isVisible,
-        type: PageElementTypes[PageElementTypes.PAGE_ELEMENT]
+        type: PageElementTypes.PAGE_ELEMENT
       };
     }
     
@@ -63,8 +63,8 @@ module cordova.plugins.band {
         elementId: json.elementId,
         rect: json.rect,
         margins: json.margins,
-        horizontalAlignment: HorizontalAlignment[json.horizontalAlignment],
-        verticalAlignment: VerticalAlignment[json.verticalAlignment],
+        horizontalAlignment: json.horizontalAlignment,
+        verticalAlignment: json.verticalAlignment,
         isVisible: json.isVisible
       }
       return element;

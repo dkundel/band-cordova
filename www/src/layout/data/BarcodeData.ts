@@ -20,8 +20,8 @@ module cordova.plugins.band {
     toJson(): IBarcodeData {
       var data = <IBarcodeData> super.toJson();
       data.barcodeText = this.barcodeText;
-      data.barcodeType = BarcodeType[this.barcodeType];
-      data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+      data.barcodeType = this.barcodeType;
+      data.type = PageElementDataTypes.BARCODE_DATA;
       
       return data;
     }

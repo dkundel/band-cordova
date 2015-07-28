@@ -1,6 +1,6 @@
 module cordova.plugins.band {
   export interface TextBlockAttributes extends PageElementAttributes {
-    color: string;
+    color: number;
     colorSource: ElementColorSource;
     font: TextBlockFont;
     baselineAlignment: TextBlockBaselineAlignment;
@@ -9,7 +9,7 @@ module cordova.plugins.band {
   }
   
   export class TextBlock extends PageElement<TextBlockAttributes> {
-    constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: string,
+    constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: number,
       font?: TextBlockFont, baselineAlignment?: TextBlockBaselineAlignment, baseline?: number,
       autoWidth?: boolean) {
       var margins: Margins = {top: 0, left: 0, right: 0, bottom: 0};
@@ -25,21 +25,21 @@ module cordova.plugins.band {
     toJson(): ITextBlockElement {
       return util.extend(super.toJson(), {
         color: this.attributes.color,
-        colorSource: ElementColorSource[this.attributes.colorSource],
-        font: TextBlockFont[this.attributes.font],
-        baselineAlignment: TextBlockBaselineAlignment[this.attributes.baselineAlignment],
+        colorSource: this.attributes.colorSource,
+        font: this.attributes.font,
+        baselineAlignment: this.attributes.baselineAlignment,
         baseline: this.attributes.baseline,
         autoWidth: this.attributes.autoWidth,
-        type: PageElementTypes[PageElementTypes.TEXT_BLOCK]
+        type: PageElementTypes.TEXT_BLOCK
       });
     }
     
     static fromJson(json: ITextBlockElement) {
       var textBlock: TextBlock = <TextBlock> PageElement.fromJson(json);
       textBlock.attributes.color = json.color;
-      textBlock.attributes.colorSource = ElementColorSource[json.colorSource];
-      textBlock.attributes.font = TextBlockFont[json.font];
-      textBlock.attributes.baselineAlignment = TextBlockBaselineAlignment[json.baselineAlignment];
+      textBlock.attributes.colorSource = json.colorSource;
+      textBlock.attributes.font = json.font;
+      textBlock.attributes.baselineAlignment = json.baselineAlignment;
       textBlock.attributes.baseline = json.baseline;
       textBlock.attributes.autoWidth = json.autoWidth;
       

@@ -13,7 +13,7 @@ module cordova.plugins.band {
     toJson(): IPageElementData {
       return {
         id: this.id,
-        type: PageElementDataTypes[PageElementDataTypes.PAGE_ELEMENT_DATA]
+        type: PageElementDataTypes.PAGE_ELEMENT_DATA
       };
     }
     

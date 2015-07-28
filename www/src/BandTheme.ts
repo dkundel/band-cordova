@@ -1,13 +1,13 @@
 module cordova.plugins.band {
   export class BandTheme {
-    private baseColor: string;
-    private highlightsColor: string;
-    private lowlightsColor: string;
-    private secondaryColor: string;
-    private highContrastColor: string;
-    private mutedColor: string;
+    private baseColor: number;
+    private highlightsColor: number;
+    private lowlightsColor: number;
+    private secondaryColor: number;
+    private highContrastColor: number;
+    private mutedColor: number;
     
-    constructor(base: string, highlights: string, lowlights: string, secondary: string, highContrast: string, muted: string) {
+    constructor(base: number, highlights: number, lowlights: number, secondary: number, highContrast: number, muted: number) {
       this.baseColor = base;
       this.highlightsColor = highlights;
       this.lowlightsColor = lowlights;
@@ -35,27 +35,27 @@ module cordova.plugins.band {
       return JSON.stringify(this.toJson());
     }
     
-    getBaseColor(): string {
+    getBaseColor(): number {
       return this.baseColor;
     }
     
-    getHighContrastColor(): string {
+    getHighContrastColor(): number {
       return this.highContrastColor;
     }
     
-    getHighlightColor(): string {
+    getHighlightColor(): number {
       return this.highlightsColor;
     }
     
-    getLowlightColor(): string {
+    getLowlightColor(): number {
       return this.lowlightsColor;
     }
     
-    getMutedColor(): string {
+    getMutedColor(): number {
       return this.mutedColor;
     }
     
-    getSecondaryTextColor(): string {
+    getSecondaryTextColor(): number {
       return this.secondaryColor;
     }
     
@@ -64,32 +64,32 @@ module cordova.plugins.band {
       return '';
     }
     
-    setBaseColor(color: string): BandTheme {
+    setBaseColor(color: number): BandTheme {
       this.baseColor = color;
       return this;
     }
     
-    setHighContrastColor(color: string): BandTheme {
+    setHighContrastColor(color: number): BandTheme {
       this.highContrastColor = color;
       return this;
     }
     
-    setHighlightColor(color: string): BandTheme {
+    setHighlightColor(color: number): BandTheme {
       this.highlightsColor = color;
       return this;
     }
     
-    setLowlightColor(color: string): BandTheme {
+    setLowlightColor(color: number): BandTheme {
       this.lowlightsColor = color;
       return this;
     }
     
-    setMutedColor(color: string): BandTheme {
+    setMutedColor(color: number): BandTheme {
       this.mutedColor = color;
       return this;
     }
     
-    setSecondaryTextColor(color: string): BandTheme {
+    setSecondaryTextColor(color: number): BandTheme {
       this.secondaryColor = color;
       return this;
     }

@@ -1,3 +1,5 @@
+/// <reference path="src/types/cordova.d.ts" />
+
 module cordova.plugins.band {
 	export module util {
 		export function extend<T, U>(first: T, second: U): T & U {

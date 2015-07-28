@@ -27,7 +27,7 @@ module cordova.plugins.band {
       
       return util.extend(super.toJson(), {
         elements,
-        type: PageElementTypes[PageElementTypes.PAGE_PANEL]
+        type: PageElementTypes.PAGE_PANEL
       });
     }
     
@@ -37,14 +37,14 @@ module cordova.plugins.band {
         elementId: json.elementId,
         rect: json.rect,
         margins: json.margins,
-        horizontalAlignment: HorizontalAlignment[json.horizontalAlignment],
-        verticalAlignment: VerticalAlignment[json.verticalAlignment],
+        horizontalAlignment: json.horizontalAlignment,
+        verticalAlignment: json.verticalAlignment,
         isVisible: json.isVisible
       }
       
       var elements: PageElement<PageElementAttributes>[] = [];
       for (let element of json.elements) {
-        switch (PageElementTypes[element.type]) {
+        switch (element.type) {
           case PageElementTypes.PAGE_ELEMENT:
             elements.push(PageElement.fromJson(<IPageElement> element));
             break;

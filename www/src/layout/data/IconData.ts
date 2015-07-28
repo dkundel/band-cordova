@@ -14,7 +14,7 @@ module cordova.plugins.band {
     toJson(): IIconData {
       var data = <IIconData> super.toJson();
       data.iconIndex = this.iconIndex;
-      data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+      data.type = PageElementDataTypes.BARCODE_DATA;
       
       return data;
     }

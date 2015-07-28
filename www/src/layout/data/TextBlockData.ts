@@ -14,7 +14,7 @@ module cordova.plugins.band {
     toJson(): ITextBlockData {
       var data = <ITextBlockData> super.toJson();
       data.text = this.text;
-      data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+      data.type = PageElementDataTypes.BARCODE_DATA;
       
       return data;
     }

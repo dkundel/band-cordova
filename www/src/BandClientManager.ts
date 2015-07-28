@@ -1,3 +1,4 @@
+/// <reference path="types/cordova.d.ts" />
 module cordova.plugins.band {
   export class BandClientManager {
     private pairedBands: BandInfo[];
@@ -25,7 +26,7 @@ module cordova.plugins.band {
     
     create(index: number, callback: (error: BandErrorMessage, bandClient?: BandClient) => void): void {
       let success = (bandClient: IBandClient) => {
-        callback(null, new BandClient(bandClient));
+        callback(null, new BandClient(bandClient, index));
       }
       
       let error = (error: BandErrorMessage) => {

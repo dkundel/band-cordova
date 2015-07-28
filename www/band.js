@@ -1,3 +1,4 @@
+/// <reference path="src/types/cordova.d.ts" />
 var cordova;
 (function (cordova) {
     var plugins;
@@ -24,6 +25,7 @@ var cordova;
 cordova.define('band', function (require, exports, module) {
     module.exports = cordova.plugins.band;
 });
+/// <reference path="types/cordova.d.ts" />
 var cordova;
 (function (cordova) {
     var plugins;
@@ -31,7 +33,8 @@ var cordova;
         var band;
         (function (band) {
             var BandClient = (function () {
-                function BandClient(data) {
+                function BandClient(data, index) {
+                    this.index = index;
                     this.connectionState = band.ConnectionState[data.connectionState];
                 }
                 BandClient.prototype.getFirmwareVersion = function (callback) {
@@ -43,7 +46,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'getFirmwareVersion', []);
+                    this.exec(success, error, 'getFirmwareVersion', []);
                 };
                 BandClient.prototype.getHardwareVersion = function (callback) {
                     var _this = this;
@@ -54,22 +57,25 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'getHardwareVersion', []);
+                    this.exec(success, error, 'getHardwareVersion', []);
                 };
                 BandClient.prototype.getConnectionState = function () {
                     return this.connectionState;
                 };
                 BandClient.prototype.getSensorManager = function () {
-                    return !this.sensorManager ? new band.BandSensorManager() : this.sensorManager;
+                    return !this.sensorManager ? new band.BandSensorManager(this) : this.sensorManager;
                 };
                 BandClient.prototype.getBandTileManager = function () {
-                    return !this.tileManager ? new band.BandTileManager() : this.tileManager;
+                    return !this.tileManager ? new band.BandTileManager(this) : this.tileManager;
                 };
                 BandClient.prototype.getNotificationManager = function () {
-                    return !this.notificationManager ? new band.BandNotificationManager() : this.notificationManager;
+                    return !this.notificationManager ? new band.BandNotificationManager(this) : this.notificationManager;
                 };
                 BandClient.prototype.getPersonalizationManager = function () {
-                    return !this.personalizationManager ? new band.BandPersonalizationManager() : this.personalizationManager;
+                    return !this.personalizationManager ? new band.BandPersonalizationManager(this) : this.personalizationManager;
+                };
+                BandClient.prototype.exec = function (success, error, action, args) {
+                    cordova.exec(success, error, 'Band', action, [this.index.toString()].concat(args));
                 };
                 BandClient.prototype.connect = function (callback) {
                     var success = function (state) {
@@ -78,7 +84,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'connect', []);
+                    this.exec(success, error, 'connect', []);
                 };
                 BandClient.prototype.disconnect = function (callback) {
                     var success = function (state) {
@@ -87,7 +93,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'disconnect', []);
+                    this.exec(success, error, 'disconnect', []);
                 };
                 BandClient.prototype.isConnected = function () {
                     return this.connectionState === band.ConnectionState.CONNECTED;
@@ -98,6 +104,7 @@ var cordova;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
 })(cordova || (cordova = {}));
+/// <reference path="types/cordova.d.ts" />
 var cordova;
 (function (cordova) {
     var plugins;
@@ -123,7 +130,7 @@ var cordova;
                 };
                 BandClientManager.prototype.create = function (index, callback) {
                     var success = function (bandClient) {
-                        callback(null, new band_1.BandClient(bandClient));
+                        callback(null, new band_1.BandClient(bandClient, index));
                     };
                     var error = function (error) {
                         callback(error);
@@ -136,6 +143,25 @@ var cordova;
                 return BandClientManager;
             })();
             band_1.BandClientManager = BandClientManager;
+        })(band = plugins.band || (plugins.band = {}));
+    })(plugins = cordova.plugins || (cordova.plugins = {}));
+})(cordova || (cordova = {}));
+var cordova;
+(function (cordova) {
+    var plugins;
+    (function (plugins) {
+        var band;
+        (function (band) {
+            var BandManagerBase = (function () {
+                function BandManagerBase(host) {
+                    this.host = host;
+                }
+                BandManagerBase.prototype.exec = function (success, error, action, args) {
+                    this.host.exec(success, error, action, args);
+                };
+                return BandManagerBase;
+            })();
+            band.BandManagerBase = BandManagerBase;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
 })(cordova || (cordova = {}));
@@ -217,14 +243,21 @@ var cordova;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
 })(cordova || (cordova = {}));
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var cordova;
 (function (cordova) {
     var plugins;
     (function (plugins) {
         var band;
         (function (band) {
-            var BandNotificationManager = (function () {
+            var BandNotificationManager = (function (_super) {
+                __extends(BandNotificationManager, _super);
                 function BandNotificationManager() {
+                    _super.apply(this, arguments);
                 }
                 BandNotificationManager.prototype.showDialog = function (tileUuid, dialogTitle, dialogBody, callback) {
                     var success = function () {
@@ -233,7 +266,7 @@ var cordova;
                     var error = function (errorMsg) {
                         callback(errorMsg);
                     };
-                    cordova.exec(success, error, 'Band', 'showDialog', [tileUuid, dialogTitle, dialogBody]);
+                    this.exec(success, error, 'showDialog', [tileUuid, dialogTitle, dialogBody]);
                 };
                 BandNotificationManager.prototype.sendMessage = function (tileUuid, messageTitle, messageBody, date, flags, callback) {
                     var success = function () {
@@ -242,7 +275,7 @@ var cordova;
                     var error = function (errorMsg) {
                         callback(errorMsg);
                     };
-                    cordova.exec(success, error, 'Band', 'vibrate', [tileUuid, messageTitle, messageBody, date.toISOString(), band.MessageFlags[flags]]);
+                    this.exec(success, error, 'sendMessage', [tileUuid, messageTitle, messageBody, date.toISOString(), band.MessageFlags[flags]]);
                 };
                 BandNotificationManager.prototype.vibrate = function (type, callback) {
                     var success = function () {
@@ -251,10 +284,10 @@ var cordova;
                     var error = function (errorMsg) {
                         callback(errorMsg);
                     };
-                    cordova.exec(success, error, 'Band', 'vibrate', [band.VibrationType[type]]);
+                    this.exec(success, error, 'vibrate', [band.VibrationType[type]]);
                 };
                 return BandNotificationManager;
-            })();
+            })(band.BandManagerBase);
             band.BandNotificationManager = BandNotificationManager;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
@@ -265,8 +298,10 @@ var cordova;
     (function (plugins) {
         var band;
         (function (band) {
-            var BandPersonalizationManager = (function () {
+            var BandPersonalizationManager = (function (_super) {
+                __extends(BandPersonalizationManager, _super);
                 function BandPersonalizationManager() {
+                    _super.apply(this, arguments);
                 }
                 BandPersonalizationManager.prototype.getMeTileImage = function (callback) {
                     var success = function (iconData) {
@@ -275,7 +310,7 @@ var cordova;
                     var error = function (errorMsg) {
                         callback(errorMsg);
                     };
-                    cordova.exec(success, error, 'Band', 'getMeTileImage', []);
+                    this.exec(success, error, 'getMeTileImage', []);
                 };
                 BandPersonalizationManager.prototype.getTheme = function (callback) {
                     var success = function (themeData) {
@@ -284,9 +319,10 @@ var cordova;
                     var error = function (errorMsg) {
                         callback(errorMsg);
                     };
-                    cordova.exec(success, error, 'Band', 'getMeTileImage', []);
+                    this.exec(success, error, 'getMeTileImage', []);
                 };
                 BandPersonalizationManager.prototype.setMeTileImage = function (icon, callback) {
+                    var _this = this;
                     var success = function () {
                         callback();
                     };
@@ -295,11 +331,11 @@ var cordova;
                     };
                     if (icon.getBase64().length === 0) {
                         icon.toBandIcon(function () {
-                            cordova.exec(success, error, 'Band', 'setMeTileImage', [icon.toString()]);
+                            _this.exec(success, error, 'setMeTileImage', [icon.toString()]);
                         });
                     }
                     else {
-                        cordova.exec(success, error, 'Band', 'setMeTileImage', [icon.toString()]);
+                        this.exec(success, error, 'setMeTileImage', [icon.toString()]);
                     }
                 };
                 BandPersonalizationManager.prototype.setTheme = function (theme, callback) {
@@ -309,23 +345,24 @@ var cordova;
                     var error = function (errorMsg) {
                         callback(errorMsg);
                     };
-                    cordova.exec(success, error, 'Band', 'setTheme', [theme.toString()]);
+                    this.exec(success, error, 'setTheme', [theme.toString()]);
                 };
                 return BandPersonalizationManager;
-            })();
+            })(band.BandManagerBase);
             band.BandPersonalizationManager = BandPersonalizationManager;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
 })(cordova || (cordova = {}));
-/// <reference path="types/cordova.d.ts" />
 var cordova;
 (function (cordova) {
     var plugins;
     (function (plugins) {
         var band;
         (function (band) {
-            var BandSensorManager = (function () {
+            var BandSensorManager = (function (_super) {
+                __extends(BandSensorManager, _super);
                 function BandSensorManager() {
+                    _super.apply(this, arguments);
                 }
                 BandSensorManager.prototype.handleSuccessfulUnregister = function () {
                     var args = [];
@@ -351,7 +388,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerAccelerometerEventListener", [band.SampleRate[reportingInterval]]);
+                    this.exec(success, error, "registerAccelerometerEventListener", [reportingInterval.toString()]);
                 };
                 BandSensorManager.prototype.registerCaloriesEventListener = function (callback) {
                     var success = function (event) {
@@ -360,7 +397,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerCaloriesEventListener", []);
+                    this.exec(success, error, "registerCaloriesEventListener", []);
                 };
                 BandSensorManager.prototype.registerContactEventListener = function (callback) {
                     var success = function (event) {
@@ -369,7 +406,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerContactEventListener", []);
+                    this.exec(success, error, "registerContactEventListener", []);
                 };
                 BandSensorManager.prototype.registerDistanceEventListener = function (callback) {
                     var success = function (event) {
@@ -378,7 +415,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerDistanceEventListener", []);
+                    this.exec(success, error, "registerDistanceEventListener", []);
                 };
                 BandSensorManager.prototype.registerGyroscopeEventListener = function (reportingInterval, callback) {
                     var success = function (event) {
@@ -387,7 +424,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerGyroscopeEventListener", [band.SampleRate[reportingInterval]]);
+                    this.exec(success, error, "registerGyroscopeEventListener", [band.SampleRate[reportingInterval]]);
                 };
                 BandSensorManager.prototype.registerHeartRateEventListener = function (callback) {
                     var success = function (event) {
@@ -396,7 +433,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerHeartRateEventListener", []);
+                    this.exec(success, error, "registerHeartRateEventListener", []);
                 };
                 BandSensorManager.prototype.registerPedometerEventListener = function (callback) {
                     var success = function (event) {
@@ -405,7 +442,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerPedometerEventListener", []);
+                    this.exec(success, error, "registerPedometerEventListener", []);
                 };
                 BandSensorManager.prototype.registerSkinTemperatureEventListener = function (callback) {
                     var success = function (event) {
@@ -414,7 +451,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerSkinTemperatureEventListener", []);
+                    this.exec(success, error, "registerSkinTemperatureEventListener", []);
                 };
                 BandSensorManager.prototype.registerUVEventListener = function (callback) {
                     var success = function (event) {
@@ -423,7 +460,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "registerUVEventListener", []);
+                    this.exec(success, error, "registerUVEventListener", []);
                 };
                 BandSensorManager.prototype.requestHeartRateConsent = function (callback) {
                     var success = function (consentGiven) {
@@ -432,67 +469,67 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, "Band", "requestHeartRateConsent", []);
+                    this.exec(success, error, "requestHeartRateConsent", []);
                 };
                 BandSensorManager.prototype.unregisterAccelerometerEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterAccelerometerEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterAccelerometerEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterAccelerometerEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterAccelerometerEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterAccelerometerEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterAllListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterAllListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterAllListeners", []);
                 };
                 BandSensorManager.prototype.unregisterCaloriesEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterCaloriesEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterCaloriesEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterCaloriesEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterCaloriesEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterCaloriesEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterContactEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterContactEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterContactEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterContactEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterContactEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterContactEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterDistanceEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterDistanceEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterDistanceEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterDistanceEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterDistanceEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterDistanceEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterGyroscopeEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterGyroscopeEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterGyroscopeEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterGyroscopeEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterGyroscopeEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterGyroscopeEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterHeartRateEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterHeartRateEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterHeartRateEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterHeartRateEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterHeartRateEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterHeartRateEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterPedometerEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterPedometerEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterPedometerEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterPedometerEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterPedometerEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterPedometerEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterSkinTemperatureEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterSkinTemperatureEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterSkinTemperatureEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterSkinTemperatureEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterSkinTemperatureEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterSkinTemperatureEventListeners", []);
                 };
                 BandSensorManager.prototype.unregisterUVEventListener = function (eventId) {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterUVEventListener", [eventId.toString()]);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterUVEventListener", [eventId.toString()]);
                 };
                 BandSensorManager.prototype.unregisterUVEventListeners = function () {
-                    cordova.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "Band", "unregisterUVEventListeners", []);
+                    this.exec(this.handleSuccessfulUnregister, this.handleErrorUnregister, "unregisterUVEventListeners", []);
                 };
                 return BandSensorManager;
-            })();
+            })(band.BandManagerBase);
             band.BandSensorManager = BandSensorManager;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
@@ -705,8 +742,10 @@ var cordova;
     (function (plugins) {
         var band;
         (function (band) {
-            var BandTileManager = (function () {
+            var BandTileManager = (function (_super) {
+                __extends(BandTileManager, _super);
                 function BandTileManager() {
+                    _super.apply(this, arguments);
                 }
                 BandTileManager.prototype.addTitle = function (tile, callback) {
                     var success = function () {
@@ -715,7 +754,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'addTile', [tile.toString()]);
+                    this.exec(success, error, 'addTile', [tile.toString()]);
                 };
                 BandTileManager.prototype.getRemainingTileCapacity = function (callback) {
                     var success = function (capacity) {
@@ -724,7 +763,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'getRemainingTileCapacity', []);
+                    this.exec(success, error, 'getRemainingTileCapacity', []);
                 };
                 BandTileManager.prototype.getTiles = function (callback) {
                     var success = function (tiles) {
@@ -738,7 +777,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'getTiles', []);
+                    this.exec(success, error, 'getTiles', []);
                 };
                 BandTileManager.prototype.removePages = function (tileId, callback) {
                     var success = function () {
@@ -747,7 +786,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'removePages', [tileId]);
+                    this.exec(success, error, 'removePages', [tileId]);
                 };
                 BandTileManager.prototype.removeTile = function (tile, callback) {
                     var success = function () {
@@ -756,7 +795,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'addTile', [tile.toString()]);
+                    this.exec(success, error, 'addTile', [tile.toString()]);
                 };
                 BandTileManager.prototype.setPages = function (tileId, pageData, callback) {
                     var success = function () {
@@ -765,10 +804,10 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    cordova.exec(success, error, 'Band', 'setPages', [tileId, pageData.toString()]);
+                    this.exec(success, error, 'setPages', [tileId, pageData.toString()]);
                 };
                 return BandTileManager;
-            })();
+            })(band.BandManagerBase);
             band.BandTileManager = BandTileManager;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
@@ -978,7 +1017,7 @@ var cordova;
                     var data = new PageData(json.pageUuid, json.layoutId);
                     for (var _i = 0, _a = json.values; _i < _a.length; _i++) {
                         var value = _a[_i];
-                        switch (band.PageElementDataTypes[value.type]) {
+                        switch (value.type) {
                             case band.PageElementDataTypes.BARCODE_DATA:
                                 data.update(band.BarcodeData.fromJson(value));
                                 break;
@@ -1032,7 +1071,7 @@ var cordova;
                 };
                 PageLayout.fromJson = function (json) {
                     var root;
-                    switch (band.PageElementTypes[json.root.type]) {
+                    switch (json.root.type) {
                         case band.PageElementTypes.FILLED_PANEL:
                             root = band.FilledPanel.fromJson(json.root);
                             break;
@@ -1056,11 +1095,6 @@ var cordova;
         })(band = plugins.band || (plugins.band = {}));
     })(plugins = cordova.plugins || (cordova.plugins = {}));
 })(cordova || (cordova = {}));
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var cordova;
 (function (cordova) {
     var plugins;
@@ -1083,8 +1117,8 @@ var cordova;
                 BarcodeData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.barcodeText = this.barcodeText;
-                    data.barcodeType = band.BarcodeType[this.barcodeType];
-                    data.type = band.PageElementDataTypes[band.PageElementDataTypes.BARCODE_DATA];
+                    data.barcodeType = this.barcodeType;
+                    data.type = band.PageElementDataTypes.BARCODE_DATA;
                     return data;
                 };
                 BarcodeData.fromJson = function (json) {
@@ -1120,7 +1154,7 @@ var cordova;
                 FilledButtonData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.color = this.pressedColor;
-                    data.type = band.PageElementDataTypes[band.PageElementDataTypes.BARCODE_DATA];
+                    data.type = band.PageElementDataTypes.BARCODE_DATA;
                     return data;
                 };
                 FilledButtonData.fromJson = function (json) {
@@ -1152,7 +1186,7 @@ var cordova;
                 IconData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.iconIndex = this.iconIndex;
-                    data.type = band.PageElementDataTypes[band.PageElementDataTypes.BARCODE_DATA];
+                    data.type = band.PageElementDataTypes.BARCODE_DATA;
                     return data;
                 };
                 IconData.fromJson = function (json) {
@@ -1182,7 +1216,7 @@ var cordova;
                 PageElementData.prototype.toJson = function () {
                     return {
                         id: this.id,
-                        type: band.PageElementDataTypes[band.PageElementDataTypes.PAGE_ELEMENT_DATA]
+                        type: band.PageElementDataTypes.PAGE_ELEMENT_DATA
                     };
                 };
                 PageElementData.prototype.toString = function () {
@@ -1215,7 +1249,7 @@ var cordova;
                 TextBlockData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.text = this.text;
-                    data.type = band.PageElementDataTypes[band.PageElementDataTypes.BARCODE_DATA];
+                    data.type = band.PageElementDataTypes.BARCODE_DATA;
                     return data;
                 };
                 TextBlockData.fromJson = function (json) {
@@ -1247,7 +1281,7 @@ var cordova;
                 WrappedTextBlockData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.text = this.text;
-                    data.type = band.PageElementDataTypes[band.PageElementDataTypes.BARCODE_DATA];
+                    data.type = band.PageElementDataTypes.BARCODE_DATA;
                     return data;
                 };
                 WrappedTextBlockData.fromJson = function (json) {
@@ -1275,13 +1309,13 @@ var cordova;
                 }
                 Barcode.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
-                        barcodeType: band.BarcodeType[this.attributes.barcodeType],
-                        type: band.PageElementTypes[band.PageElementTypes.BARCODE]
+                        barcodeType: this.attributes.barcodeType,
+                        type: band.PageElementTypes.BARCODE
                     });
                 };
                 Barcode.fromJson = function (json) {
                     var barcode = band.PageElement.fromJson(json);
-                    barcode.attributes.barcodeType = band.BarcodeType[json.barcodeType];
+                    barcode.attributes.barcodeType = json.barcodeType;
                     return barcode;
                 };
                 return Barcode;
@@ -1307,14 +1341,14 @@ var cordova;
                 FilledButton.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
                         color: this.attributes.color,
-                        colorSource: band.ElementColorSource[this.attributes.colorSource],
-                        type: band.PageElementTypes[band.PageElementTypes.FILLED_BUTTON]
+                        colorSource: this.attributes.colorSource,
+                        type: band.PageElementTypes.FILLED_BUTTON
                     });
                 };
                 FilledButton.fromJson = function (json) {
                     var button = band.PageElement.fromJson(json);
                     button.attributes.color = json.color;
-                    button.attributes.colorSource = band.ElementColorSource[json.colorSource];
+                    button.attributes.colorSource = json.colorSource;
                     return button;
                 };
                 return FilledButton;
@@ -1343,14 +1377,14 @@ var cordova;
                 FilledPanel.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
                         backgroundColor: this.attributes.backgroundColor,
-                        backgroundColorSource: band.ElementColorSource[this.attributes.backgroundColorSource],
-                        type: band.PageElementTypes[band.PageElementTypes.FILLED_PANEL]
+                        backgroundColorSource: this.attributes.backgroundColorSource,
+                        type: band.PageElementTypes.FILLED_PANEL
                     });
                 };
                 FilledPanel.fromJson = function (json) {
                     var panel = band.PageElement.fromJson(json);
                     panel.attributes.backgroundColor = json.backgroundColor;
-                    panel.attributes.backgroundColorSource = band.ElementColorSource[json.backgroundColorSource];
+                    panel.attributes.backgroundColorSource = json.backgroundColorSource;
                     return panel;
                 };
                 return FilledPanel;
@@ -1377,13 +1411,13 @@ var cordova;
                 }
                 FlowPanel.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
-                        orientation: band.Orientation[this.attributes.orientation],
-                        type: band.PageElementTypes[band.PageElementTypes.FLOW_PANEL]
+                        orientation: this.attributes.orientation,
+                        type: band.PageElementTypes.FLOW_PANEL
                     });
                 };
                 FlowPanel.fromJson = function (json) {
                     var panel = band.PageElement.fromJson(json);
-                    panel.attributes.orientation = band.Orientation[json.orientation];
+                    panel.attributes.orientation = json.orientation;
                     return panel;
                 };
                 return FlowPanel;
@@ -1409,14 +1443,14 @@ var cordova;
                 Icon.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
                         color: this.attributes.color,
-                        colorSource: band.ElementColorSource[this.attributes.colorSource],
-                        type: band.PageElementTypes[band.PageElementTypes.ICON]
+                        colorSource: this.attributes.colorSource,
+                        type: band.PageElementTypes.ICON
                     });
                 };
                 Icon.fromJson = function (json) {
                     var icon = band.PageElement.fromJson(json);
                     icon.attributes.color = json.color;
-                    icon.attributes.colorSource = band.ElementColorSource[json.colorSource];
+                    icon.attributes.colorSource = json.colorSource;
                     return icon;
                 };
                 return Icon;
@@ -1458,10 +1492,10 @@ var cordova;
                         elementId: this.attributes.elementId,
                         rect: this.attributes.rect,
                         margins: this.attributes.margins,
-                        horizontalAlignment: band.HorizontalAlignment[this.attributes.horizontalAlignment],
-                        verticalAlignment: band.VerticalAlignment[this.attributes.verticalAlignment],
+                        horizontalAlignment: this.attributes.horizontalAlignment,
+                        verticalAlignment: this.attributes.verticalAlignment,
                         isVisible: this.attributes.isVisible,
-                        type: band.PageElementTypes[band.PageElementTypes.PAGE_ELEMENT]
+                        type: band.PageElementTypes.PAGE_ELEMENT
                     };
                 };
                 PageElement.prototype.toString = function () {
@@ -1473,8 +1507,8 @@ var cordova;
                         elementId: json.elementId,
                         rect: json.rect,
                         margins: json.margins,
-                        horizontalAlignment: band.HorizontalAlignment[json.horizontalAlignment],
-                        verticalAlignment: band.VerticalAlignment[json.verticalAlignment],
+                        horizontalAlignment: json.horizontalAlignment,
+                        verticalAlignment: json.verticalAlignment,
                         isVisible: json.isVisible
                     };
                     return element;
@@ -1519,7 +1553,7 @@ var cordova;
                     }
                     return band.util.extend(_super.prototype.toJson.call(this), {
                         elements: elements,
-                        type: band.PageElementTypes[band.PageElementTypes.PAGE_PANEL]
+                        type: band.PageElementTypes.PAGE_PANEL
                     });
                 };
                 PagePanel.fromJson = function (json) {
@@ -1528,14 +1562,14 @@ var cordova;
                         elementId: json.elementId,
                         rect: json.rect,
                         margins: json.margins,
-                        horizontalAlignment: band.HorizontalAlignment[json.horizontalAlignment],
-                        verticalAlignment: band.VerticalAlignment[json.verticalAlignment],
+                        horizontalAlignment: json.horizontalAlignment,
+                        verticalAlignment: json.verticalAlignment,
                         isVisible: json.isVisible
                     };
                     var elements = [];
                     for (var _i = 0, _a = json.elements; _i < _a.length; _i++) {
                         var element = _a[_i];
-                        switch (band.PageElementTypes[element.type]) {
+                        switch (element.type) {
                             case band.PageElementTypes.PAGE_ELEMENT:
                                 elements.push(band.PageElement.fromJson(element));
                                 break;
@@ -1591,29 +1625,23 @@ var cordova;
         (function (band) {
             var ScrollFlowPanel = (function (_super) {
                 __extends(ScrollFlowPanel, _super);
-                function ScrollFlowPanel(elementId, rect, orientation, colorSource, color) {
+                function ScrollFlowPanel(elementId, rect, orientation) {
                     var elements = [];
-                    for (var _i = 5; _i < arguments.length; _i++) {
-                        elements[_i - 5] = arguments[_i];
+                    for (var _i = 3; _i < arguments.length; _i++) {
+                        elements[_i - 3] = arguments[_i];
                     }
                     _super.apply(this, [elementId, rect].concat(elements));
-                    this.attributes.color = color;
-                    this.attributes.colorSource = colorSource;
                     this.attributes.orientation = orientation;
                 }
                 ScrollFlowPanel.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
-                        color: this.attributes.color,
-                        colorSource: band.ElementColorSource[this.attributes.colorSource],
-                        orientation: band.Orientation[this.attributes.orientation],
-                        type: band.PageElementTypes[band.PageElementTypes.SCROLL_FLOW_PANEL]
+                        orientation: this.attributes.orientation,
+                        type: band.PageElementTypes.SCROLL_FLOW_PANEL
                     });
                 };
                 ScrollFlowPanel.fromJson = function (json) {
                     var panel = band.PageElement.fromJson(json);
-                    panel.attributes.color = json.color;
-                    panel.attributes.colorSource = band.ElementColorSource[json.colorSource];
-                    panel.attributes.orientation = band.Orientation[json.orientation];
+                    panel.attributes.orientation = json.orientation;
                     return panel;
                 };
                 return ScrollFlowPanel;
@@ -1643,20 +1671,20 @@ var cordova;
                 TextBlock.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
                         color: this.attributes.color,
-                        colorSource: band.ElementColorSource[this.attributes.colorSource],
-                        font: band.TextBlockFont[this.attributes.font],
-                        baselineAlignment: band.TextBlockBaselineAlignment[this.attributes.baselineAlignment],
+                        colorSource: this.attributes.colorSource,
+                        font: this.attributes.font,
+                        baselineAlignment: this.attributes.baselineAlignment,
                         baseline: this.attributes.baseline,
                         autoWidth: this.attributes.autoWidth,
-                        type: band.PageElementTypes[band.PageElementTypes.TEXT_BLOCK]
+                        type: band.PageElementTypes.TEXT_BLOCK
                     });
                 };
                 TextBlock.fromJson = function (json) {
                     var textBlock = band.PageElement.fromJson(json);
                     textBlock.attributes.color = json.color;
-                    textBlock.attributes.colorSource = band.ElementColorSource[json.colorSource];
-                    textBlock.attributes.font = band.TextBlockFont[json.font];
-                    textBlock.attributes.baselineAlignment = band.TextBlockBaselineAlignment[json.baselineAlignment];
+                    textBlock.attributes.colorSource = json.colorSource;
+                    textBlock.attributes.font = json.font;
+                    textBlock.attributes.baselineAlignment = json.baselineAlignment;
                     textBlock.attributes.baseline = json.baseline;
                     textBlock.attributes.autoWidth = json.autoWidth;
                     return textBlock;
@@ -1684,14 +1712,14 @@ var cordova;
                 TextButton.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
                         color: this.attributes.color,
-                        colorSource: band.ElementColorSource[this.attributes.colorSource],
-                        type: band.PageElementTypes[band.PageElementTypes.TEXT_BUTTON]
+                        colorSource: this.attributes.colorSource,
+                        type: band.PageElementTypes.TEXT_BUTTON
                     });
                 };
                 TextButton.fromJson = function (json) {
                     var button = band.PageElement.fromJson(json);
                     button.attributes.color = json.color;
-                    button.attributes.colorSource = band.ElementColorSource[json.colorSource];
+                    button.attributes.colorSource = json.colorSource;
                     return button;
                 };
                 return TextButton;
@@ -1719,17 +1747,17 @@ var cordova;
                 WrappedTextBlock.prototype.toJson = function () {
                     return band.util.extend(_super.prototype.toJson.call(this), {
                         color: this.attributes.color,
-                        colorSource: band.ElementColorSource[this.attributes.colorSource],
-                        font: band.WrappedTextBlockFont[this.attributes.font],
+                        colorSource: this.attributes.colorSource,
+                        font: this.attributes.font,
                         autoHeight: this.attributes.autoHeight,
-                        type: band.PageElementTypes[band.PageElementTypes.WRAPPED_TEXT_BLOCK]
+                        type: band.PageElementTypes.WRAPPED_TEXT_BLOCK
                     });
                 };
                 WrappedTextBlock.fromJson = function (json) {
                     var textBlock = band.PageElement.fromJson(json);
                     textBlock.attributes.color = json.color;
-                    textBlock.attributes.colorSource = band.ElementColorSource[json.colorSource];
-                    textBlock.attributes.font = band.WrappedTextBlockFont[json.font];
+                    textBlock.attributes.colorSource = json.colorSource;
+                    textBlock.attributes.font = json.font;
                     textBlock.attributes.autoHeight = json.autoHeight;
                     return textBlock;
                 };

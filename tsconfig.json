@@ -13,6 +13,7 @@
     "www/band.ts",
     "www/src/BandClient.ts",
     "www/src/BandClientManager.ts",
+    "www/src/BandManagerBase.ts",
     "www/src/BandIcon.ts",
     "www/src/BandInfo.ts",
     "www/src/BandNotificationManager.ts",

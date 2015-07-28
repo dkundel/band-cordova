@@ -23,7 +23,7 @@ module cordova.plugins.band {
     
     static fromJson(json: IPageLayout): PageLayout {
       let root: PagePanel<PagePanelAttributes>;
-      switch (PageElementTypes[json.root.type]) {
+      switch (json.root.type) {
         case PageElementTypes.FILLED_PANEL:
           root = FilledPanel.fromJson(<IFilledPanelElement> json.root)
           break;

@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  export class BandPersonalizationManager {
+  export class BandPersonalizationManager extends BandManagerBase {
     getMeTileImage(callback: (error: BandErrorMessage, icon?: BandIcon) => void): void {
       let success = (iconData: IBandIcon) => {
         callback(null, BandIcon.fromJson(iconData));
@@ -9,7 +9,7 @@ module cordova.plugins.band {
         callback(errorMsg);
       }
       
-      cordova.exec(success, error, 'Band', 'getMeTileImage', []);
+      this.exec(success, error, 'getMeTileImage', []);
     }
     
     getTheme(callback: (error: BandErrorMessage, theme?: BandTheme) => void): void {
@@ -21,7 +21,7 @@ module cordova.plugins.band {
         callback(errorMsg);
       }
       
-      cordova.exec(success, error, 'Band', 'getMeTileImage', []);
+      this.exec(success, error, 'getMeTileImage', []);
     }
     
     setMeTileImage(icon: BandIcon, callback: (error?: BandErrorMessage) => void): void {
@@ -35,10 +35,10 @@ module cordova.plugins.band {
       
       if (icon.getBase64().length === 0) {
         icon.toBandIcon(() => {
-          cordova.exec(success, error, 'Band', 'setMeTileImage', [icon.toString()]);
+          this.exec(success, error, 'setMeTileImage', [icon.toString()]);
         })
       } else {
-        cordova.exec(success, error, 'Band', 'setMeTileImage', [icon.toString()]);
+        this.exec(success, error, 'setMeTileImage', [icon.toString()]);
       }
     }
     
@@ -51,7 +51,7 @@ module cordova.plugins.band {
         callback(errorMsg);
       }
       
-      cordova.exec(success, error, 'Band', 'setTheme', [theme.toString()]);
+      this.exec(success, error, 'setTheme', [theme.toString()]);
     }
   }
 }

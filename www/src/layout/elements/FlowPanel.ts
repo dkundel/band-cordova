@@ -11,14 +11,14 @@ module cordova.plugins.band {
     
     toJson(): IFlowPanelElement {
       return util.extend(super.toJson(),{
-        orientation: Orientation[this.attributes.orientation],
-        type: PageElementTypes[PageElementTypes.FLOW_PANEL]
+        orientation: this.attributes.orientation,
+        type: PageElementTypes.FLOW_PANEL
       });
     }
     
     static fromJson(json: IFlowPanelElement) {
       var panel: FlowPanel = <FlowPanel> PageElement.fromJson(json);
-      panel.attributes.orientation = Orientation[json.orientation];
+      panel.attributes.orientation = json.orientation;
       
       return panel;
     }

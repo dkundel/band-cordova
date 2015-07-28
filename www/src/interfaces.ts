@@ -82,10 +82,10 @@ module cordova.plugins.band {
     elementId: number;
     rect: PageRect;
     margins: Margins;
-    horizontalAlignment: string;
-    verticalAlignment: string;
+    horizontalAlignment: number;
+    verticalAlignment: number;
     isVisible: boolean;
-    type: string;
+    type: number;
   }
   
   export interface IPagePanel extends IPageElement {
@@ -93,51 +93,51 @@ module cordova.plugins.band {
   }
   
   export interface IBarcode extends IPageElement {
-    barcodeType: string;
+    barcodeType: number;
   }
   
   export interface IFilledPanelElement extends IPagePanel {
-    backgroundColor: string;
-    backgroundColorSource: string;
+    backgroundColor: number;
+    backgroundColorSource: number;
   }
   
   export interface ITextBlockElement extends IPageElement {
-    colorSource: string;
-    color: string;
-    font: string;
-    baselineAlignment: string;
+    colorSource: number;
+    color: number;
+    font: number;
+    baselineAlignment: number;
     baseline: number;
     autoWidth: boolean;
   }
   
   export interface IWrappedTextBlockElement extends IPageElement {
-    colorSource: string;
-    color: string;
-    font: string;
+    colorSource: number;
+    color: number;
+    font: number;
     autoHeight: boolean;
   }
   
   export interface IIconElement extends IPageElement {
-    colorSource: string;
-    color: string;
+    colorSource: number;
+    color: number;
   }
   
   export interface ITextButtonElement extends IPageElement {
-    colorSource: string;
-    color: string;
+    colorSource: number;
+    color: number;
   }
   
   export interface IFilledButtonElement extends IPageElement {
-    colorSource: string;
-    color: string;
+    colorSource: number;
+    color: number;
   }
   
   export interface IScrollFlowPanelElement extends IPagePanel {
-    orientation: string;
+    orientation: number;
   }
   
   export interface IFlowPanelElement extends IPagePanel {
-    orientation: string;
+    orientation: number;
   }
   
   /**
@@ -146,16 +146,16 @@ module cordova.plugins.band {
    
   export interface IPageElementData {
      id: number;
-     type: string;
+     type: number;
    }
    
   export interface IBarcodeData extends IPageElementData {
     barcodeText: string;
-    barcodeType: string;
+    barcodeType: number;
   }
   
   export interface IFilledButtonData extends IPageElementData {
-    color: string;
+    color: number;
   }
   
   export interface IIconData extends IPageElementData {

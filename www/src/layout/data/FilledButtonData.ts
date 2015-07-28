@@ -1,24 +1,24 @@
 module cordova.plugins.band {
   export class FilledButtonData extends PageElementData {
-    private pressedColor: string;
+    private pressedColor: number;
     
-    constructor(id: number, color: string) {
+    constructor(id: number, color: number) {
       super(id);
       this.pressedColor = color;
     }
     
-    getPressedColor(): string {
+    getPressedColor(): number {
       return this.pressedColor;
     }
     
-    setPressedColor(color: string): void {
+    setPressedColor(color: number): void {
       this.pressedColor = color;
     }
     
     toJson(): IFilledButtonData {
       var data = <IFilledButtonData> super.toJson();
       data.color = this.pressedColor;
-      data.type = PageElementDataTypes[PageElementDataTypes.BARCODE_DATA];
+      data.type = PageElementDataTypes.BARCODE_DATA;
       
       return data;
     }

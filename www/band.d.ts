@@ -14,7 +14,7 @@ declare module cordova.plugins.band {
         private tileManager;
         private notificationManager;
         private personalizationManager;
-        constructor(data: IBandClient);
+        constructor(data: IBandClient, index: number);
         getFirmwareVersion(callback: (error: BandErrorMessage, version?: string) => void): void;
         getHardwareVersion(callback: (error: BandErrorMessage, version?: string) => void): void;
         getConnectionState(): ConnectionState;
@@ -22,6 +22,7 @@ declare module cordova.plugins.band {
         getBandTileManager(): BandTileManager;
         getNotificationManager(): BandNotificationManager;
         getPersonalizationManager(): BandPersonalizationManager;
+        exec(success: (yields: any) => any, error: (message: any) => any, action: string, args: string[]): void;
         connect(callback: (error: BandErrorMessage, state?: ConnectionState) => void): void;
         disconnect(callback: (error?: BandErrorMessage) => void): void;
         isConnected(): boolean;
@@ -34,6 +35,13 @@ declare module cordova.plugins.band {
         getPairedBands(callback: (error: BandErrorMessage, bands?: BandInfo[]) => void): void;
         create(index: number, callback: (error: BandErrorMessage, bandClient?: BandClient) => void): void;
         static getInstance(): BandClientManager;
+    }
+}
+declare module cordova.plugins.band {
+    abstract class BandManagerBase {
+        private host;
+        constructor(host: BandClient);
+        exec(success: (args: any) => any, error: (args: any) => any, action: string, args: string[]): void;
     }
 }
 declare module cordova.plugins.band {
@@ -58,14 +66,14 @@ declare module cordova.plugins.band {
     }
 }
 declare module cordova.plugins.band {
-    class BandNotificationManager {
+    class BandNotificationManager extends BandManagerBase {
         showDialog(tileUuid: string, dialogTitle: string, dialogBody: string, callback: (error?: BandErrorMessage) => void): void;
         sendMessage(tileUuid: string, messageTitle: string, messageBody: string, date: Date, flags: MessageFlags, callback: (error?: BandErrorMessage) => void): void;
         vibrate(type: VibrationType, callback: (error?: BandErrorMessage) => void): void;
     }
 }
 declare module cordova.plugins.band {
-    class BandPersonalizationManager {
+    class BandPersonalizationManager extends BandManagerBase {
         getMeTileImage(callback: (error: BandErrorMessage, icon?: BandIcon) => void): void;
         getTheme(callback: (error: BandErrorMessage, theme?: BandTheme) => void): void;
         setMeTileImage(icon: BandIcon, callback: (error?: BandErrorMessage) => void): void;
@@ -73,11 +81,10 @@ declare module cordova.plugins.band {
     }
 }
 declare module cordova.plugins.band {
-    class BandSensorManager {
+    class BandSensorManager extends BandManagerBase {
         private currentHeartRateConsent;
         handleSuccessfulUnregister(...args: any[]): void;
         handleErrorUnregister(...args: any[]): void;
-        constructor();
         getCurrentgetCurrentHeartRateConsent(): UserConsent;
         registerAccelerometerEventListener(reportingInterval: SampleRate, callback: (error: BandErrorMessage, event?: BandAccelerometerEvent, eventId?: number) => void): void;
         registerCaloriesEventListener(callback: (error: BandErrorMessage, event?: BandCaloriesEvent, eventId?: number) => void): void;
@@ -118,23 +125,23 @@ declare module cordova.plugins.band {
         private secondaryColor;
         private highContrastColor;
         private mutedColor;
-        constructor(base: string, highlights: string, lowlights: string, secondary: string, highContrast: string, muted: string);
+        constructor(base: number, highlights: number, lowlights: number, secondary: number, highContrast: number, muted: number);
         static fromJson(json: IBandTheme): BandTheme;
         toJson(): IBandTheme;
         toString(): string;
-        getBaseColor(): string;
-        getHighContrastColor(): string;
-        getHighlightColor(): string;
-        getLowlightColor(): string;
-        getMutedColor(): string;
-        getSecondaryTextColor(): string;
+        getBaseColor(): number;
+        getHighContrastColor(): number;
+        getHighlightColor(): number;
+        getLowlightColor(): number;
+        getMutedColor(): number;
+        getSecondaryTextColor(): number;
         hashCode(): string;
-        setBaseColor(color: string): BandTheme;
-        setHighContrastColor(color: string): BandTheme;
-        setHighlightColor(color: string): BandTheme;
-        setLowlightColor(color: string): BandTheme;
-        setMutedColor(color: string): BandTheme;
-        setSecondaryTextColor(color: string): BandTheme;
+        setBaseColor(color: number): BandTheme;
+        setHighContrastColor(color: number): BandTheme;
+        setHighlightColor(color: number): BandTheme;
+        setLowlightColor(color: number): BandTheme;
+        setMutedColor(color: number): BandTheme;
+        setSecondaryTextColor(color: number): BandTheme;
     }
 }
 declare module cordova.plugins.band {
@@ -167,7 +174,7 @@ declare module cordova.plugins.band {
     }
 }
 declare module cordova.plugins.band {
-    class BandTileManager {
+    class BandTileManager extends BandManagerBase {
         addTitle(tile: BandTile, callback: (error: BandErrorMessage) => void): void;
         getRemainingTileCapacity(callback: (error: BandErrorMessage, capacity?: number) => void): void;
         getTiles(callback: (error: BandErrorMessage, tiles?: BandTile[]) => void): void;
@@ -384,65 +391,63 @@ declare module cordova.plugins.band {
         elementId: number;
         rect: PageRect;
         margins: Margins;
-        horizontalAlignment: string;
-        verticalAlignment: string;
+        horizontalAlignment: number;
+        verticalAlignment: number;
         isVisible: boolean;
-        type: string;
+        type: number;
     }
     interface IPagePanel extends IPageElement {
         elements: IPageElement[];
     }
     interface IBarcode extends IPageElement {
-        barcodeType: string;
+        barcodeType: number;
     }
     interface IFilledPanelElement extends IPagePanel {
-        backgroundColor: string;
-        backgroundColorSource: string;
+        backgroundColor: number;
+        backgroundColorSource: number;
     }
     interface ITextBlockElement extends IPageElement {
-        colorSource: string;
-        color: string;
-        font: string;
-        baselineAlignment: string;
+        colorSource: number;
+        color: number;
+        font: number;
+        baselineAlignment: number;
         baseline: number;
         autoWidth: boolean;
     }
     interface IWrappedTextBlockElement extends IPageElement {
-        colorSource: string;
-        color: string;
-        font: string;
+        colorSource: number;
+        color: number;
+        font: number;
         autoHeight: boolean;
     }
     interface IIconElement extends IPageElement {
-        colorSource: string;
-        color: string;
+        colorSource: number;
+        color: number;
     }
     interface ITextButtonElement extends IPageElement {
-        colorSource: string;
-        color: string;
+        colorSource: number;
+        color: number;
     }
     interface IFilledButtonElement extends IPageElement {
-        colorSource: string;
-        color: string;
+        colorSource: number;
+        color: number;
     }
     interface IScrollFlowPanelElement extends IPagePanel {
-        colorSource: string;
-        color: string;
-        orientation: string;
+        orientation: number;
     }
     interface IFlowPanelElement extends IPagePanel {
-        orientation: string;
+        orientation: number;
     }
     interface IPageElementData {
         id: number;
-        type: string;
+        type: number;
     }
     interface IBarcodeData extends IPageElementData {
         barcodeText: string;
-        barcodeType: string;
+        barcodeType: number;
     }
     interface IFilledButtonData extends IPageElementData {
-        color: string;
+        color: number;
     }
     interface IIconData extends IPageElementData {
         iconIndex: number;
@@ -476,12 +481,12 @@ declare module cordova.plugins.band {
         iconBase64: string;
     }
     interface IBandTheme {
-        base: string;
-        highlights: string;
-        lowlights: string;
-        secondary: string;
-        highContrast: string;
-        muted: string;
+        base: number;
+        highlights: number;
+        lowlights: number;
+        secondary: number;
+        highContrast: number;
+        muted: number;
     }
     interface IBandClient {
         connectionState: string;
@@ -539,9 +544,9 @@ declare module cordova.plugins.band {
 declare module cordova.plugins.band {
     class FilledButtonData extends PageElementData {
         private pressedColor;
-        constructor(id: number, color: string);
-        getPressedColor(): string;
-        setPressedColor(color: string): void;
+        constructor(id: number, color: number);
+        getPressedColor(): number;
+        setPressedColor(color: number): void;
         toJson(): IFilledButtonData;
         static fromJson(json: IFilledButtonData): FilledButtonData;
     }
@@ -595,22 +600,22 @@ declare module cordova.plugins.band {
 }
 declare module cordova.plugins.band {
     interface FilledButtonAttributes extends PageElementAttributes {
-        color: string;
+        color: number;
         colorSource: ElementColorSource;
     }
     class FilledButton extends PageElement<FilledButtonAttributes> {
-        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: string);
+        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: number);
         toJson(): IFilledButtonElement;
         static fromJson(json: IFilledButtonElement): FilledButton;
     }
 }
 declare module cordova.plugins.band {
     interface FilledPanelAttributes extends PagePanelAttributes {
-        backgroundColor: string;
+        backgroundColor: number;
         backgroundColorSource: ElementColorSource;
     }
     class FilledPanel extends PagePanel<FilledPanelAttributes> {
-        constructor(elementId: number, rect: PageRect, backgroundColorSource: ElementColorSource, backgroundColor: string, ...elements: PageElement<PageElementAttributes>[]);
+        constructor(elementId: number, rect: PageRect, backgroundColorSource: ElementColorSource, backgroundColor: number, ...elements: PageElement<PageElementAttributes>[]);
         toJson(): IFilledPanelElement;
         static fromJson(json: IFilledPanelElement): FilledPanel;
     }
@@ -627,11 +632,11 @@ declare module cordova.plugins.band {
 }
 declare module cordova.plugins.band {
     interface IconAttributes extends PageElementAttributes {
-        color: string;
+        color: number;
         colorSource: ElementColorSource;
     }
     class Icon extends PageElement<IconAttributes> {
-        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: string);
+        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: number);
         toJson(): IIconElement;
         static fromJson(json: IIconElement): Icon;
     }
@@ -673,19 +678,17 @@ declare module cordova.plugins.band {
 }
 declare module cordova.plugins.band {
     interface ScrollFlowPanelAttributes extends PagePanelAttributes {
-        color: string;
-        colorSource: ElementColorSource;
         orientation: Orientation;
     }
     class ScrollFlowPanel extends PagePanel<ScrollFlowPanelAttributes> {
-        constructor(elementId: number, rect: PageRect, orientation: Orientation, colorSource: ElementColorSource, color: string, ...elements: PageElement<PageElementAttributes>[]);
+        constructor(elementId: number, rect: PageRect, orientation: Orientation, ...elements: PageElement<PageElementAttributes>[]);
         toJson(): IScrollFlowPanelElement;
         static fromJson(json: IScrollFlowPanelElement): ScrollFlowPanel;
     }
 }
 declare module cordova.plugins.band {
     interface TextBlockAttributes extends PageElementAttributes {
-        color: string;
+        color: number;
         colorSource: ElementColorSource;
         font: TextBlockFont;
         baselineAlignment: TextBlockBaselineAlignment;
@@ -693,31 +696,31 @@ declare module cordova.plugins.band {
         autoWidth: boolean;
     }
     class TextBlock extends PageElement<TextBlockAttributes> {
-        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: string, font?: TextBlockFont, baselineAlignment?: TextBlockBaselineAlignment, baseline?: number, autoWidth?: boolean);
+        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: number, font?: TextBlockFont, baselineAlignment?: TextBlockBaselineAlignment, baseline?: number, autoWidth?: boolean);
         toJson(): ITextBlockElement;
         static fromJson(json: ITextBlockElement): TextBlock;
     }
 }
 declare module cordova.plugins.band {
     interface TextButtonAttributes extends PageElementAttributes {
-        color: string;
+        color: number;
         colorSource: ElementColorSource;
     }
     class TextButton extends PageElement<TextButtonAttributes> {
-        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: string);
+        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: number);
         toJson(): ITextButtonElement;
         static fromJson(json: ITextButtonElement): TextButton;
     }
 }
 declare module cordova.plugins.band {
     interface WrappedTextBlockAttributes extends PageElementAttributes {
-        color: string;
+        color: number;
         colorSource: ElementColorSource;
         font: WrappedTextBlockFont;
         autoHeight: boolean;
     }
     class WrappedTextBlock extends PageElement<WrappedTextBlockAttributes> {
-        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: string, font?: WrappedTextBlockFont, autoHeight?: boolean);
+        constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: number, font?: WrappedTextBlockFont, autoHeight?: boolean);
         toJson(): IWrappedTextBlockElement;
         static fromJson(json: IWrappedTextBlockElement): WrappedTextBlock;
     }

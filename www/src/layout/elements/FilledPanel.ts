@@ -1,11 +1,11 @@
 module cordova.plugins.band {
   export interface FilledPanelAttributes extends PagePanelAttributes {
-    backgroundColor: string;
+    backgroundColor: number;
     backgroundColorSource: ElementColorSource;
   }
   
   export class FilledPanel extends PagePanel<FilledPanelAttributes> {
-    constructor(elementId: number, rect: PageRect, backgroundColorSource: ElementColorSource, backgroundColor: string, ...elements: PageElement<PageElementAttributes>[]) {
+    constructor(elementId: number, rect: PageRect, backgroundColorSource: ElementColorSource, backgroundColor: number, ...elements: PageElement<PageElementAttributes>[]) {
       super(elementId, rect, ...elements);
       this.attributes.backgroundColorSource = backgroundColorSource;
       this.attributes.backgroundColor = backgroundColor;
@@ -14,15 +14,15 @@ module cordova.plugins.band {
     toJson(): IFilledPanelElement {
       return util.extend(super.toJson(), {
         backgroundColor: this.attributes.backgroundColor,
-        backgroundColorSource: ElementColorSource[this.attributes.backgroundColorSource],
-        type: PageElementTypes[PageElementTypes.FILLED_PANEL]
+        backgroundColorSource: this.attributes.backgroundColorSource,
+        type: PageElementTypes.FILLED_PANEL
       });
     }
     
     static fromJson(json: IFilledPanelElement) {
       var panel: FilledPanel = <FilledPanel> PageElement.fromJson(json);
       panel.attributes.backgroundColor = json.backgroundColor;
-      panel.attributes.backgroundColorSource = ElementColorSource[json.backgroundColorSource];
+      panel.attributes.backgroundColorSource = json.backgroundColorSource;
       
       return panel;
     }
