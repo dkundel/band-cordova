@@ -62,7 +62,7 @@ module cordova.plugins.band {
         callback(error);
       }
       
-      this.exec(success, error, 'addTile', [tile.toString()])
+      this.exec(success, error, 'removeTile', [tile.uuid])
     }
     
     setPages(tileId: string, pageData: PageData[], callback: (error: BandErrorMessage) => void): void {

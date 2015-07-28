@@ -237,10 +237,9 @@ module cordova.plugins.band {
     pageLayouts: IPageLayout[];
     theme: IBandTheme;
     tileIcon: IBandIcon;
-    tileId: string;
     tileName: string;
     tileSmallIcon: IBandIcon;
-    badingEnabled: boolean;
+    badgingEnabled: boolean;
   }
   
   export interface BandErrorMessage {

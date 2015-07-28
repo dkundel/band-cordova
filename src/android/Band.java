@@ -3,20 +3,24 @@ package co.kundel.band;
 import com.microsoft.band.*;
 import com.microsoft.band.notifications.MessageFlags;
 import com.microsoft.band.notifications.VibrationType;
+import com.microsoft.band.sensors.BandAccelerometerEvent;
+import com.microsoft.band.sensors.BandAccelerometerEventListener;
+import com.microsoft.band.sensors.HeartRateConsentListener;
+import com.microsoft.band.sensors.SampleRate;
+import com.microsoft.band.tiles.BandIcon;
 import com.microsoft.band.tiles.BandTile;
 import com.microsoft.band.tiles.pages.*;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
+import org.apache.cordova.PluginResult.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -79,6 +83,14 @@ public class Band extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 callbackContext.success(obj);
+            }
+        });
+    }
+
+    private void success(final CallbackContext callbackContext, final Boolean b) {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, b));
             }
         });
     }
@@ -158,6 +170,15 @@ public class Band extends CordovaPlugin {
         TEXT_BLOCK,
         TEXT_BUTTON,
         WRAPPED_TEXT_BLOCK
+    }
+
+    enum PageElementDataTypes {
+        BARCODE_DATA,
+        FILLED_BUTTON_DATA,
+        ICON_DATA,
+        PAGE_ELEMENT_DATA,
+        TEXT_BLOCK_DATA,
+        WRAPPED_TEXT_BLOCK_DATA
     }
 
     private PageRect fromIPageRect(JSONObject o) throws JSONException {
@@ -273,6 +294,231 @@ public class Band extends CordovaPlugin {
         }
         return null;
     }
+
+    public JSONObject buildTheme(BandTheme theme) throws JSONException {
+        return new JSONObject()
+                .put("base", theme.getBaseColor())
+                .put("highlights", theme.getHighlightColor())
+                .put("lowlights", theme.getLowlightColor())
+                .put("secondary", theme.getSecondaryTextColor())
+                .put("highContrast", theme.getHighContrastColor())
+                .put("muted", theme.getMutedColor());
+    }
+
+    public JSONObject buildIcon(Bitmap image) throws JSONException {
+        String b64 = toBase64(image);
+        return new JSONObject().put("iconBase64", b64);
+    }
+
+    public JSONArray buildTiles(List<BandTile> tiles) throws JSONException {
+        JSONArray arr = new JSONArray();
+        for (int i = 0; i < tiles.size(); i++) {
+            BandTile elem = tiles.get(i);
+            arr.put(buildTile(elem));
+        }
+        return arr;
+    }
+
+    public JSONObject buildBandIcon(BandIcon icon) throws JSONException {
+        return buildIcon(icon.getIcon());
+    }
+
+    public JSONObject buildPageLayout(PageLayout layout) throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("root", buildPageElement(layout.getRoot()));
+        return o;
+    }
+
+    public JSONObject buildPageRect(PageRect rect) throws JSONException {
+        return new JSONObject()
+                .put("x", rect.getOriginX())
+                .put("y", rect.getOriginY())
+                .put("height", rect.getHeight())
+                .put("width", rect.getWidth());
+    }
+
+    public JSONObject buildMargins(Margins margins) throws JSONException {
+        return new JSONObject()
+                .put("left", margins.getLeft())
+                .put("top", margins.getTop())
+                .put("right", margins.getBottom())
+                .put("bottom", margins.getBottom());
+    }
+
+    public JSONObject buildPageElement(PageElement elem) throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("type", PageElementTypes.PAGE_ELEMENT.ordinal());
+        //We convey type information to the client - since Java doesn't support generic methods it's ugly...
+        if (elem instanceof PagePanel) {
+            PagePanel panel = (PagePanel)elem;
+            o.put("type", PageElementTypes.PAGE_PANEL.ordinal());
+            if (panel instanceof FilledPanel) {
+                FilledPanel filled = (FilledPanel)panel;
+                o.put("type", PageElementTypes.FILLED_PANEL.ordinal());
+                o.put("backgroundColor", filled.getBackgroundColor());
+                o.put("BackgroundColorSource", filled.getBackgroundColorSource().ordinal());
+
+            } else if (panel instanceof  FlowPanel) {
+                FlowPanel flow = (FlowPanel)panel;
+                o.put("type", PageElementTypes.FLOW_PANEL.ordinal());
+                o.put("orientation", flow.getFlowPanelOrientation().ordinal());
+
+                if (flow instanceof ScrollFlowPanel) { //inherits from flowpanel
+                    ScrollFlowPanel scroll = (ScrollFlowPanel)flow;
+                    o.put("type", PageElementTypes.SCROLL_FLOW_PANEL.ordinal());
+                    o.put("color", scroll.getScrollBarColor());
+                    o.put("colorSource", scroll.getScrollBarColorSource());
+                }
+            }
+
+            JSONArray children = new JSONArray();
+            List<PageElement> elems = panel.getElements();
+            for (int i = 0; i < elems.size(); i++) {
+                children.put(i, buildPageElement(elems.get(i)));
+            }
+            o.put("elements", children);
+        } else if (elem instanceof Barcode) {
+            Barcode code = (Barcode)elem;
+            o.put("type", PageElementTypes.BARCODE.ordinal());
+            o.put("barcodeType", code.getBarcodeType().ordinal());
+
+        } else if (elem instanceof FilledButton){
+            FilledButton filled = (FilledButton)elem;
+            o.put("type", PageElementTypes.FILLED_BUTTON.ordinal());
+            o.put("color", filled.getBackgroundColor());
+            o.put("colorSource", filled.getBackgroundColorSource().ordinal());
+
+        } else if (elem instanceof Icon) {
+            Icon ico = (Icon)elem;
+            o.put("type", PageElementTypes.ICON.ordinal());
+            o.put("color", ico.getColor());
+            o.put("colorSource", ico.getColorSource().ordinal());
+
+        } else if (elem instanceof TextBlock) {
+            TextBlock block = (TextBlock)elem;
+            o.put("type", PageElementTypes.TEXT_BLOCK.ordinal());
+            o.put("color", block.getColor());
+            o.put("colorSource", block.getColorSource().ordinal());
+            o.put("font", block.getFont().ordinal());
+            o.put("baselineAlignment", block.getBaselineAlignment().ordinal());
+            o.put("baseline", block.getBaseline());
+            o.put("autoWidth", block.isAutoWidthEnabled());
+
+        } else if (elem instanceof TextButton) {
+            TextButton button = (TextButton)elem;
+            o.put("type", PageElementTypes.TEXT_BUTTON.ordinal());
+            o.put("color", button.getPressedColor());
+            o.put("colorSource", button.getPressedColorSource().ordinal());
+
+        } else if (elem instanceof WrappedTextBlock) {
+            WrappedTextBlock block = (WrappedTextBlock)elem;
+            o.put("type", PageElementTypes.WRAPPED_TEXT_BLOCK.ordinal());
+            o.put("color", block.getColor());
+            o.put("colorSource", block.getColorSource().ordinal());
+            o.put("font", block.getFont().ordinal());
+            o.put("autoHeight", block.isAutoHeightEnabled());
+
+        }
+
+        o.put("elementId", elem.getId());
+        o.put("rect", buildPageRect(elem.getRect()));
+        o.put("margins", buildMargins(elem.getMargins()));
+        o.put("horizontalAlignment", elem.getHorizontalAlignment().ordinal());
+        o.put("verticalAlignment", elem.getVerticalAlignment().ordinal());
+        o.put("isVisible", elem.isVisible());
+        return o;
+    }
+
+    public JSONObject buildTile(BandTile tile) throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("uuid", tile.getTileId().toString());
+        o.put("tileName", tile.getTileName());
+        o.put("badgingEnabled", tile.isBadgingEnabled());
+        o.put("theme", buildTheme(tile.getTheme()));
+        o.put("tileIcon", buildIcon(tile.getTileIcon().getIcon()));
+        o.put("smallTileIcon", buildIcon(tile.getTileSmallIcon().getIcon()));
+
+        JSONArray pageIcons = new JSONArray();
+        List<BandIcon> icons = tile.getPageIcons();
+        for (int i = 0; i < icons.size(); i++) {
+            pageIcons.put(i, buildBandIcon(icons.get(i)));
+        }
+        o.put("pageIcons", pageIcons);
+
+        JSONArray pageLayouts = new JSONArray();
+        List<PageLayout> layouts = tile.getPageLayouts();
+        for (int j = 0; j < layouts.size(); j++) {
+            pageLayouts.put(j, buildPageLayout(layouts.get(j)));
+        }
+        o.put("pageLayouts", pageLayouts);
+
+        return o;
+    }
+
+    private BarcodeData fromIBarcodeData(JSONObject o) throws JSONException {
+        return new BarcodeData(o.getInt("id"), o.getString("barcodeText"), BarcodeType.values()[o.getInt("barcodeType")]);
+    }
+
+    private FilledButtonData fromIFilledButtonData(JSONObject o) throws JSONException {
+        return new FilledButtonData(o.getInt("id"), o.getInt("color"));
+    }
+
+    private IconData fromIIconData(JSONObject o) throws JSONException {
+        return new IconData(o.getInt("id"), o.getInt("iconIndex"));
+    }
+
+    private TextBlockData fromITextBlockData(JSONObject o) throws JSONException {
+        return new TextBlockData(o.getInt("id"), o.getString("text"));
+    }
+
+    private WrappedTextBlockData fromIWrappedTextBlockData(JSONObject o) throws JSONException {
+        return new WrappedTextBlockData(o.getInt("id"), o.getString("text"));
+    }
+
+    private PageElementData fromIPageElementData(JSONObject o) throws JSONException {
+        switch(PageElementDataTypes.values()[o.getInt("type")]){
+            case BARCODE_DATA:
+                return fromIBarcodeData(o);
+            case FILLED_BUTTON_DATA:
+                return fromIFilledButtonData(o);
+            case ICON_DATA:
+                return fromIIconData(o);
+            case PAGE_ELEMENT_DATA:
+                throw new JSONException("PAGE_ELEMENT_DATA is a base class and cannot be instantiated");
+            case TEXT_BLOCK_DATA:
+                return fromITextBlockData(o);
+            case WRAPPED_TEXT_BLOCK_DATA:
+                return fromIWrappedTextBlockData(o);
+        }
+    }
+
+    private PageElementData[] fromIPageElementDataArray(JSONArray a) throws JSONException {
+        PageElementData[] ret = new PageElementData[a.length()];
+        for (int i = 0; i < a.length(); i++) {
+            ret[i] = fromIPageElementData(a.getJSONObject(i));
+        }
+        return ret;
+    }
+
+    private PageData fromIPageData(JSONObject o) throws JSONException {
+        PageData data = new PageData(UUID.fromString(o.getString("pageUuid")), o.getInt("layoutId"));
+        PageElementData[] elemData = fromIPageElementDataArray(o.getJSONArray("values"));
+        for (int i = 0; i < elemData.length; i++) {
+            data.update(elemData[i]);
+        }
+        return data;
+    }
+
+    private PageData[] fromIPageDataArray(JSONArray arr) throws JSONException {
+        PageData[] ret = new PageData[arr.length()];
+        for (int i = 0; i < arr.length(); i++) {
+            ret[i] = fromIPageData(arr.getJSONObject(i));
+        }
+        return ret;
+    }
+
+    private Hashtable<Integer, Object> listeners = new Hashtable<>(); //Not particularly typesafe, but the listeners don't share another base class
+    private int listenersId = 0;
     
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
@@ -285,7 +531,7 @@ public class Band extends CordovaPlugin {
             case "getPairedBands": {
                 final BandInfo[] bands = BandClientManager.getInstance().getPairedBands();
                 success(callbackContext, new JSONArray(bands));
-                return false;
+                return true;
             }
             case "create": {
                 lookupClient(args); //create client as a side-effect
@@ -360,10 +606,12 @@ public class Band extends CordovaPlugin {
                         callbackContext.success(connectionState.ordinal());
                     }
                 });
+                return true;
             }
             case "unregisterConnectionEventListeners": {
                 final BandClient cli = lookupClient(args);
                 cli.unregisterConnectionCallback();
+                return true;
             }
 
             /**
@@ -430,10 +678,7 @@ public class Band extends CordovaPlugin {
                 try {
                     BandPendingResult<Bitmap> result = cli.getPersonalizationManager().getMeTileImage();
                     Bitmap image = result.await();
-                    String b64 = toBase64(image);
-                    success(callbackContext, new JSONObject()
-                            .put("iconBase64", b64)
-                    );
+                    success(callbackContext, buildIcon(image));
                     return true;
                 } catch(InterruptedException ex) {
                     error(callbackContext, "InterruptedException");
@@ -462,14 +707,7 @@ public class Band extends CordovaPlugin {
                 try {
                     final BandPendingResult<BandTheme> result= cli.getPersonalizationManager().getTheme();
                     final BandTheme theme = result.await();
-                    success(callbackContext, new JSONObject()
-                                    .put("base", theme.getBaseColor())
-                                    .put("highlights", theme.getHighlightColor())
-                                    .put("lowlights", theme.getLowlightColor())
-                                    .put("secondary", theme.getSecondaryTextColor())
-                                    .put("highContrast", theme.getHighContrastColor())
-                                    .put("muted", theme.getMutedColor())
-                    );
+                    success(callbackContext, buildTheme(theme));
                     return true;
                 } catch(InterruptedException ex) {
                     error(callbackContext, "InterruptedException");
@@ -539,15 +777,86 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "getTiles": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    BandPendingResult<List<BandTile>> result = cli.getTileManager().getTiles();
+                    final List<BandTile> tiles = result.await();
+                    success(callbackContext, buildTiles(tiles));
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
+                return false;
+            }
+            case "removeTile": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    UUID id = UUID.fromString(args.getString(1));
+                    BandPendingResult<Boolean> result = cli.getTileManager().removeTile(id);
+                    Boolean res = result.await();
+                    if (res)
+                        success(callbackContext);
+                    else
+                        error(callbackContext, 0);
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "getRemainingTileCapacity": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    BandPendingResult<Integer> result = cli.getTileManager().getRemainingTileCapacity();
+                    Integer capacity = result.await();
+                    success(callbackContext, capacity);
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "setPages": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    UUID id = UUID.fromString(args.getString(1));
+                    PageData[] pages = fromIPageDataArray(new JSONArray(args.getString(2)));
+                    BandPendingResult<Boolean> result = cli.getTileManager().setPages(id, pages);
+                    Boolean res = result.await();
+                    if (res)
+                        success(callbackContext);
+                    else
+                        error(callbackContext, 0);
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "removePages": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    UUID id = UUID.fromString(args.getString(1));
+                    BandPendingResult<Boolean> result = cli.getTileManager().removePages(id);
+                    Boolean res = result.await();
+                    if (res)
+                        success(callbackContext);
+                    else
+                        error(callbackContext, 0);
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
 
@@ -555,15 +864,83 @@ public class Band extends CordovaPlugin {
              * Sensor Manager Actions
              */
             case "requestHeartRateConsent": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().requestHeartRateConsent(cordova.getActivity(), new HeartRateConsentListener() {
+                        @Override
+                        public void userAccepted(boolean b) {
+                            success(callbackContext, b);
+                        }
+                    });
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerAccelerometerEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandAccelerometerEventListener listener = new BandAccelerometerEventListener() {
+                        @Override
+                        public void onBandAccelerometerChanged(BandAccelerometerEvent bandAccelerometerEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                                .put("acceleration", new JSONObject()
+                                                                .put("x", bandAccelerometerEvent.getAccelerationX())
+                                                                .put("y", bandAccelerometerEvent.getAccelerationY())
+                                                                .put("z", bandAccelerometerEvent.getAccelerationZ())
+                                                )
+                                                .put("id", l)
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerAccelerometerEventListener(listener, SampleRate.values()[args.getInt(1)]);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterAccelerometerEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandAccelerometerEventListener listener = (BandAccelerometerEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterAccelerometerEventListener(listener);
+                    listeners.remove(key);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterAccelerometerEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterAccelerometerEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandAccelerometerEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerCaloriesEventListener": {

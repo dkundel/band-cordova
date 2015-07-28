@@ -18,7 +18,7 @@ module cordova.plugins.band {
     toJson(): IFilledButtonData {
       var data = <IFilledButtonData> super.toJson();
       data.color = this.pressedColor;
-      data.type = PageElementDataTypes.BARCODE_DATA;
+      data.type = PageElementDataTypes.FILLED_BUTTON_DATA;
       
       return data;
     }

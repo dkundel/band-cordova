@@ -14,7 +14,7 @@ module cordova.plugins.band {
     toJson(): IWrappedTextBlockData {
       var data = <IWrappedTextBlockData> super.toJson();
       data.text = this.text;
-      data.type = PageElementDataTypes.BARCODE_DATA;
+      data.type = PageElementDataTypes.WRAPPED_TEXT_BLOCK_DATA;
       
       return data;
     }

@@ -38,7 +38,7 @@ module cordova.plugins.band {
     }
     
     setTileSmallIcon(icon: BandIcon, badgingEnabled: boolean): BandTileBuilder {
-      this.tile.badingEnabled = badgingEnabled;
+      this.tile.badgingEnabled = badgingEnabled;
       this.tile.tileSmallIcon = icon.toJson();
       return this;
     }
