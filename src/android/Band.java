@@ -489,6 +489,8 @@ public class Band extends CordovaPlugin {
                 return fromITextBlockData(o);
             case WRAPPED_TEXT_BLOCK_DATA:
                 return fromIWrappedTextBlockData(o);
+            default:
+                throw new JSONException("Invalid enum");
         }
     }
 
@@ -864,19 +866,13 @@ public class Band extends CordovaPlugin {
              * Sensor Manager Actions
              */
             case "requestHeartRateConsent": {
-                try {
-                    final BandClient cli = lookupClient(args);
-                    cli.getSensorManager().requestHeartRateConsent(cordova.getActivity(), new HeartRateConsentListener() {
-                        @Override
-                        public void userAccepted(boolean b) {
-                            success(callbackContext, b);
-                        }
-                    });
-                } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
-                } catch(BandException ex) {
-                    error(callbackContext, "BandException");
-                }
+                final BandClient cli = lookupClient(args);
+                cli.getSensorManager().requestHeartRateConsent(cordova.getActivity(), new HeartRateConsentListener() {
+                    @Override
+                    public void userAccepted(boolean b) {
+                        success(callbackContext, b);
+                    }
+                });
                 return false;
             }
             case "registerAccelerometerEventListener": {

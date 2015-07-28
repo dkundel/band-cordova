@@ -639,10 +639,9 @@ var cordova;
                     this.pageLayouts = layouts;
                     this.theme = band.BandTheme.fromJson(json.theme);
                     this.tileIcon = band.BandIcon.fromJson(json.tileIcon);
-                    this.tileId = json.tileId;
                     this.tileName = json.tileName;
                     this.tileSmallIcon = band.BandIcon.fromJson(json.tileSmallIcon);
-                    this.badgingEnabled = json.badingEnabled;
+                    this.badgingEnabled = json.badgingEnabled;
                 }
                 BandTile.prototype.toJson = function () {
                     var icons = [], layouts = [];
@@ -660,10 +659,9 @@ var cordova;
                         pageLayouts: layouts,
                         theme: this.theme.toJson(),
                         tileIcon: this.tileIcon.toJson(),
-                        tileId: this.tileId,
                         tileName: this.tileName,
                         tileSmallIcon: this.tileSmallIcon.toJson(),
-                        badingEnabled: this.badgingEnabled
+                        badgingEnabled: this.badgingEnabled
                     };
                 };
                 BandTile.prototype.toString = function () {
@@ -723,7 +721,7 @@ var cordova;
                     return this;
                 };
                 BandTileBuilder.prototype.setTileSmallIcon = function (icon, badgingEnabled) {
-                    this.tile.badingEnabled = badgingEnabled;
+                    this.tile.badgingEnabled = badgingEnabled;
                     this.tile.tileSmallIcon = icon.toJson();
                     return this;
                 };
@@ -795,7 +793,7 @@ var cordova;
                     var error = function (error) {
                         callback(error);
                     };
-                    this.exec(success, error, 'addTile', [tile.toString()]);
+                    this.exec(success, error, 'removeTile', [tile.uuid]);
                 };
                 BandTileManager.prototype.setPages = function (tileId, pageData, callback) {
                     var success = function () {
@@ -1154,7 +1152,7 @@ var cordova;
                 FilledButtonData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.color = this.pressedColor;
-                    data.type = band.PageElementDataTypes.BARCODE_DATA;
+                    data.type = band.PageElementDataTypes.FILLED_BUTTON_DATA;
                     return data;
                 };
                 FilledButtonData.fromJson = function (json) {
@@ -1186,7 +1184,7 @@ var cordova;
                 IconData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.iconIndex = this.iconIndex;
-                    data.type = band.PageElementDataTypes.BARCODE_DATA;
+                    data.type = band.PageElementDataTypes.ICON_DATA;
                     return data;
                 };
                 IconData.fromJson = function (json) {
@@ -1249,7 +1247,7 @@ var cordova;
                 TextBlockData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.text = this.text;
-                    data.type = band.PageElementDataTypes.BARCODE_DATA;
+                    data.type = band.PageElementDataTypes.TEXT_BLOCK_DATA;
                     return data;
                 };
                 TextBlockData.fromJson = function (json) {
@@ -1281,7 +1279,7 @@ var cordova;
                 WrappedTextBlockData.prototype.toJson = function () {
                     var data = _super.prototype.toJson.call(this);
                     data.text = this.text;
-                    data.type = band.PageElementDataTypes.BARCODE_DATA;
+                    data.type = band.PageElementDataTypes.WRAPPED_TEXT_BLOCK_DATA;
                     return data;
                 };
                 WrappedTextBlockData.fromJson = function (json) {

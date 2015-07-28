@@ -146,12 +146,11 @@ declare module cordova.plugins.band {
 }
 declare module cordova.plugins.band {
     class BandTile {
-        private uuid;
+        uuid: string;
         private pageIcons;
         private pageLayouts;
         private theme;
         private tileIcon;
-        private tileId;
         private tileName;
         private tileSmallIcon;
         private badgingEnabled;
@@ -497,10 +496,9 @@ declare module cordova.plugins.band {
         pageLayouts: IPageLayout[];
         theme: IBandTheme;
         tileIcon: IBandIcon;
-        tileId: string;
         tileName: string;
         tileSmallIcon: IBandIcon;
-        badingEnabled: boolean;
+        badgingEnabled: boolean;
     }
     interface BandErrorMessage {
         message: string;
