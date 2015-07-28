@@ -21,7 +21,7 @@ module cordova.plugins.band {
         callback(errorMsg);
       }
       
-      cordova.exec(success, error, 'Band', 'vibrate', [tileUuid, messageTitle, messageBody, date.toISOString(), MessageFlags[flags]]);
+      cordova.exec(success, error, 'Band', 'sendMessage', [tileUuid, messageTitle, messageBody, date.toISOString(), MessageFlags[flags]]);
     }
     
     vibrate(type: VibrationType, callback: (error?: BandErrorMessage) => void): void {
