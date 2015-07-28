@@ -17,11 +17,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-import android.os.Parcel;
 
 public class Band extends CordovaPlugin {
     private final Dictionary<Integer, BandClient> clients = new Hashtable<>();
@@ -36,6 +37,10 @@ public class Band extends CordovaPlugin {
             clients.put(id, cli);
             return cli;
         }
+    }
+    
+    private BandClient lookupClient(JSONArray args) throws JSONException {
+        return lookupClient(new Integer(args.getString(0)));
     }
 
     private void success(final CallbackContext callbackContext, final JSONObject obj) {
@@ -114,7 +119,7 @@ public class Band extends CordovaPlugin {
     private String toBase64(Bitmap image) {
         Bitmap compresed = image;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        compresed.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        compresed.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] b = stream.toByteArray();
         String result = Base64.encodeToString(b, Base64.DEFAULT);
 
@@ -268,6 +273,8 @@ public class Band extends CordovaPlugin {
         }
         return null;
     }
+    
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
 
     @Override
     public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -281,9 +288,8 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "create": {
-                final Integer index = args.getInt(0);
-                lookupClient(index); //create client as a side-effect
-                success(callbackContext, index);
+                lookupClient(args); //create client as a side-effect
+                success(callbackContext, new Integer(args.getString(0)));
                 return true;
             }
 
@@ -291,7 +297,7 @@ public class Band extends CordovaPlugin {
              * Client Actions
              */
             case "getFirmwareVersion": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     final BandPendingResult<String> version = cli.getFirmwareVersion();
                     final String ver = version.await();
@@ -305,7 +311,7 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "getHardwareVersion": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     final BandPendingResult<String> version = cli.getHardwareVersion();
                     final String ver = version.await();
@@ -319,7 +325,7 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "connect": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
 				final BandPendingResult<ConnectionState> pendingResult = cli.connect();
 				try {
 					final ConnectionState state = pendingResult.await();
@@ -333,7 +339,7 @@ public class Band extends CordovaPlugin {
 				return false;
             }
             case "disconnect": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 final BandPendingResult<Void> pendingResult = cli.disconnect();
                 try {
                     pendingResult.await();
@@ -347,7 +353,7 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "registerConnectionEventListener": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 cli.registerConnectionCallback(new BandConnectionCallback() {
                     @Override
                     public void onStateChanged(ConnectionState connectionState) {
@@ -356,7 +362,7 @@ public class Band extends CordovaPlugin {
                 });
             }
             case "unregisterConnectionEventListeners": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 cli.unregisterConnectionCallback();
             }
 
@@ -364,7 +370,7 @@ public class Band extends CordovaPlugin {
              * Notification Manager Actions
              */
             case "showDialog": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     final BandPendingResult<Void> res = cli.getNotificationManager().showDialog(UUID.fromString(args.getString(1)), args.getString(2), args.getString(3));
                     res.await();
@@ -378,13 +384,13 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "sendMessage": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     final BandPendingResult<Void> res = cli.getNotificationManager().sendMessage(
                             UUID.fromString(args.getString(1)),
                             args.getString(2),
                             args.getString(3),
-                            javax.xml.bind.DatatypeConverter.parseDateTime(args.getString(4)).getTime(), //WTF Java
+                            dateFormat.parse(args.getString(4)),
                             MessageFlags.values()[args.getInt(5)]
                     );
                     res.await();
@@ -394,11 +400,13 @@ public class Band extends CordovaPlugin {
                     error(callbackContext, "InterruptedException");
                 } catch(BandException ex) {
                     error(callbackContext, "BandException");
+                } catch(ParseException ex) {
+                    error(callbackContext, "ParseException");
                 }
                 return false;
             }
             case "vibrate": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     final BandPendingResult<Void> res = cli.getNotificationManager().vibrate(
                             VibrationType.values()[args.getInt(1)]
@@ -418,7 +426,7 @@ public class Band extends CordovaPlugin {
              * Personalization Manager Actions
              */
             case "getMeTileImage": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     BandPendingResult<Bitmap> result = cli.getPersonalizationManager().getMeTileImage();
                     Bitmap image = result.await();
@@ -435,7 +443,7 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "setMeTileImage": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     Bitmap image = fromIBandIcon(new JSONObject(args.getString(1)));
                     BandPendingResult<Void> result = cli.getPersonalizationManager().setMeTileImage(image);
@@ -450,7 +458,7 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "getTheme": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     final BandPendingResult<BandTheme> result= cli.getPersonalizationManager().getTheme();
                     final BandTheme theme = result.await();
@@ -471,7 +479,7 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "setTheme": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     JSONObject theme = new JSONObject(args.getString(1));
                     final BandPendingResult<Void> result = cli.getPersonalizationManager().setTheme(fromIBandTheme(theme));
@@ -490,7 +498,7 @@ public class Band extends CordovaPlugin {
              * Tile Manager Actions
              */
             case "addTile": {
-                final BandClient cli = lookupClient(args.getInt(0));
+                final BandClient cli = lookupClient(args);
                 try {
                     JSONObject tile = new JSONObject(args.getString(1));
                     BandTile.Builder builder = new BandTile.Builder(
