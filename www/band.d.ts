@@ -1,7 +1,7 @@
 /// <reference path="src/types/cordova.d.ts" />
 declare module cordova.plugins.band {
     module util {
-        function extend<T, U>(first: T, second: U): T & U;
+        function extend<T, U>(first: T, second: U): any;
     }
 }
 declare module cordova.plugins.band {
@@ -38,7 +38,7 @@ declare module cordova.plugins.band {
     }
 }
 declare module cordova.plugins.band {
-    abstract class BandManagerBase {
+    class BandManagerBase {
         private host;
         constructor(host: BandClient);
         exec(success: (args: any) => any, error: (args: any) => any, action: string, args: string[]): void;

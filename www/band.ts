@@ -2,8 +2,8 @@
 
 module cordova.plugins.band {
 	export module util {
-		export function extend<T, U>(first: T, second: U): T & U {
-		    let result = <T & U> {};
+		export function extend<T, U>(first: T, second: U): any /*T & U*/ {
+		    let result = /*<T & U>*/ <any> {};
 		    for (let id in first) {
 		        result[id] = first[id];
 		    }
