@@ -20,7 +20,7 @@ module cordova.plugins.band {
   }
   
   export interface IContactEvent extends ISensorEvent {
-    contactState: string;
+    contactState: number;
   }
   
   export interface IDistanceEvent extends ISensorEvent {
@@ -45,7 +45,7 @@ module cordova.plugins.band {
   
   export interface IHeartRateEvent extends ISensorEvent {
     heartRate: number;
-    quality: string;
+    quality: number;
   }
   
   export interface IPedometerEvent extends ISensorEvent {
@@ -57,7 +57,7 @@ module cordova.plugins.band {
   }
   
   export interface IUVEvent extends ISensorEvent {
-    uvIndexLevel: string;
+    uvIndexLevel: number;
   }
   
   /**

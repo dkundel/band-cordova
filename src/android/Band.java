@@ -3,10 +3,7 @@ package co.kundel.band;
 import com.microsoft.band.*;
 import com.microsoft.band.notifications.MessageFlags;
 import com.microsoft.band.notifications.VibrationType;
-import com.microsoft.band.sensors.BandAccelerometerEvent;
-import com.microsoft.band.sensors.BandAccelerometerEventListener;
-import com.microsoft.band.sensors.HeartRateConsentListener;
-import com.microsoft.band.sensors.SampleRate;
+import com.microsoft.band.sensors.*;
 import com.microsoft.band.tiles.BandIcon;
 import com.microsoft.band.tiles.BandTile;
 import com.microsoft.band.tiles.pages.*;
@@ -885,12 +882,13 @@ public class Band extends CordovaPlugin {
                         public void onBandAccelerometerChanged(BandAccelerometerEvent bandAccelerometerEvent) {
                             try {
                                 success(callbackContext, new JSONObject()
-                                                .put("acceleration", new JSONObject()
-                                                                .put("x", bandAccelerometerEvent.getAccelerationX())
-                                                                .put("y", bandAccelerometerEvent.getAccelerationY())
-                                                                .put("z", bandAccelerometerEvent.getAccelerationZ())
-                                                )
-                                                .put("id", l)
+                                    .put("acceleration", new JSONObject()
+                                        .put("x", bandAccelerometerEvent.getAccelerationX())
+                                        .put("y", bandAccelerometerEvent.getAccelerationY())
+                                        .put("z", bandAccelerometerEvent.getAccelerationZ())
+                                    )
+                                    .put("id", l)
+                                    .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
                                 error(callbackContext, "JSONException");
@@ -912,6 +910,7 @@ public class Band extends CordovaPlugin {
                     BandAccelerometerEventListener listener = (BandAccelerometerEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterAccelerometerEventListener(listener);
                     listeners.remove(key);
+                    return true;
                 } catch(BandException ex) {
                     error(callbackContext, "BandException");
                 }
@@ -933,82 +932,519 @@ public class Band extends CordovaPlugin {
                     for (int i = 0; i < toRemove.size(); i++) {
                         listeners.remove(toRemove.get(i));
                     }
-
+                    return true;
                 } catch(BandException ex) {
                     error(callbackContext, "BandException");
                 }
                 return false;
             }
             case "registerCaloriesEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandCaloriesEventListener listener = new BandCaloriesEventListener() {
+                        @Override
+                        public void onBandCaloriesChanged(BandCaloriesEvent bandCaloriesEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                    .put("calories", bandCaloriesEvent.getCalories())
+                                    .put("id", l)
+                                    .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerCaloriesEventListener(listener);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterCaloriesEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandCaloriesEventListener listener = (BandCaloriesEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterCaloriesEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterCaloriesEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterCaloriesEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandCaloriesEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerContactEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandContactEventListener listener = new BandContactEventListener() {
+                        @Override
+                        public void onBandContactChanged(BandContactEvent bandContactEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                    .put("contact", bandContactEvent.getContactState().ordinal())
+                                    .put("id", l)
+                                    .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerContactEventListener(listener);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterContactEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandContactEventListener listener = (BandContactEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterContactEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterContactEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterContactEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandContactEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerDistanceEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandDistanceEventListener listener = new BandDistanceEventListener() {
+                        @Override
+                        public void onBandDistanceChanged(BandDistanceEvent bandDistanceEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                    .put("motionType", bandDistanceEvent.getMotionType().ordinal())
+                                    .put("pace", bandDistanceEvent.getPace())
+                                    .put("speed", bandDistanceEvent.getSpeed())
+                                    .put("totalDistance", bandDistanceEvent.getTotalDistance())
+                                    .put("id", l)
+                                    .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerDistanceEventListener(listener);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterDistanceEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandDistanceEventListener listener = (BandDistanceEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterDistanceEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterDistanceEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterDistanceEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandDistanceEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerGyroscopeEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandGyroscopeEventListener listener = new BandGyroscopeEventListener() {
+                        @Override
+                        public void onBandGyroscopeChanged(BandGyroscopeEvent bandGyroscopeEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                    .put("acceleration", new JSONObject()
+                                                    .put("x", bandGyroscopeEvent.getAccelerationX())
+                                                    .put("y", bandGyroscopeEvent.getAccelerationY())
+                                                    .put("z", bandGyroscopeEvent.getAccelerationZ())
+                                    )
+                                    .put("angularVelocity", new JSONObject()
+                                                    .put("x", bandGyroscopeEvent.getAngularVelocityX())
+                                                    .put("y", bandGyroscopeEvent.getAngularVelocityY())
+                                                    .put("z", bandGyroscopeEvent.getAngularVelocityZ())
+                                    )
+                                    .put("id", l)
+                                    .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerGyroscopeEventListener(listener, SampleRate.values()[args.getInt(1)]);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterGyroscopeEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandGyroscopeEventListener listener = (BandGyroscopeEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterGyroscopeEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterGyroscopeEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterGyroscopeEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandGyroscopeEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerHeartRateEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandHeartRateEventListener listener = new BandHeartRateEventListener() {
+                        @Override
+                        public void onBandHeartRateChanged(BandHeartRateEvent bandHeartRateEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                                .put("heartRate", bandHeartRateEvent.getHeartRate())
+                                                .put("quality", bandHeartRateEvent.getQuality().ordinal())
+                                                .put("id", l)
+                                                .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerHeartRateEventListener(listener);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterHeartRateEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandHeartRateEventListener listener = (BandHeartRateEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterHeartRateEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterHeartRateEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterHeartRateEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandHeartRateEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerPedometerEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandPedometerEventListener listener = new BandPedometerEventListener() {
+                        @Override
+                        public void onBandPedometerChanged(BandPedometerEvent bandPedometerEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                                .put("totalSteps", bandPedometerEvent.getTotalSteps())
+                                                .put("id", l)
+                                                .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerPedometerEventListener(listener);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterPedometerEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandPedometerEventListener listener = (BandPedometerEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterPedometerEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterPedometerEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterPedometerEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandPedometerEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }            
             case "registerSkinTemperatureEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandSkinTemperatureEventListener listener = new BandSkinTemperatureEventListener() {
+                        @Override
+                        public void onBandSkinTemperatureChanged(BandSkinTemperatureEvent bandSkinTemperatureEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                                .put("skinTemperature", bandSkinTemperatureEvent.getTemperature())
+                                                .put("id", l)
+                                                .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerSkinTemperatureEventListener(listener);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterSkinTemperatureEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandSkinTemperatureEventListener listener = (BandSkinTemperatureEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterSkinTemperatureEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterSkinTemperatureEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterSkinTemperatureEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandSkinTemperatureEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "registerUVEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    final Integer l = listenersId++;
+
+                    BandUVEventListener listener = new BandUVEventListener() {
+                        @Override
+                        public void onBandUVChanged(BandUVEvent bandUVEvent) {
+                            try {
+                                success(callbackContext, new JSONObject()
+                                                .put("uvIndexLevel", bandUVEvent.getUVIndexLevel().ordinal())
+                                                .put("id", l)
+                                                .put("timestamp", (new Date()).getTime())
+                                );
+                            } catch (JSONException ex) {
+                                error(callbackContext, "JSONException");
+                            }
+                        }
+                    };
+                    listeners.put(l, listener);
+
+                    return cli.getSensorManager().registerUVEventListener(listener);
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterUVEventListener": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    Integer key = args.getInt(1);
+                    BandUVEventListener listener = (BandUVEventListener)listeners.get(key);
+                    cli.getSensorManager().unregisterUVEventListener(listener);
+                    listeners.remove(key);
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "unregisterUVEventListeners": {
+                try {
+                    final BandClient cli = lookupClient(args);
+                    cli.getSensorManager().unregisterUVEventListeners();
+                    Set<Map.Entry<Integer, Object>> entries = listeners.entrySet();
+                    Iterator<Map.Entry<Integer, Object>> it = entries.iterator();
+                    List<Integer> toRemove = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Map.Entry<Integer, Object> elem = it.next();
+                        if (elem.getValue() instanceof BandUVEventListener) {
+                            toRemove.add(elem.getKey());
+                        }
+                    }
+                    for (int i = 0; i < toRemove.size(); i++) {
+                        listeners.remove(toRemove.get(i));
+                    }
+                    return true;
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
 
