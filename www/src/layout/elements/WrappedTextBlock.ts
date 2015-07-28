@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface WrappedTextBlockAttributes extends PageElementAttributes {
+  export interface WrappedTextBlockAttributes extends PageElementAttributes {
     color: string;
     colorSource: ElementColorSource;
     font: WrappedTextBlockFont;

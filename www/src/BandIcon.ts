@@ -1,7 +1,3 @@
-interface WebGLRenderingContext {
-  drawImage(image: HTMLImageElement, x: number, y: number): void;
-}
-
 module cordova.plugins.band {
   export class BandIcon {
     private path: string;
