@@ -1,9 +1,4 @@
-/// <reference path="BandIcon" />
-/// <reference path="BandTheme" />
-/// <reference path="BandTileBuilder" />
-
-
-module BandCordova {
+module cordova.plugins.band {
   export class BandTile {
     private uuid: string;
     private pageIcons: BandIcon[];

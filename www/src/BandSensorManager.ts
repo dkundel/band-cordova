@@ -1,9 +1,6 @@
-/// <reference path="types/cordova" />
-/// <reference path="enums" />
-/// <reference path="interfaces" />
-/// <reference path="events/_all" />
+/// <reference path="types/cordova.d.ts" />
 
-module BandCordova { 
+module cordova.plugins.band {
   export class BandSensorManager {
     private currentHeartRateConsent: UserConsent;
     

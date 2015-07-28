@@ -26,7 +26,7 @@
 //// <reference path="plugins/Vibration.d.ts"/>
 //// <reference path="plugins/WebSQL.d.ts"/>
 
-interface Cordova {
+declare module cordova {
     /** Invokes native functionality by specifying corresponding service name, action and optional parameters.
      * @param success A success callback function.
      * @param fail An error callback function.
@@ -34,20 +34,18 @@ interface Cordova {
      * @param action The action name to call on the native side (generally corresponds to the native class method).
      * @param args An array of arguments to pass into the native environment.
      */
-    exec(success: (...args: any[]) => any, fail: (...args: any[]) => any, service: string, action: string, args?: string[]): void;
+    export function exec(success: (...args: any[]) => any, fail: (...args: any[]) => any, service: string, action: string, args?: string[]): void;
     /** Gets the operating system name. */
-    platformId: string;
+    export var platformId: string;
     /** Gets Cordova framework version */
-    version: string;
+    export var version: string;
     /** Defines custom logic as a Cordova module. Other modules can later access it using module name provided. */
-    define(moduleName: string, factory: (require: any, exports: any, module: any) => any): void;
+    export function define(moduleName: string, factory: (require: (module: string) => any, exports: any, module: any) => any): void;
     /** Access a Cordova module by name. */
-    require(moduleName: string): any;
+    export function require(moduleName: string): any;
     /** Namespace for Cordova plugin functionality */
-    plugins:CordovaPlugins;
+    export module plugins {}
 }
-
-interface CordovaPlugins {}
 
 interface Document {
     addEventListener(type: "deviceready", listener: (ev: Event) => any, useCapture?: boolean): void;
@@ -77,7 +75,7 @@ interface Document {
 }
 
 interface Window {
-  cordova:Cordova;
+  cordova: typeof cordova;
 }
 
 // cordova/argscheck module
@@ -91,6 +89,3 @@ interface ArgsCheck {
 interface UrlUtil {
     makeAbsolute(url: string): string
 }
-
-/** Apache Cordova instance */
-declare var cordova: Cordova;

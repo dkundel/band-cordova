@@ -1,4 +1,4 @@
-module BandCordova {
+module cordova.plugins.band {
   export class BandNotificationManager {
     showDialog(tileUuid: string, dialogTitle: string, dialogBody: string, callback: (error?: BandErrorMessage) => void): void {
       let success = () => {

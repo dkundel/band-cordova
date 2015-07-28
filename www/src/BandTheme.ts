@@ -1,6 +1,4 @@
-/// <reference path="interfaces" />
-
-module BandCordova {
+module cordova.plugins.band {
   export class BandTheme {
     private baseColor: string;
     private highlightsColor: string;

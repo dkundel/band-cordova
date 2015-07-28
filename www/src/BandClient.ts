@@ -1,4 +1,4 @@
-module BandCordova {
+module cordova.plugins.band {
   export class BandClient {
     private index: number;
     private firmware: string;

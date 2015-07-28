@@ -2,7 +2,7 @@ interface WebGLRenderingContext {
   drawImage(image: HTMLImageElement, x: number, y: number): void;
 }
 
-module BandCordova {
+module cordova.plugins.band {
   export class BandIcon {
     private path: string;
     private base64: string = '';

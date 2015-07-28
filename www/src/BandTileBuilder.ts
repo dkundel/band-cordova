@@ -1,4 +1,4 @@
-module BandCordova {
+module cordova.plugins.band {
   export class BandTileBuilder {
     private tile: IBandTile;
     
@@ -15,7 +15,7 @@ module BandCordova {
     }
     
     setPageIcons(...icons: BandIcon[]): BandTileBuilder {
-      let iconJsons = [];
+      let iconJsons: IBandIcon[] = [];
       for (let icon of icons) {
         iconJsons.push(icon.toJson());
       }
@@ -24,7 +24,7 @@ module BandCordova {
     }
     
     setPageLayouts(...pageLayouts: PageLayout[]): BandTileBuilder {
-      let layouts = [];
+      let layouts: IPageLayout[] = [];
       for (let layout of pageLayouts) {
         layouts.push(layout.toJson());
       }

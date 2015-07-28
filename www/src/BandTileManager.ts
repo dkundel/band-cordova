@@ -1,10 +1,4 @@
-/// <reference path="BandTile" />
-/// <reference path="types/cordova" />
-/// <reference path="interfaces" />
-/// <reference path="layout/_all" />
-
-
-module BandCordova {
+module cordova.plugins.band {
   export class BandTileManager {
     addTitle(tile: BandTile, callback: (error: BandErrorMessage) => void): void {
       var success = () => {

@@ -1,4 +1,4 @@
-module BandCordova {
+module cordova.plugins.band {
   export class BandClientManager {
     private pairedBands: BandInfo[];
     
@@ -7,7 +7,7 @@ module BandCordova {
     }
     
     getPairedBands(callback: (error: BandErrorMessage, bands?: BandInfo[]) => void): void {
-      let success = (bandList) => {
+      let success = (bandList: IBandInfo[]) => {
         let bandInfo: BandInfo[] = [];
         for (let band of bandList) {
           bandInfo.push(new BandInfo(band));
