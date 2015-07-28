@@ -3,7 +3,7 @@ module cordova.plugins.band {
     private uvIndexLevel: UVIndexLevel;
     
     constructor(eventObj: IUVEvent) {
-      this.uvIndexLevel = UVIndexLevel[eventObj.uvIndexLevel];
+      this.uvIndexLevel = eventObj.uvIndexLevel;
       super(eventObj);
     }
     

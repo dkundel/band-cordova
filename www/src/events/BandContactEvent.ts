@@ -3,7 +3,7 @@ module cordova.plugins.band {
     private contactState: BandContactState;
     
     constructor(eventObj: IContactEvent) {
-      this.contactState = BandContactState[eventObj.contactState];
+      this.contactState = eventObj.contactState;
       super(eventObj);
     }
     

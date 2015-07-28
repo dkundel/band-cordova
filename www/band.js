@@ -1822,7 +1822,7 @@ var cordova;
             var BandContactEvent = (function (_super) {
                 __extends(BandContactEvent, _super);
                 function BandContactEvent(eventObj) {
-                    this.contactState = band.BandContactState[eventObj.contactState];
+                    this.contactState = eventObj.contactState;
                     _super.call(this, eventObj);
                 }
                 BandContactEvent.prototype.getContactState = function () {
@@ -1914,7 +1914,7 @@ var cordova;
                 __extends(BandHeartRateEvent, _super);
                 function BandHeartRateEvent(eventObj) {
                     this.heartRate = eventObj.heartRate;
-                    this.quality = band.HeartRateQuality[eventObj.quality];
+                    this.quality = eventObj.quality;
                     _super.call(this, eventObj);
                 }
                 BandHeartRateEvent.prototype.getHeartRate = function () {
@@ -1996,7 +1996,7 @@ var cordova;
             var BandUVEvent = (function (_super) {
                 __extends(BandUVEvent, _super);
                 function BandUVEvent(eventObj) {
-                    this.uvIndexLevel = band.UVIndexLevel[eventObj.uvIndexLevel];
+                    this.uvIndexLevel = eventObj.uvIndexLevel;
                     _super.call(this, eventObj);
                 }
                 BandUVEvent.prototype.getUVIndexLevel = function () {

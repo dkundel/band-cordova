@@ -5,7 +5,7 @@ module cordova.plugins.band {
     
     constructor(eventObj: IHeartRateEvent) {
       this.heartRate = eventObj.heartRate;
-      this.quality = HeartRateQuality[eventObj.quality];
+      this.quality = eventObj.quality;
       super(eventObj);
     }
     

@@ -341,7 +341,7 @@ declare module cordova.plugins.band {
         calories: number;
     }
     interface IContactEvent extends ISensorEvent {
-        contactState: string;
+        contactState: number;
     }
     interface IDistanceEvent extends ISensorEvent {
         motionType: string;
@@ -363,7 +363,7 @@ declare module cordova.plugins.band {
     }
     interface IHeartRateEvent extends ISensorEvent {
         heartRate: number;
-        quality: string;
+        quality: number;
     }
     interface IPedometerEvent extends ISensorEvent {
         totalSteps: number;
@@ -372,7 +372,7 @@ declare module cordova.plugins.band {
         skinTemperature: number;
     }
     interface IUVEvent extends ISensorEvent {
-        uvIndexLevel: string;
+        uvIndexLevel: number;
     }
     interface PageRect {
         x: number;
