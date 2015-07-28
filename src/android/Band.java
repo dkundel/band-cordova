@@ -3,6 +3,8 @@ package co.kundel.band;
 import com.microsoft.band.*;
 import com.microsoft.band.notifications.MessageFlags;
 import com.microsoft.band.notifications.VibrationType;
+import com.microsoft.band.tiles.BandTile;
+import com.microsoft.band.tiles.pages.*;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
@@ -11,15 +13,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.UUID;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-import org.json.JSONStringer;
+import android.os.Parcel;
 
 public class Band extends CordovaPlugin {
     private final Dictionary<Integer, BandClient> clients = new Hashtable<>();
@@ -124,6 +126,149 @@ public class Band extends CordovaPlugin {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
+    private Bitmap fromIBandIcon(JSONObject o) throws JSONException {
+        return fromBase64(o.getString("iconBase64"));
+    }
+
+    private BandTheme fromIBandTheme(JSONObject theme) throws JSONException {
+        return new BandTheme(
+                theme.getInt("base"),
+                theme.getInt("highlights"),
+                theme.getInt("lowlights"),
+                theme.getInt("secondary"),
+                theme.getInt("highContrast"),
+                theme.getInt("muted")
+        );
+    }
+
+    private enum PageElementTypes { //This _MUST_ be in sync with the one in TS
+        PAGE_ELEMENT,
+        BARCODE,
+        FILLED_BUTTON,
+        PAGE_PANEL,
+        FILLED_PANEL,
+        FLOW_PANEL,
+        ICON,
+        SCROLL_FLOW_PANEL,
+        TEXT_BLOCK,
+        TEXT_BUTTON,
+        WRAPPED_TEXT_BLOCK
+    }
+
+    private PageRect fromIPageRect(JSONObject o) throws JSONException {
+        return new PageRect(o.getInt("x"), o.getInt("y"), o.getInt("width"), o.getInt("height"));
+    }
+
+    private Margins fromIMargins(JSONObject o) throws JSONException {
+        return new Margins(o.getInt("left"), o.getInt("top"), o.getInt("right"), o.getInt("bottom"));
+    }
+
+    private PageElement fromIPageElement(JSONObject o) throws JSONException {
+        PageElement ret = null;
+        PageRect bounds = fromIPageRect(o.getJSONObject("rect"));
+
+        switch (PageElementTypes.values()[o.getInt("type")]) {
+            case PAGE_ELEMENT:
+                //This is the (abstract) base class enum - this should never exist here
+                throw new JSONException("enum PAGE_ELEMENT not valid for instantiation");
+            case BARCODE:
+                ret = new Barcode(bounds, BarcodeType.values()[o.getInt("barcodeType")]);
+                break;
+            case FILLED_BUTTON:
+                FilledButton filledButton = new FilledButton(bounds);
+                filledButton.setBackgroundColor(o.getInt("backgroundColor"));
+                filledButton.setBackgroundColorSource(ElementColorSource.values()[o.getInt("backgroundColorSource")]);
+                ret = filledButton;
+                break;
+            case ICON:
+                Icon ico = new Icon(bounds);
+                ico.setColor(o.getInt("color"));
+                ico.setColorSource(ElementColorSource.values()[o.getInt("colorSource")]);
+
+                ret = ico;
+                break;
+            case TEXT_BLOCK:
+                TextBlock block = new TextBlock(bounds, TextBlockFont.values()[o.getInt("font")], o.getInt("baseline"));
+                block.setAutoWidthEnabled(o.getBoolean("autoWidth"));
+                block.setBaselineAlignment(TextBlockBaselineAlignment.values()[o.getInt("baselineAlignment")]);
+                block.setColor(o.getInt("color"));
+                block.setColorSource(ElementColorSource.values()[o.getInt("colorSource")]);
+                ret = block;
+                break;
+            case TEXT_BUTTON:
+                TextButton button = new TextButton(bounds);
+                button.setPressedColor(o.getInt("color"));
+                button.setPressedColorSource(ElementColorSource.values()[o.getInt("colorSource")]);
+                ret = button;
+                break;
+            case WRAPPED_TEXT_BLOCK:
+                WrappedTextBlock wrappedBlock = new WrappedTextBlock(bounds, WrappedTextBlockFont.values()[o.getInt("font")]);
+                wrappedBlock.setColor(o.getInt("color"));
+                wrappedBlock.setColorSource(ElementColorSource.values()[o.getInt("colorSource")]);
+                wrappedBlock.setAutoHeightEnabled(o.getBoolean("autoHeight"));
+
+                ret = wrappedBlock;
+                break;
+            case PAGE_PANEL:
+                //This is the (abstract) base class of all panels/blocks - this should never exist here
+                throw new JSONException("enum PAGE_PANEL not valid for instantiation");
+            case FILLED_PANEL:
+                FilledPanel filledPanel = new FilledPanel(bounds);
+                filledPanel.setBackgroundColor(o.getInt("backgroundColor"));
+                filledPanel.setBackgroundColorSource(ElementColorSource.values()[o.getInt("backgroundColorSource")]);
+
+                JSONArray filledChildElems = o.getJSONArray("elements");
+                for (int i = 0; i < filledChildElems.length(); i++) {
+                    filledPanel.addElements(fromIPageElement(filledChildElems.getJSONObject(i)));
+                }
+
+                ret = filledPanel;
+                break;
+            case FLOW_PANEL:
+                FlowPanel panel = new FlowPanel(bounds);
+                panel.setFlowPanelOrientation(FlowPanelOrientation.values()[o.getInt("orientation")]);
+
+                JSONArray flowChildElems = o.getJSONArray("elements");
+                for (int i = 0; i < flowChildElems.length(); i++) {
+                    panel.addElements(fromIPageElement(flowChildElems.getJSONObject(i)));
+                }
+
+                ret = panel;
+                break;
+            case SCROLL_FLOW_PANEL:
+                ScrollFlowPanel scrollPanel = new ScrollFlowPanel(bounds);
+                scrollPanel.setFlowPanelOrientation(FlowPanelOrientation.values()[o.getInt("orientation")]);
+
+                JSONArray scrollChildElems = o.getJSONArray("elements");
+                for (int i = 0; i < scrollChildElems.length(); i++) {
+                    scrollPanel.addElements(fromIPageElement(scrollChildElems.getJSONObject(i)));
+                }
+
+                ret = scrollPanel;
+                break;
+        }
+
+        if (ret == null){
+            return null;
+        }
+
+        ret.setId(o.getInt("elementId"));
+        ret.setMargins(fromIMargins(o.getJSONObject("margins")));
+        ret.setBounds(bounds);
+        ret.setHorizontalAlignment(HorizontalAlignment.values()[o.getInt("horizontalAlignment")]);
+        ret.setVerticalAlignment(VerticalAlignment.values()[o.getInt("verticalAlignment")]);
+        ret.setVisible(o.getBoolean("isVisible"));
+        return ret;
+    }
+
+    public PageLayout fromIPageLayout(JSONObject o) throws JSONException {
+        PageElement elem = fromIPageElement(o.getJSONObject("root"));
+        if (elem instanceof PagePanel) {
+            return new PageLayout((PagePanel)elem);
+        }
+        return null;
+    }
+
     @Override
     public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         switch(action) {
@@ -137,7 +282,7 @@ public class Band extends CordovaPlugin {
             }
             case "create": {
                 final Integer index = args.getInt(0);
-                lookupClient(index); //create client as a sideeffect
+                lookupClient(index); //create client as a side-effect
                 success(callbackContext, index);
                 return true;
             }
@@ -292,7 +437,7 @@ public class Band extends CordovaPlugin {
             case "setMeTileImage": {
                 final BandClient cli = lookupClient(args.getInt(0));
                 try {
-                    Bitmap image = fromBase64((String)(new JSONObject(args.getString(1)).get("iconBase64")));
+                    Bitmap image = fromIBandIcon(new JSONObject(args.getString(1)));
                     BandPendingResult<Void> result = cli.getPersonalizationManager().setMeTileImage(image);
                     result.await();
                     success(callbackContext);
@@ -304,13 +449,85 @@ public class Band extends CordovaPlugin {
                 }
                 return false;
             }
+            case "getTheme": {
+                final BandClient cli = lookupClient(args.getInt(0));
+                try {
+                    final BandPendingResult<BandTheme> result= cli.getPersonalizationManager().getTheme();
+                    final BandTheme theme = result.await();
+                    success(callbackContext, new JSONObject()
+                                    .put("base", theme.getBaseColor())
+                                    .put("highlights", theme.getHighlightColor())
+                                    .put("lowlights", theme.getLowlightColor())
+                                    .put("secondary", theme.getSecondaryTextColor())
+                                    .put("highContrast", theme.getHighContrastColor())
+                                    .put("muted", theme.getMutedColor())
+                    );
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
+                return false;
+            }
             case "setTheme": {
+                final BandClient cli = lookupClient(args.getInt(0));
+                try {
+                    JSONObject theme = new JSONObject(args.getString(1));
+                    final BandPendingResult<Void> result = cli.getPersonalizationManager().setTheme(fromIBandTheme(theme));
+                    result.await();
+                    success(callbackContext);
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
-            case "requestHeartRateConsent": {
-                return false;
-            }
+
+            /**
+             * Tile Manager Actions
+             */
             case "addTile": {
+                final BandClient cli = lookupClient(args.getInt(0));
+                try {
+                    JSONObject tile = new JSONObject(args.getString(1));
+                    BandTile.Builder builder = new BandTile.Builder(
+                            UUID.fromString(tile.getString("uuid")),
+                            tile.getString("tileName"),
+                            fromIBandIcon(tile.getJSONObject("tileIcon")));
+                    builder.setTheme(fromIBandTheme(tile.getJSONObject("theme")));
+                    builder.setTileSmallIcon(fromIBandIcon(tile.getJSONObject("tileSmallIcon")), tile.getBoolean("badgingEnabled"));
+
+                    JSONArray pageIcons = tile.getJSONArray("pageIcons");
+                    Bitmap[] icons = new Bitmap[pageIcons.length()];
+                    for (int i = 0; i < pageIcons.length(); i++) {
+                        icons[i] = fromIBandIcon(pageIcons.getJSONObject(i));
+                    }
+                    builder.setPageIcons(icons);
+
+                    JSONArray pageLayouts = tile.getJSONArray("pageLayouts");
+                    for (int i = 0; i < pageLayouts.length(); i++) {
+                        PageLayout layout = fromIPageLayout(pageLayouts.getJSONObject(i));
+                        if (layout == null) {
+                            throw new JSONException("Root of layout was not a panel - but must be a panel");
+                        }
+                        builder.addPageLayout(layout);
+                    }
+
+                    BandPendingResult<Boolean> result = cli.getTileManager().addTile(cordova.getActivity(), builder.build());
+                    Boolean response = result.await();
+                    if (response)
+                        success(callbackContext);
+                    else
+                        error(callbackContext, 0);
+                    return true;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
                 return false;
             }
             case "getTiles": {
@@ -323,6 +540,13 @@ public class Band extends CordovaPlugin {
                 return false;
             }
             case "removePages": {
+                return false;
+            }
+
+            /**
+             * Sensor Manager Actions
+             */
+            case "requestHeartRateConsent": {
                 return false;
             }
             case "registerAccelerometerEventListener": {
@@ -378,8 +602,13 @@ public class Band extends CordovaPlugin {
             }
             case "unregisterUVEventListeners": {
                 return false;
-            }            
+            }
+
+            /**
+             * No action.
+             */
             default: {
+                error(callbackContext, String.format("Band action could not be found: '%s'", action));
                 return false;
             }
         }
@@ -387,6 +616,6 @@ public class Band extends CordovaPlugin {
     
     @Override
     public void pluginInitialize() {
-        clients = [];
+        //TODO: Any initialization logic
     }
 }

@@ -133,8 +133,6 @@ module cordova.plugins.band {
   }
   
   export interface IScrollFlowPanelElement extends IPagePanel {
-    colorSource: string;
-    color: string;
     orientation: string;
   }
   
@@ -216,12 +214,12 @@ module cordova.plugins.band {
   }
   
   export interface IBandTheme {
-    base: string;
-    highlights: string;
-    lowlights: string;
-    secondary: string;
-    highContrast: string;
-    muted: string;
+    base: number;
+    highlights: number;
+    lowlights: number;
+    secondary: number;
+    highContrast: number;
+    muted: number;
   }
   
   
