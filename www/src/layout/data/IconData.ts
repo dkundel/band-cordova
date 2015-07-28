@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class IconData extends PageElementData {
     private iconIndex: number;
     

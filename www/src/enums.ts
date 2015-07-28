@@ -1,7 +1,7 @@
 /**
  * All the export enums
  */
-module cordova.plugins.band {
+module BandPlugin {
   export enum ConnectionState {
     BINDING,
     BOUND,

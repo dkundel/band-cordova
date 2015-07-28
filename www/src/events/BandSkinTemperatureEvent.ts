@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandSkinTemperatureEvent extends BandSensorEvent {
     private skinTemperature: number;
     

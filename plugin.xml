@@ -7,7 +7,7 @@
 	<repo>https://github.com/dkundel/band-cordova.git</repo>
 	<issue>https://github.com/dkundel/band-cordova/issues</issue>
 	<js-module src="www/band.js" name="band">
-		<clobbers target="cordova.plugins.band" />
+		<clobbers target="BandPlugin" />
 	</js-module>
 	<!-- android -->
 	<platform name="android">

@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export interface FlowPanelAttributes extends PagePanelAttributes {
     orientation: Orientation;
   }

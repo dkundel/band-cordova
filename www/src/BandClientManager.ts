@@ -1,5 +1,5 @@
 /// <reference path="types/cordova.d.ts" />
-module cordova.plugins.band {
+module BandPlugin {
   export class BandClientManager {
     private pairedBands: BandInfo[];
     

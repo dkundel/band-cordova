@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandPedometerEvent extends BandSensorEvent {
     private totalSteps: number;
     

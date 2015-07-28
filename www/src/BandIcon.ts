@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandIcon {
     private path: string;
     private base64: string = '';

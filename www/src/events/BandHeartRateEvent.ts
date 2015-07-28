@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandHeartRateEvent extends BandSensorEvent {
     private heartRate: number;
     private quality: HeartRateQuality;

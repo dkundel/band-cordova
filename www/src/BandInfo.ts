@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandInfo {
     private macAddress: string;
     private name: string;

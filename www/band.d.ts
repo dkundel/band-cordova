@@ -1,10 +1,10 @@
 /// <reference path="src/types/cordova.d.ts" />
-declare module cordova.plugins.band {
+declare module BandPlugin {
     module util {
         function extend<T, U>(first: T, second: U): any;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandClient {
         private index;
         private firmware;
@@ -28,7 +28,7 @@ declare module cordova.plugins.band {
         isConnected(): boolean;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandClientManager {
         private pairedBands;
         constructor();
@@ -37,14 +37,14 @@ declare module cordova.plugins.band {
         static getInstance(): BandClientManager;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandManagerBase {
         private host;
         constructor(host: BandClient);
         exec(success: (args: any) => any, error: (args: any) => any, action: string, args: string[]): void;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandIcon {
         private path;
         private base64;
@@ -56,7 +56,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IBandIcon): BandIcon;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandInfo {
         private macAddress;
         private name;
@@ -65,14 +65,14 @@ declare module cordova.plugins.band {
         getName(): string;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandNotificationManager extends BandManagerBase {
         showDialog(tileUuid: string, dialogTitle: string, dialogBody: string, callback: (error?: BandErrorMessage) => void): void;
         sendMessage(tileUuid: string, messageTitle: string, messageBody: string, date: Date, flags: MessageFlags, callback: (error?: BandErrorMessage) => void): void;
         vibrate(type: VibrationType, callback: (error?: BandErrorMessage) => void): void;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandPersonalizationManager extends BandManagerBase {
         getMeTileImage(callback: (error: BandErrorMessage, icon?: BandIcon) => void): void;
         getTheme(callback: (error: BandErrorMessage, theme?: BandTheme) => void): void;
@@ -80,7 +80,7 @@ declare module cordova.plugins.band {
         setTheme(theme: BandTheme, callback: (error?: BandErrorMessage) => void): void;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandSensorManager extends BandManagerBase {
         private currentHeartRateConsent;
         handleSuccessfulUnregister(...args: any[]): void;
@@ -117,7 +117,7 @@ declare module cordova.plugins.band {
         unregisterUVEventListeners(): void;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandTheme {
         private baseColor;
         private highlightsColor;
@@ -144,7 +144,7 @@ declare module cordova.plugins.band {
         setSecondaryTextColor(color: number): BandTheme;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandTile {
         uuid: string;
         private pageIcons;
@@ -160,7 +160,7 @@ declare module cordova.plugins.band {
         toString(): string;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandTileBuilder {
         private tile;
         constructor(uuid: string, tileName: string, tileIcon: BandIcon);
@@ -172,7 +172,7 @@ declare module cordova.plugins.band {
         build(): BandTile;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandTileManager extends BandManagerBase {
         addTitle(tile: BandTile, callback: (error: BandErrorMessage) => void): void;
         getRemainingTileCapacity(callback: (error: BandErrorMessage, capacity?: number) => void): void;
@@ -182,7 +182,7 @@ declare module cordova.plugins.band {
         setPages(tileId: string, pageData: PageData[], callback: (error: BandErrorMessage) => void): void;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     enum ConnectionState {
         BINDING = 0,
         BOUND = 1,
@@ -325,7 +325,7 @@ declare module cordova.plugins.band {
         WRAPPED_TEXT_BLOCK_DATA = 5,
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface ISensorEvent {
         timestamp: number;
         id: number;
@@ -506,7 +506,7 @@ declare module cordova.plugins.band {
     interface IBandTile {
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class PageData {
         private pageUuid;
         private layoutId;
@@ -518,7 +518,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IPageData): PageData;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class PageLayout {
         private root;
         constructor(root: PagePanel<PagePanelAttributes>);
@@ -528,7 +528,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IPageLayout): PageLayout;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BarcodeData extends PageElementData {
         private barcodeText;
         private barcodeType;
@@ -539,7 +539,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IBarcodeData): BarcodeData;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class FilledButtonData extends PageElementData {
         private pressedColor;
         constructor(id: number, color: number);
@@ -549,7 +549,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IFilledButtonData): FilledButtonData;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class IconData extends PageElementData {
         private iconIndex;
         constructor(id: number, iconIndex: number);
@@ -558,7 +558,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IIconData): IconData;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class PageElementData {
         protected id: number;
         constructor(id: number);
@@ -568,7 +568,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IPageElementData): PageElementData;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class TextBlockData extends PageElementData {
         private text;
         constructor(id: number, text: string);
@@ -577,7 +577,7 @@ declare module cordova.plugins.band {
         static fromJson(json: ITextBlockData): TextBlockData;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class WrappedTextBlockData extends PageElementData {
         private text;
         constructor(id: number, text: string);
@@ -586,7 +586,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IWrappedTextBlockData): WrappedTextBlockData;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface BarcodeAttributes extends PageElementAttributes {
         barcodeType: BarcodeType;
     }
@@ -596,7 +596,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IBarcode): Barcode;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface FilledButtonAttributes extends PageElementAttributes {
         color: number;
         colorSource: ElementColorSource;
@@ -607,7 +607,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IFilledButtonElement): FilledButton;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface FilledPanelAttributes extends PagePanelAttributes {
         backgroundColor: number;
         backgroundColorSource: ElementColorSource;
@@ -618,7 +618,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IFilledPanelElement): FilledPanel;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface FlowPanelAttributes extends PagePanelAttributes {
         orientation: Orientation;
     }
@@ -628,7 +628,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IFlowPanelElement): FlowPanel;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface IconAttributes extends PageElementAttributes {
         color: number;
         colorSource: ElementColorSource;
@@ -639,7 +639,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IIconElement): Icon;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface PageElementAttributes {
         elementId: number;
         rect: PageRect;
@@ -662,7 +662,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IPageElement): PageElement<PageElementAttributes>;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface PagePanelAttributes extends PageElementAttributes {
     }
     class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAttributes> {
@@ -674,7 +674,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IPagePanel): PagePanel<PagePanelAttributes>;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface ScrollFlowPanelAttributes extends PagePanelAttributes {
         orientation: Orientation;
     }
@@ -684,7 +684,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IScrollFlowPanelElement): ScrollFlowPanel;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface TextBlockAttributes extends PageElementAttributes {
         color: number;
         colorSource: ElementColorSource;
@@ -699,7 +699,7 @@ declare module cordova.plugins.band {
         static fromJson(json: ITextBlockElement): TextBlock;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface TextButtonAttributes extends PageElementAttributes {
         color: number;
         colorSource: ElementColorSource;
@@ -710,7 +710,7 @@ declare module cordova.plugins.band {
         static fromJson(json: ITextButtonElement): TextButton;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     interface WrappedTextBlockAttributes extends PageElementAttributes {
         color: number;
         colorSource: ElementColorSource;
@@ -723,7 +723,7 @@ declare module cordova.plugins.band {
         static fromJson(json: IWrappedTextBlockElement): WrappedTextBlock;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandAccelerometerEvent extends BandSensorEvent {
         private acceleration;
         constructor(eventObj: IAccelerometerEvent);
@@ -732,21 +732,21 @@ declare module cordova.plugins.band {
         getAccelerationZ(): number;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandCaloriesEvent extends BandSensorEvent {
         private calories;
         constructor(eventObj: ICaloriesEvent);
         getCalories(): number;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandContactEvent extends BandSensorEvent {
         private contactState;
         constructor(eventObj: IContactEvent);
         getContactState(): BandContactState;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandDistanceEvent extends BandSensorEvent {
         private motionType;
         private pace;
@@ -759,7 +759,7 @@ declare module cordova.plugins.band {
         getTotalDistance(): number;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandGyroscopeEvent extends BandSensorEvent {
         private acceleration;
         private angularVelocity;
@@ -772,7 +772,7 @@ declare module cordova.plugins.band {
         getAngularVelocityZ(): number;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandHeartRateEvent extends BandSensorEvent {
         private heartRate;
         private quality;
@@ -781,27 +781,27 @@ declare module cordova.plugins.band {
         getQuality(): HeartRateQuality;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandPedometerEvent extends BandSensorEvent {
         private totalSteps;
         constructor(eventObj: IPedometerEvent);
         getTotalSteps(): number;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandSensorEvent {
         private timestamp;
         constructor(eventObj: ISensorEvent);
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandSkinTemperatureEvent extends BandSensorEvent {
         private skinTemperature;
         constructor(eventObj: ISkinTemperatureEvent);
         getSkinTemperature(): number;
     }
 }
-declare module cordova.plugins.band {
+declare module BandPlugin {
     class BandUVEvent extends BandSensorEvent {
         private uvIndexLevel;
         constructor(eventObj: IUVEvent);

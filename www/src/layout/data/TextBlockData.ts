@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class TextBlockData extends PageElementData {
     private text: string;
     

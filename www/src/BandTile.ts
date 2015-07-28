@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandTile {
     public uuid: string;
     private pageIcons: BandIcon[];

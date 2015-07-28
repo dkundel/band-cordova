@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandTileManager extends BandManagerBase {
     addTitle(tile: BandTile, callback: (error: BandErrorMessage) => void): void {
       var success = () => {

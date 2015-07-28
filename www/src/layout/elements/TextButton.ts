@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export interface TextButtonAttributes extends PageElementAttributes {
     color: number;
     colorSource: ElementColorSource;

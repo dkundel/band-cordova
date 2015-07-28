@@ -1,6 +1,6 @@
 /// <reference path="src/types/cordova.d.ts" />
 
-module cordova.plugins.band {
+module BandPlugin {
 	export module util {
 		export function extend<T, U>(first: T, second: U): any /*T & U*/ {
 		    let result = /*<T & U>*/ <any> {};
@@ -16,5 +16,5 @@ module cordova.plugins.band {
 }
 
 cordova.define('band', (require, exports, module) => {
-	module.exports = cordova.plugins.band;
+	module.exports = BandPlugin;
 });

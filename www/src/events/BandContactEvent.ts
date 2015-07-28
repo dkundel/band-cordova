@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandContactEvent extends BandSensorEvent {
     private contactState: BandContactState;
     

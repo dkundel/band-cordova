@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandSensorManager extends BandManagerBase {
     private currentHeartRateConsent: UserConsent;
     

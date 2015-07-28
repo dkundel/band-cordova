@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BarcodeData extends PageElementData {
     private barcodeText: string;
     private barcodeType: BarcodeType;

@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export /*abstract*/ class BandManagerBase {    
 	  constructor(private host: BandClient) {}
     exec(success: (args: any) => any, error: (args: any) => any, action: string, args: string[]) {

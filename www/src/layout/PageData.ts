@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class PageData {
     private pageUuid: string;
     private layoutId: number;

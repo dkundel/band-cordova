@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandGyroscopeEvent extends BandSensorEvent {
     private acceleration: {
       x: number; 

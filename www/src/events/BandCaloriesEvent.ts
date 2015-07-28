@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandCaloriesEvent extends BandSensorEvent {
     private calories: number;
     

@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandDistanceEvent extends BandSensorEvent {
     private motionType: MotionType;
     private pace: number;

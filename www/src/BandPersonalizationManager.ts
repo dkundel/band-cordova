@@ -1,4 +1,4 @@
-module cordova.plugins.band {
+module BandPlugin {
   export class BandPersonalizationManager extends BandManagerBase {
     getMeTileImage(callback: (error: BandErrorMessage, icon?: BandIcon) => void): void {
       let success = (iconData: IBandIcon) => {
