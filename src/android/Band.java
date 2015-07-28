@@ -529,7 +529,14 @@ public class Band extends CordovaPlugin {
              */
             case "getPairedBands": {
                 final BandInfo[] bands = BandClientManager.getInstance().getPairedBands();
-                success(callbackContext, new JSONArray(bands));
+                JSONArray bandInfo = new JSONArray();
+                for(int i = 0; i < bands.length; i++) {
+                    bandInfo.put(i, new JSONObject()
+                        .put("macAddress", bands[i].getMacAddress())
+                        .put("name", bands[i].getName())
+                    );
+                }
+                success(callbackContext, bandInfo);
                 return true;
             }
             case "create": {

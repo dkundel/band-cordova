@@ -529,6 +529,16 @@ declare module BandPlugin {
     }
 }
 declare module BandPlugin {
+    class PageElementData {
+        protected id: number;
+        constructor(id: number);
+        getId(): number;
+        toJson(): IPageElementData;
+        toString(): string;
+        static fromJson(json: IPageElementData): PageElementData;
+    }
+}
+declare module BandPlugin {
     class BarcodeData extends PageElementData {
         private barcodeText;
         private barcodeType;
@@ -559,16 +569,6 @@ declare module BandPlugin {
     }
 }
 declare module BandPlugin {
-    class PageElementData {
-        protected id: number;
-        constructor(id: number);
-        getId(): number;
-        toJson(): IPageElementData;
-        toString(): string;
-        static fromJson(json: IPageElementData): PageElementData;
-    }
-}
-declare module BandPlugin {
     class TextBlockData extends PageElementData {
         private text;
         constructor(id: number, text: string);
@@ -584,6 +584,41 @@ declare module BandPlugin {
         getText(): string;
         toJson(): IWrappedTextBlockData;
         static fromJson(json: IWrappedTextBlockData): WrappedTextBlockData;
+    }
+}
+declare module BandPlugin {
+    interface PageElementAttributes {
+        elementId: number;
+        rect: PageRect;
+        margins: Margins;
+        horizontalAlignment: HorizontalAlignment;
+        verticalAlignment: VerticalAlignment;
+        isVisible: boolean;
+    }
+    class PageElement<TPageElementAttributes extends PageElementAttributes> {
+        protected attributes: TPageElementAttributes;
+        constructor(elementId?: number, rect?: PageRect, margins?: Margins, horizontalAlignment?: HorizontalAlignment, verticalAlignment?: VerticalAlignment, isVisible?: boolean);
+        getAttributes(): PageElementAttributes;
+        setAttributes(attr: TPageElementAttributes): void;
+        isVisible(): boolean;
+        setVisible(visible: boolean): void;
+        getId(): number;
+        setId(id: number): void;
+        toJson(): IPageElement;
+        toString(): string;
+        static fromJson(json: IPageElement): PageElement<PageElementAttributes>;
+    }
+}
+declare module BandPlugin {
+    interface PagePanelAttributes extends PageElementAttributes {
+    }
+    class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAttributes> {
+        protected elements: PageElement<PageElementAttributes>[];
+        constructor(elementId: number, rect: PageRect, ...elements: PageElement<PageElementAttributes>[]);
+        addElements(...elements: PageElement<PageElementAttributes>[]): void;
+        getElements(): PageElement<PageElementAttributes>[];
+        toJson(): IPagePanel;
+        static fromJson(json: IPagePanel): PagePanel<PagePanelAttributes>;
     }
 }
 declare module BandPlugin {
@@ -640,41 +675,6 @@ declare module BandPlugin {
     }
 }
 declare module BandPlugin {
-    interface PageElementAttributes {
-        elementId: number;
-        rect: PageRect;
-        margins: Margins;
-        horizontalAlignment: HorizontalAlignment;
-        verticalAlignment: VerticalAlignment;
-        isVisible: boolean;
-    }
-    class PageElement<TPageElementAttributes extends PageElementAttributes> {
-        protected attributes: TPageElementAttributes;
-        constructor(elementId?: number, rect?: PageRect, margins?: Margins, horizontalAlignment?: HorizontalAlignment, verticalAlignment?: VerticalAlignment, isVisible?: boolean);
-        getAttributes(): PageElementAttributes;
-        setAttributes(attr: TPageElementAttributes): void;
-        isVisible(): boolean;
-        setVisible(visible: boolean): void;
-        getId(): number;
-        setId(id: number): void;
-        toJson(): IPageElement;
-        toString(): string;
-        static fromJson(json: IPageElement): PageElement<PageElementAttributes>;
-    }
-}
-declare module BandPlugin {
-    interface PagePanelAttributes extends PageElementAttributes {
-    }
-    class PagePanel<TAttributes extends PagePanelAttributes> extends PageElement<TAttributes> {
-        protected elements: PageElement<PageElementAttributes>[];
-        constructor(elementId: number, rect: PageRect, ...elements: PageElement<PageElementAttributes>[]);
-        addElements(...elements: PageElement<PageElementAttributes>[]): void;
-        getElements(): PageElement<PageElementAttributes>[];
-        toJson(): IPagePanel;
-        static fromJson(json: IPagePanel): PagePanel<PagePanelAttributes>;
-    }
-}
-declare module BandPlugin {
     interface ScrollFlowPanelAttributes extends PagePanelAttributes {
         orientation: Orientation;
     }
@@ -721,6 +721,12 @@ declare module BandPlugin {
         constructor(elementId: number, rect: PageRect, colorSource?: ElementColorSource, color?: number, font?: WrappedTextBlockFont, autoHeight?: boolean);
         toJson(): IWrappedTextBlockElement;
         static fromJson(json: IWrappedTextBlockElement): WrappedTextBlock;
+    }
+}
+declare module BandPlugin {
+    class BandSensorEvent {
+        private timestamp;
+        constructor(eventObj: ISensorEvent);
     }
 }
 declare module BandPlugin {
@@ -786,12 +792,6 @@ declare module BandPlugin {
         private totalSteps;
         constructor(eventObj: IPedometerEvent);
         getTotalSteps(): number;
-    }
-}
-declare module BandPlugin {
-    class BandSensorEvent {
-        private timestamp;
-        constructor(eventObj: ISensorEvent);
     }
 }
 declare module BandPlugin {

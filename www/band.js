@@ -1000,6 +1000,31 @@ var BandPlugin;
 })(BandPlugin || (BandPlugin = {}));
 var BandPlugin;
 (function (BandPlugin) {
+    var PageElementData = (function () {
+        function PageElementData(id) {
+            this.id = id;
+        }
+        PageElementData.prototype.getId = function () {
+            return this.id;
+        };
+        PageElementData.prototype.toJson = function () {
+            return {
+                id: this.id,
+                type: BandPlugin.PageElementDataTypes.PAGE_ELEMENT_DATA
+            };
+        };
+        PageElementData.prototype.toString = function () {
+            return JSON.stringify(this.toJson());
+        };
+        PageElementData.fromJson = function (json) {
+            return new PageElementData(json.id);
+        };
+        return PageElementData;
+    })();
+    BandPlugin.PageElementData = PageElementData;
+})(BandPlugin || (BandPlugin = {}));
+var BandPlugin;
+(function (BandPlugin) {
     var BarcodeData = (function (_super) {
         __extends(BarcodeData, _super);
         function BarcodeData(id, barcodeText, type) {
@@ -1087,31 +1112,6 @@ var BandPlugin;
 })(BandPlugin || (BandPlugin = {}));
 var BandPlugin;
 (function (BandPlugin) {
-    var PageElementData = (function () {
-        function PageElementData(id) {
-            this.id = id;
-        }
-        PageElementData.prototype.getId = function () {
-            return this.id;
-        };
-        PageElementData.prototype.toJson = function () {
-            return {
-                id: this.id,
-                type: BandPlugin.PageElementDataTypes.PAGE_ELEMENT_DATA
-            };
-        };
-        PageElementData.prototype.toString = function () {
-            return JSON.stringify(this.toJson());
-        };
-        PageElementData.fromJson = function (json) {
-            return new PageElementData(json.id);
-        };
-        return PageElementData;
-    })();
-    BandPlugin.PageElementData = PageElementData;
-})(BandPlugin || (BandPlugin = {}));
-var BandPlugin;
-(function (BandPlugin) {
     var TextBlockData = (function (_super) {
         __extends(TextBlockData, _super);
         function TextBlockData(id, text) {
@@ -1161,140 +1161,6 @@ var BandPlugin;
         return WrappedTextBlockData;
     })(BandPlugin.PageElementData);
     BandPlugin.WrappedTextBlockData = WrappedTextBlockData;
-})(BandPlugin || (BandPlugin = {}));
-var BandPlugin;
-(function (BandPlugin) {
-    var Barcode = (function (_super) {
-        __extends(Barcode, _super);
-        function Barcode(elementId, rect, type) {
-            var margins = { top: 0, left: 0, right: 0, bottom: 0 };
-            _super.call(this, elementId, rect, margins, BandPlugin.HorizontalAlignment.CENTERED, BandPlugin.VerticalAlignment.CENTERED, true);
-        }
-        Barcode.prototype.toJson = function () {
-            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
-                barcodeType: this.attributes.barcodeType,
-                type: BandPlugin.PageElementTypes.BARCODE
-            });
-        };
-        Barcode.fromJson = function (json) {
-            var barcode = BandPlugin.PageElement.fromJson(json);
-            barcode.attributes.barcodeType = json.barcodeType;
-            return barcode;
-        };
-        return Barcode;
-    })(BandPlugin.PageElement);
-    BandPlugin.Barcode = Barcode;
-})(BandPlugin || (BandPlugin = {}));
-var BandPlugin;
-(function (BandPlugin) {
-    var FilledButton = (function (_super) {
-        __extends(FilledButton, _super);
-        function FilledButton(elementId, rect, colorSource, color) {
-            var margins = { top: 0, left: 0, right: 0, bottom: 0 };
-            _super.call(this, elementId, rect, margins, BandPlugin.HorizontalAlignment.CENTERED, BandPlugin.VerticalAlignment.CENTERED, true);
-            this.attributes.colorSource = colorSource;
-            this.attributes.color = color;
-        }
-        FilledButton.prototype.toJson = function () {
-            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
-                color: this.attributes.color,
-                colorSource: this.attributes.colorSource,
-                type: BandPlugin.PageElementTypes.FILLED_BUTTON
-            });
-        };
-        FilledButton.fromJson = function (json) {
-            var button = BandPlugin.PageElement.fromJson(json);
-            button.attributes.color = json.color;
-            button.attributes.colorSource = json.colorSource;
-            return button;
-        };
-        return FilledButton;
-    })(BandPlugin.PageElement);
-    BandPlugin.FilledButton = FilledButton;
-})(BandPlugin || (BandPlugin = {}));
-var BandPlugin;
-(function (BandPlugin) {
-    var FilledPanel = (function (_super) {
-        __extends(FilledPanel, _super);
-        function FilledPanel(elementId, rect, backgroundColorSource, backgroundColor) {
-            var elements = [];
-            for (var _i = 4; _i < arguments.length; _i++) {
-                elements[_i - 4] = arguments[_i];
-            }
-            _super.apply(this, [elementId, rect].concat(elements));
-            this.attributes.backgroundColorSource = backgroundColorSource;
-            this.attributes.backgroundColor = backgroundColor;
-        }
-        FilledPanel.prototype.toJson = function () {
-            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
-                backgroundColor: this.attributes.backgroundColor,
-                backgroundColorSource: this.attributes.backgroundColorSource,
-                type: BandPlugin.PageElementTypes.FILLED_PANEL
-            });
-        };
-        FilledPanel.fromJson = function (json) {
-            var panel = BandPlugin.PageElement.fromJson(json);
-            panel.attributes.backgroundColor = json.backgroundColor;
-            panel.attributes.backgroundColorSource = json.backgroundColorSource;
-            return panel;
-        };
-        return FilledPanel;
-    })(BandPlugin.PagePanel);
-    BandPlugin.FilledPanel = FilledPanel;
-})(BandPlugin || (BandPlugin = {}));
-var BandPlugin;
-(function (BandPlugin) {
-    var FlowPanel = (function (_super) {
-        __extends(FlowPanel, _super);
-        function FlowPanel(elementId, rect, orientation) {
-            var elements = [];
-            for (var _i = 3; _i < arguments.length; _i++) {
-                elements[_i - 3] = arguments[_i];
-            }
-            _super.apply(this, [elementId, rect].concat(elements));
-            this.attributes.orientation = orientation;
-        }
-        FlowPanel.prototype.toJson = function () {
-            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
-                orientation: this.attributes.orientation,
-                type: BandPlugin.PageElementTypes.FLOW_PANEL
-            });
-        };
-        FlowPanel.fromJson = function (json) {
-            var panel = BandPlugin.PageElement.fromJson(json);
-            panel.attributes.orientation = json.orientation;
-            return panel;
-        };
-        return FlowPanel;
-    })(BandPlugin.PagePanel);
-    BandPlugin.FlowPanel = FlowPanel;
-})(BandPlugin || (BandPlugin = {}));
-var BandPlugin;
-(function (BandPlugin) {
-    var Icon = (function (_super) {
-        __extends(Icon, _super);
-        function Icon(elementId, rect, colorSource, color) {
-            var margins = { top: 0, left: 0, right: 0, bottom: 0 };
-            _super.call(this, elementId, rect, margins, BandPlugin.HorizontalAlignment.CENTERED, BandPlugin.VerticalAlignment.CENTERED, true);
-            this.attributes.colorSource = colorSource;
-            this.attributes.color = color;
-        }
-        Icon.prototype.toJson = function () {
-            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
-                color: this.attributes.color,
-                colorSource: this.attributes.colorSource,
-                type: BandPlugin.PageElementTypes.ICON
-            });
-        };
-        Icon.fromJson = function (json) {
-            var icon = BandPlugin.PageElement.fromJson(json);
-            icon.attributes.color = json.color;
-            icon.attributes.colorSource = json.colorSource;
-            return icon;
-        };
-        return Icon;
-    })(BandPlugin.PageElement);
-    BandPlugin.Icon = Icon;
 })(BandPlugin || (BandPlugin = {}));
 var BandPlugin;
 (function (BandPlugin) {
@@ -1444,6 +1310,140 @@ var BandPlugin;
 })(BandPlugin || (BandPlugin = {}));
 var BandPlugin;
 (function (BandPlugin) {
+    var Barcode = (function (_super) {
+        __extends(Barcode, _super);
+        function Barcode(elementId, rect, type) {
+            var margins = { top: 0, left: 0, right: 0, bottom: 0 };
+            _super.call(this, elementId, rect, margins, BandPlugin.HorizontalAlignment.CENTERED, BandPlugin.VerticalAlignment.CENTERED, true);
+        }
+        Barcode.prototype.toJson = function () {
+            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
+                barcodeType: this.attributes.barcodeType,
+                type: BandPlugin.PageElementTypes.BARCODE
+            });
+        };
+        Barcode.fromJson = function (json) {
+            var barcode = BandPlugin.PageElement.fromJson(json);
+            barcode.attributes.barcodeType = json.barcodeType;
+            return barcode;
+        };
+        return Barcode;
+    })(BandPlugin.PageElement);
+    BandPlugin.Barcode = Barcode;
+})(BandPlugin || (BandPlugin = {}));
+var BandPlugin;
+(function (BandPlugin) {
+    var FilledButton = (function (_super) {
+        __extends(FilledButton, _super);
+        function FilledButton(elementId, rect, colorSource, color) {
+            var margins = { top: 0, left: 0, right: 0, bottom: 0 };
+            _super.call(this, elementId, rect, margins, BandPlugin.HorizontalAlignment.CENTERED, BandPlugin.VerticalAlignment.CENTERED, true);
+            this.attributes.colorSource = colorSource;
+            this.attributes.color = color;
+        }
+        FilledButton.prototype.toJson = function () {
+            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
+                color: this.attributes.color,
+                colorSource: this.attributes.colorSource,
+                type: BandPlugin.PageElementTypes.FILLED_BUTTON
+            });
+        };
+        FilledButton.fromJson = function (json) {
+            var button = BandPlugin.PageElement.fromJson(json);
+            button.attributes.color = json.color;
+            button.attributes.colorSource = json.colorSource;
+            return button;
+        };
+        return FilledButton;
+    })(BandPlugin.PageElement);
+    BandPlugin.FilledButton = FilledButton;
+})(BandPlugin || (BandPlugin = {}));
+var BandPlugin;
+(function (BandPlugin) {
+    var FilledPanel = (function (_super) {
+        __extends(FilledPanel, _super);
+        function FilledPanel(elementId, rect, backgroundColorSource, backgroundColor) {
+            var elements = [];
+            for (var _i = 4; _i < arguments.length; _i++) {
+                elements[_i - 4] = arguments[_i];
+            }
+            _super.apply(this, [elementId, rect].concat(elements));
+            this.attributes.backgroundColorSource = backgroundColorSource;
+            this.attributes.backgroundColor = backgroundColor;
+        }
+        FilledPanel.prototype.toJson = function () {
+            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
+                backgroundColor: this.attributes.backgroundColor,
+                backgroundColorSource: this.attributes.backgroundColorSource,
+                type: BandPlugin.PageElementTypes.FILLED_PANEL
+            });
+        };
+        FilledPanel.fromJson = function (json) {
+            var panel = BandPlugin.PageElement.fromJson(json);
+            panel.attributes.backgroundColor = json.backgroundColor;
+            panel.attributes.backgroundColorSource = json.backgroundColorSource;
+            return panel;
+        };
+        return FilledPanel;
+    })(BandPlugin.PagePanel);
+    BandPlugin.FilledPanel = FilledPanel;
+})(BandPlugin || (BandPlugin = {}));
+var BandPlugin;
+(function (BandPlugin) {
+    var FlowPanel = (function (_super) {
+        __extends(FlowPanel, _super);
+        function FlowPanel(elementId, rect, orientation) {
+            var elements = [];
+            for (var _i = 3; _i < arguments.length; _i++) {
+                elements[_i - 3] = arguments[_i];
+            }
+            _super.apply(this, [elementId, rect].concat(elements));
+            this.attributes.orientation = orientation;
+        }
+        FlowPanel.prototype.toJson = function () {
+            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
+                orientation: this.attributes.orientation,
+                type: BandPlugin.PageElementTypes.FLOW_PANEL
+            });
+        };
+        FlowPanel.fromJson = function (json) {
+            var panel = BandPlugin.PageElement.fromJson(json);
+            panel.attributes.orientation = json.orientation;
+            return panel;
+        };
+        return FlowPanel;
+    })(BandPlugin.PagePanel);
+    BandPlugin.FlowPanel = FlowPanel;
+})(BandPlugin || (BandPlugin = {}));
+var BandPlugin;
+(function (BandPlugin) {
+    var Icon = (function (_super) {
+        __extends(Icon, _super);
+        function Icon(elementId, rect, colorSource, color) {
+            var margins = { top: 0, left: 0, right: 0, bottom: 0 };
+            _super.call(this, elementId, rect, margins, BandPlugin.HorizontalAlignment.CENTERED, BandPlugin.VerticalAlignment.CENTERED, true);
+            this.attributes.colorSource = colorSource;
+            this.attributes.color = color;
+        }
+        Icon.prototype.toJson = function () {
+            return BandPlugin.util.extend(_super.prototype.toJson.call(this), {
+                color: this.attributes.color,
+                colorSource: this.attributes.colorSource,
+                type: BandPlugin.PageElementTypes.ICON
+            });
+        };
+        Icon.fromJson = function (json) {
+            var icon = BandPlugin.PageElement.fromJson(json);
+            icon.attributes.color = json.color;
+            icon.attributes.colorSource = json.colorSource;
+            return icon;
+        };
+        return Icon;
+    })(BandPlugin.PageElement);
+    BandPlugin.Icon = Icon;
+})(BandPlugin || (BandPlugin = {}));
+var BandPlugin;
+(function (BandPlugin) {
     var ScrollFlowPanel = (function (_super) {
         __extends(ScrollFlowPanel, _super);
         function ScrollFlowPanel(elementId, rect, orientation) {
@@ -1567,6 +1567,16 @@ var BandPlugin;
         return WrappedTextBlock;
     })(BandPlugin.PageElement);
     BandPlugin.WrappedTextBlock = WrappedTextBlock;
+})(BandPlugin || (BandPlugin = {}));
+var BandPlugin;
+(function (BandPlugin) {
+    var BandSensorEvent = (function () {
+        function BandSensorEvent(eventObj) {
+            this.timestamp = new Date(eventObj.timestamp);
+        }
+        return BandSensorEvent;
+    })();
+    BandPlugin.BandSensorEvent = BandSensorEvent;
 })(BandPlugin || (BandPlugin = {}));
 var BandPlugin;
 (function (BandPlugin) {
@@ -1710,16 +1720,6 @@ var BandPlugin;
         return BandPedometerEvent;
     })(BandPlugin.BandSensorEvent);
     BandPlugin.BandPedometerEvent = BandPedometerEvent;
-})(BandPlugin || (BandPlugin = {}));
-var BandPlugin;
-(function (BandPlugin) {
-    var BandSensorEvent = (function () {
-        function BandSensorEvent(eventObj) {
-            this.timestamp = new Date(eventObj.timestamp);
-        }
-        return BandSensorEvent;
-    })();
-    BandPlugin.BandSensorEvent = BandSensorEvent;
 })(BandPlugin || (BandPlugin = {}));
 var BandPlugin;
 (function (BandPlugin) {
