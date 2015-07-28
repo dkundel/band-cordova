@@ -326,17 +326,17 @@ public class Band extends CordovaPlugin {
             }
             case "connect": {
                 final BandClient cli = lookupClient(args);
-				final BandPendingResult<ConnectionState> pendingResult = cli.connect();
-				try {
-					final ConnectionState state = pendingResult.await();
-		            success(callbackContext, state.ordinal());
+                final BandPendingResult<ConnectionState> pendingResult = cli.connect();
+                try {
+                    final ConnectionState state = pendingResult.await();
+                    success(callbackContext, state.ordinal());
                     return true;
-				} catch(InterruptedException ex) {
-		            error(callbackContext, "InterruptedException");
-				} catch(BandException ex) {
-		            error(callbackContext, "BandException");
-				}
-				return false;
+                } catch(InterruptedException ex) {
+                    error(callbackContext, "InterruptedException");
+                } catch(BandException ex) {
+                    error(callbackContext, "BandException");
+                }
+                return false;
             }
             case "disconnect": {
                 final BandClient cli = lookupClient(args);
@@ -560,40 +560,61 @@ public class Band extends CordovaPlugin {
             case "registerAccelerometerEventListener": {
                 return false;
             }
+            case "unregisterAccelerometerEventListener": {
+                return false;
+            }
             case "unregisterAccelerometerEventListeners": {
                 return false;
-            }            
+            }
             case "registerCaloriesEventListener": {
+                return false;
+            }
+            case "unregisterCaloriesEventListener": {
                 return false;
             }
             case "unregisterCaloriesEventListeners": {
                 return false;
-            }            
+            }
             case "registerContactEventListener": {
+                return false;
+            }
+            case "unregisterContactEventListener": {
                 return false;
             }
             case "unregisterContactEventListeners": {
                 return false;
-            }            
+            }
             case "registerDistanceEventListener": {
+                return false;
+            }
+            case "unregisterDistanceEventListener": {
                 return false;
             }
             case "unregisterDistanceEventListeners": {
                 return false;
-            }            
+            }
             case "registerGyroscopeEventListener": {
+                return false;
+            }
+            case "unregisterGyroscopeEventListener": {
                 return false;
             }
             case "unregisterGyroscopeEventListeners": {
                 return false;
-            }            
+            }
             case "registerHeartRateEventListener": {
+                return false;
+            }
+            case "unregisterHeartRateEventListener": {
                 return false;
             }
             case "unregisterHeartRateEventListeners": {
                 return false;
-            }            
+            }
             case "registerPedometerEventListener": {
+                return false;
+            }
+            case "unregisterPedometerEventListener": {
                 return false;
             }
             case "unregisterPedometerEventListeners": {
@@ -602,10 +623,16 @@ public class Band extends CordovaPlugin {
             case "registerSkinTemperatureEventListener": {
                 return false;
             }
+            case "unregisterSkinTemperatureEventListener": {
+                return false;
+            }
             case "unregisterSkinTemperatureEventListeners": {
                 return false;
-            }            
+            }
             case "registerUVEventListener": {
+                return false;
+            }
+            case "unregisterUVEventListener": {
                 return false;
             }
             case "unregisterUVEventListeners": {
