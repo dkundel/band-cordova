@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface FlowPanelAttributes extends PagePanelAttributes {
+  export interface FlowPanelAttributes extends PagePanelAttributes {
     orientation: Orientation;
   }
   
@@ -10,11 +10,10 @@ module cordova.plugins.band {
     }
     
     toJson(): IFlowPanelElement {
-      var json = <IFlowPanelElement> super.toJson()
-      json.orientation = Orientation[this.attributes.orientation];
-      json.type = PageElementTypes[PageElementTypes.FLOW_PANEL];
-      
-      return json;
+      return util.extend(super.toJson(),{
+        orientation: Orientation[this.attributes.orientation],
+        type: PageElementTypes[PageElementTypes.FLOW_PANEL]
+      });
     }
     
     static fromJson(json: IFlowPanelElement) {

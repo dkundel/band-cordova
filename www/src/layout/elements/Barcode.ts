@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface BarcodeAttributes extends PageElementAttributes {
+  export interface BarcodeAttributes extends PageElementAttributes {
     barcodeType: BarcodeType;
   }
   
@@ -11,11 +11,10 @@ module cordova.plugins.band {
     }
     
     toJson(): IBarcode {
-      var json = <IBarcode> super.toJson()
-      json.barcodeType = BarcodeType[this.attributes.barcodeType];
-      json.type = PageElementTypes[PageElementTypes.BARCODE];
-      
-      return json;
+      return util.extend(super.toJson(), {
+        barcodeType: BarcodeType[this.attributes.barcodeType],
+        type: PageElementTypes[PageElementTypes.BARCODE]
+      });
     }
     
     static fromJson(json: IBarcode) {

@@ -17,15 +17,14 @@ module cordova.plugins.band {
       this.attributes.autoHeight = autoHeight;
     }
     
-    toJson(): IWrappedTextBlockElement {
-      var json = <IWrappedTextBlockElement> super.toJson()
-      json.color = this.attributes.color;
-      json.colorSource = ElementColorSource[this.attributes.colorSource];
-      json.font = WrappedTextBlockFont[this.attributes.font];
-      json.autoHeight = this.attributes.autoHeight;
-      json.type = PageElementTypes[PageElementTypes.WRAPPED_TEXT_BLOCK];
-      
-      return json;
+    toJson(): IWrappedTextBlockElement {      
+      return util.extend(super.toJson(), {
+        color: this.attributes.color,
+        colorSource: ElementColorSource[this.attributes.colorSource],
+        font: WrappedTextBlockFont[this.attributes.font],
+        autoHeight: this.attributes.autoHeight,
+        type: PageElementTypes[PageElementTypes.WRAPPED_TEXT_BLOCK]
+      });
     }
     
     static fromJson(json: IWrappedTextBlockElement) {

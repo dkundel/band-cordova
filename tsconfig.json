@@ -2,6 +2,7 @@
   "compilerOptions": {
     "out": "www/band.js",
     "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,

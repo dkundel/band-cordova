@@ -1,3 +1,26 @@
+var cordova;
+(function (cordova) {
+    var plugins;
+    (function (plugins) {
+        var band;
+        (function (band) {
+            var util;
+            (function (util) {
+                function extend(first, second) {
+                    var result = {};
+                    for (var id in first) {
+                        result[id] = first[id];
+                    }
+                    for (var id in second) {
+                        result[id] = second[id];
+                    }
+                    return result;
+                }
+                util.extend = extend;
+            })(util = band.util || (band.util = {}));
+        })(band = plugins.band || (plugins.band = {}));
+    })(plugins = cordova.plugins || (cordova.plugins = {}));
+})(cordova || (cordova = {}));
 cordova.define('band', function (require, exports, module) {
     module.exports = cordova.plugins.band;
 });
@@ -1251,10 +1274,10 @@ var cordova;
                     _super.call(this, elementId, rect, margins, band.HorizontalAlignment.CENTERED, band.VerticalAlignment.CENTERED, true);
                 }
                 Barcode.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.barcodeType = band.BarcodeType[this.attributes.barcodeType];
-                    json.type = band.PageElementTypes[band.PageElementTypes.BARCODE];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        barcodeType: band.BarcodeType[this.attributes.barcodeType],
+                        type: band.PageElementTypes[band.PageElementTypes.BARCODE]
+                    });
                 };
                 Barcode.fromJson = function (json) {
                     var barcode = band.PageElement.fromJson(json);
@@ -1282,11 +1305,11 @@ var cordova;
                     this.attributes.color = color;
                 }
                 FilledButton.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.color = this.attributes.color;
-                    json.colorSource = band.ElementColorSource[this.attributes.colorSource];
-                    json.type = band.PageElementTypes[band.PageElementTypes.FILLED_BUTTON];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        color: this.attributes.color,
+                        colorSource: band.ElementColorSource[this.attributes.colorSource],
+                        type: band.PageElementTypes[band.PageElementTypes.FILLED_BUTTON]
+                    });
                 };
                 FilledButton.fromJson = function (json) {
                     var button = band.PageElement.fromJson(json);
@@ -1318,11 +1341,11 @@ var cordova;
                     this.attributes.backgroundColor = backgroundColor;
                 }
                 FilledPanel.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.backgroundColor = this.attributes.backgroundColor;
-                    json.backgroundColorSource = band.ElementColorSource[this.attributes.backgroundColorSource];
-                    json.type = band.PageElementTypes[band.PageElementTypes.FILLED_PANEL];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        backgroundColor: this.attributes.backgroundColor,
+                        backgroundColorSource: band.ElementColorSource[this.attributes.backgroundColorSource],
+                        type: band.PageElementTypes[band.PageElementTypes.FILLED_PANEL]
+                    });
                 };
                 FilledPanel.fromJson = function (json) {
                     var panel = band.PageElement.fromJson(json);
@@ -1353,10 +1376,10 @@ var cordova;
                     this.attributes.orientation = orientation;
                 }
                 FlowPanel.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.orientation = band.Orientation[this.attributes.orientation];
-                    json.type = band.PageElementTypes[band.PageElementTypes.FLOW_PANEL];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        orientation: band.Orientation[this.attributes.orientation],
+                        type: band.PageElementTypes[band.PageElementTypes.FLOW_PANEL]
+                    });
                 };
                 FlowPanel.fromJson = function (json) {
                     var panel = band.PageElement.fromJson(json);
@@ -1384,11 +1407,11 @@ var cordova;
                     this.attributes.color = color;
                 }
                 Icon.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.color = this.attributes.color;
-                    json.colorSource = band.ElementColorSource[this.attributes.colorSource];
-                    json.type = band.PageElementTypes[band.PageElementTypes.ICON];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        color: this.attributes.color,
+                        colorSource: band.ElementColorSource[this.attributes.colorSource],
+                        type: band.PageElementTypes[band.PageElementTypes.ICON]
+                    });
                 };
                 Icon.fromJson = function (json) {
                     var icon = band.PageElement.fromJson(json);
@@ -1494,10 +1517,10 @@ var cordova;
                     for (var element in this.elements) {
                         elements.push(element.toJson());
                     }
-                    var panel = _super.prototype.toJson.call(this);
-                    panel.elements = elements;
-                    panel.type = band.PageElementTypes[band.PageElementTypes.PAGE_PANEL];
-                    return panel;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        elements: elements,
+                        type: band.PageElementTypes[band.PageElementTypes.PAGE_PANEL]
+                    });
                 };
                 PagePanel.fromJson = function (json) {
                     var panel = new PagePanel(json.elementId, json.rect);
@@ -1579,12 +1602,12 @@ var cordova;
                     this.attributes.orientation = orientation;
                 }
                 ScrollFlowPanel.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.color = this.attributes.color;
-                    json.colorSource = band.ElementColorSource[this.attributes.colorSource];
-                    json.orientation = band.Orientation[this.attributes.orientation];
-                    json.type = band.PageElementTypes[band.PageElementTypes.SCROLL_FLOW_PANEL];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        color: this.attributes.color,
+                        colorSource: band.ElementColorSource[this.attributes.colorSource],
+                        orientation: band.Orientation[this.attributes.orientation],
+                        type: band.PageElementTypes[band.PageElementTypes.SCROLL_FLOW_PANEL]
+                    });
                 };
                 ScrollFlowPanel.fromJson = function (json) {
                     var panel = band.PageElement.fromJson(json);
@@ -1618,15 +1641,15 @@ var cordova;
                     this.attributes.autoWidth = autoWidth;
                 }
                 TextBlock.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.color = this.attributes.color;
-                    json.colorSource = band.ElementColorSource[this.attributes.colorSource];
-                    json.font = band.TextBlockFont[this.attributes.font];
-                    json.baselineAlignment = band.TextBlockBaselineAlignment[this.attributes.baselineAlignment];
-                    json.baseline = this.attributes.baseline;
-                    json.autoWidth = this.attributes.autoWidth;
-                    json.type = band.PageElementTypes[band.PageElementTypes.TEXT_BLOCK];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        color: this.attributes.color,
+                        colorSource: band.ElementColorSource[this.attributes.colorSource],
+                        font: band.TextBlockFont[this.attributes.font],
+                        baselineAlignment: band.TextBlockBaselineAlignment[this.attributes.baselineAlignment],
+                        baseline: this.attributes.baseline,
+                        autoWidth: this.attributes.autoWidth,
+                        type: band.PageElementTypes[band.PageElementTypes.TEXT_BLOCK]
+                    });
                 };
                 TextBlock.fromJson = function (json) {
                     var textBlock = band.PageElement.fromJson(json);
@@ -1659,11 +1682,11 @@ var cordova;
                     this.attributes.color = color;
                 }
                 TextButton.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.color = this.attributes.color;
-                    json.colorSource = band.ElementColorSource[this.attributes.colorSource];
-                    json.type = band.PageElementTypes[band.PageElementTypes.TEXT_BUTTON];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        color: this.attributes.color,
+                        colorSource: band.ElementColorSource[this.attributes.colorSource],
+                        type: band.PageElementTypes[band.PageElementTypes.TEXT_BUTTON]
+                    });
                 };
                 TextButton.fromJson = function (json) {
                     var button = band.PageElement.fromJson(json);
@@ -1694,13 +1717,13 @@ var cordova;
                     this.attributes.autoHeight = autoHeight;
                 }
                 WrappedTextBlock.prototype.toJson = function () {
-                    var json = _super.prototype.toJson.call(this);
-                    json.color = this.attributes.color;
-                    json.colorSource = band.ElementColorSource[this.attributes.colorSource];
-                    json.font = band.WrappedTextBlockFont[this.attributes.font];
-                    json.autoHeight = this.attributes.autoHeight;
-                    json.type = band.PageElementTypes[band.PageElementTypes.WRAPPED_TEXT_BLOCK];
-                    return json;
+                    return band.util.extend(_super.prototype.toJson.call(this), {
+                        color: this.attributes.color,
+                        colorSource: band.ElementColorSource[this.attributes.colorSource],
+                        font: band.WrappedTextBlockFont[this.attributes.font],
+                        autoHeight: this.attributes.autoHeight,
+                        type: band.PageElementTypes[band.PageElementTypes.WRAPPED_TEXT_BLOCK]
+                    });
                 };
                 WrappedTextBlock.fromJson = function (json) {
                     var textBlock = band.PageElement.fromJson(json);

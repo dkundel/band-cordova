@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface TextButtonAttributes extends PageElementAttributes {
+  export interface TextButtonAttributes extends PageElementAttributes {
     color: string;
     colorSource: ElementColorSource;
   }
@@ -13,12 +13,11 @@ module cordova.plugins.band {
     }
     
     toJson(): ITextButtonElement {
-      var json = <ITextButtonElement> super.toJson()
-      json.color = this.attributes.color;
-      json.colorSource = ElementColorSource[this.attributes.colorSource];
-      json.type = PageElementTypes[PageElementTypes.TEXT_BUTTON];
-      
-      return json;
+      return util.extend(super.toJson(), {
+        color: this.attributes.color,
+        colorSource: ElementColorSource[this.attributes.colorSource],
+        type: PageElementTypes[PageElementTypes.TEXT_BUTTON]
+      });
     }
     
     static fromJson(json: ITextButtonElement) {

@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface PageElementAttributes {
+  export interface PageElementAttributes {
     elementId: number;
     rect: PageRect;
     margins: Margins;

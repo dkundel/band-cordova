@@ -27,7 +27,7 @@ module cordova.plugins.band {
       return {
         pageUuid: this.pageUuid,
         layoutId: this.layoutId,
-        values: values
+        values
       }
     }
     

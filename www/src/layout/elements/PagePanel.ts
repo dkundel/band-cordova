@@ -25,11 +25,10 @@ module cordova.plugins.band {
         elements.push(element.toJson());
       }
       
-      var panel = <IPagePanel> super.toJson();
-      panel.elements = elements;
-      panel.type = PageElementTypes[PageElementTypes.PAGE_PANEL];
-      
-      return panel;
+      return util.extend(super.toJson(), {
+        elements,
+        type: PageElementTypes[PageElementTypes.PAGE_PANEL]
+      });
     }
     
     static fromJson(json: IPagePanel): PagePanel<PagePanelAttributes> {

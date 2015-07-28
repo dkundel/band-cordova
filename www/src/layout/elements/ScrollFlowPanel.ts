@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface ScrollFlowPanelAttributes extends PagePanelAttributes {
+  export interface ScrollFlowPanelAttributes extends PagePanelAttributes {
     color: string;
     colorSource: ElementColorSource;
     orientation: Orientation;
@@ -14,13 +14,12 @@ module cordova.plugins.band {
     }
     
     toJson(): IScrollFlowPanelElement {
-      var json = <IScrollFlowPanelElement> super.toJson();
-      json.color = this.attributes.color;
-      json.colorSource = ElementColorSource[this.attributes.colorSource];
-      json.orientation = Orientation[this.attributes.orientation];
-      json.type = PageElementTypes[PageElementTypes.SCROLL_FLOW_PANEL];
-      
-      return json;
+      return util.extend(super.toJson(), {
+        color: this.attributes.color,
+        colorSource: ElementColorSource[this.attributes.colorSource],
+        orientation: Orientation[this.attributes.orientation],
+        type: PageElementTypes[PageElementTypes.SCROLL_FLOW_PANEL]
+      });
     }
     
     static fromJson(json: IScrollFlowPanelElement) {

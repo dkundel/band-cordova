@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface IconAttributes extends PageElementAttributes {
+  export interface IconAttributes extends PageElementAttributes {
     color: string;
     colorSource: ElementColorSource;
   }
@@ -13,12 +13,11 @@ module cordova.plugins.band {
     }
     
     toJson(): IIconElement {
-      var json = <IIconElement> super.toJson()
-      json.color = this.attributes.color;
-      json.colorSource = ElementColorSource[this.attributes.colorSource];
-      json.type = PageElementTypes[PageElementTypes.ICON];
-      
-      return json;
+      return util.extend(super.toJson(), {
+        color: this.attributes.color,
+        colorSource: ElementColorSource[this.attributes.colorSource],
+        type: PageElementTypes[PageElementTypes.ICON]
+      });
     }
     
     static fromJson(json: IIconElement) {

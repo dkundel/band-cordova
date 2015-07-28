@@ -1,5 +1,5 @@
 module cordova.plugins.band {
-  interface TextBlockAttributes extends PageElementAttributes {
+  export interface TextBlockAttributes extends PageElementAttributes {
     color: string;
     colorSource: ElementColorSource;
     font: TextBlockFont;
@@ -23,16 +23,15 @@ module cordova.plugins.band {
     }
     
     toJson(): ITextBlockElement {
-      var json = <ITextBlockElement> super.toJson()
-      json.color = this.attributes.color;
-      json.colorSource = ElementColorSource[this.attributes.colorSource];
-      json.font = TextBlockFont[this.attributes.font];
-      json.baselineAlignment = TextBlockBaselineAlignment[this.attributes.baselineAlignment];
-      json.baseline = this.attributes.baseline;
-      json.autoWidth = this.attributes.autoWidth;
-      json.type = PageElementTypes[PageElementTypes.TEXT_BLOCK];
-      
-      return json;
+      return util.extend(super.toJson(), {
+        color: this.attributes.color,
+        colorSource: ElementColorSource[this.attributes.colorSource],
+        font: TextBlockFont[this.attributes.font],
+        baselineAlignment: TextBlockBaselineAlignment[this.attributes.baselineAlignment],
+        baseline: this.attributes.baseline,
+        autoWidth: this.attributes.autoWidth,
+        type: PageElementTypes[PageElementTypes.TEXT_BLOCK]
+      });
     }
     
     static fromJson(json: ITextBlockElement) {
