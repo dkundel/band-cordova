@@ -17,15 +17,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 public class Band extends CordovaPlugin {
+    
+    public void onNewIntent(Intent intent) { 
+        if (intent.getAction() == "com.microsoft.band.action.ACTION_TILE_OPENED") {
+         // handle tile opened event
+        }
+        else if (intent.getAction() == "com.microsoft.band.action.ACTION_TILE_BUTTON_PRESSED") {
+         // handle button pressed event
+        }
+        else if (intent.getAction() == "com.microsoft.band.action.ACTION_TILE_CLOSED") {
+         // handle tile closed event
+        }
+    }
+    
     private final Dictionary<Integer, BandClient> clients = new Hashtable<>();
 
     private BandClient lookupClient(int id) {
@@ -515,6 +530,16 @@ public class Band extends CordovaPlugin {
         }
         return ret;
     }
+    
+    //http://stackoverflow.com/questions/10120709/difference-between-printstacktrace-and-tostring
+    public static String exceptionStacktraceToString(Exception e)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        e.printStackTrace(ps);
+        ps.close();
+        return baos.toString();
+    }
 
     private Hashtable<Integer, Object> listeners = new Hashtable<>(); //Not particularly typesafe, but the listeners don't share another base class
     private int listenersId = 0;
@@ -556,9 +581,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext, ver);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch (BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -570,9 +595,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext, ver);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch (BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -584,9 +609,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext, state.ordinal());
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -598,9 +623,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -631,9 +656,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -645,15 +670,15 @@ public class Band extends CordovaPlugin {
                             args.getString(2),
                             args.getString(3),
                             dateFormat.parse(args.getString(4)),
-                            MessageFlags.values()[args.getInt(5)]
+                            MessageFlags.values()[new Integer(args.getString(5))]
                     );
                     res.await();
                     success(callbackContext);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(ParseException ex) {
                     error(callbackContext, "ParseException");
                 }
@@ -663,15 +688,15 @@ public class Band extends CordovaPlugin {
                 final BandClient cli = lookupClient(args);
                 try {
                     final BandPendingResult<Void> res = cli.getNotificationManager().vibrate(
-                            VibrationType.values()[args.getInt(1)]
+                            VibrationType.values()[new Integer(args.getString(1))]
                     );
                     res.await();
                     success(callbackContext);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -687,9 +712,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext, buildIcon(image));
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -702,9 +727,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -716,9 +741,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext, buildTheme(theme));
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -731,9 +756,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -776,9 +801,9 @@ public class Band extends CordovaPlugin {
                         error(callbackContext, 0);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -790,9 +815,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext, buildTiles(tiles));
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -808,9 +833,9 @@ public class Band extends CordovaPlugin {
                         error(callbackContext, 0);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -822,9 +847,9 @@ public class Band extends CordovaPlugin {
                     success(callbackContext, capacity);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -841,9 +866,9 @@ public class Band extends CordovaPlugin {
                         error(callbackContext, 0);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -859,9 +884,9 @@ public class Band extends CordovaPlugin {
                         error(callbackContext, 0);
                     return true;
                 } catch(InterruptedException ex) {
-                    error(callbackContext, "InterruptedException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -898,28 +923,28 @@ public class Band extends CordovaPlugin {
                                     .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
                     listeners.put(l, listener);
 
-                    return cli.getSensorManager().registerAccelerometerEventListener(listener, SampleRate.values()[args.getInt(1)]);
+                    return cli.getSensorManager().registerAccelerometerEventListener(listener, SampleRate.values()[new Integer(args.getString(1))]);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterAccelerometerEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandAccelerometerEventListener listener = (BandAccelerometerEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterAccelerometerEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -941,7 +966,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -960,7 +985,7 @@ public class Band extends CordovaPlugin {
                                     .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
@@ -968,20 +993,20 @@ public class Band extends CordovaPlugin {
 
                     return cli.getSensorManager().registerCaloriesEventListener(listener);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterCaloriesEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandCaloriesEventListener listener = (BandCaloriesEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterCaloriesEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1003,7 +1028,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1022,7 +1047,7 @@ public class Band extends CordovaPlugin {
                                     .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
@@ -1030,20 +1055,20 @@ public class Band extends CordovaPlugin {
 
                     return cli.getSensorManager().registerContactEventListener(listener);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterContactEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandContactEventListener listener = (BandContactEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterContactEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1065,7 +1090,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1087,7 +1112,7 @@ public class Band extends CordovaPlugin {
                                     .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
@@ -1095,20 +1120,20 @@ public class Band extends CordovaPlugin {
 
                     return cli.getSensorManager().registerDistanceEventListener(listener);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterDistanceEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandDistanceEventListener listener = (BandDistanceEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterDistanceEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1130,7 +1155,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1158,28 +1183,28 @@ public class Band extends CordovaPlugin {
                                     .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
                     listeners.put(l, listener);
 
-                    return cli.getSensorManager().registerGyroscopeEventListener(listener, SampleRate.values()[args.getInt(1)]);
+                    return cli.getSensorManager().registerGyroscopeEventListener(listener, SampleRate.values()[new Integer(args.getString(1))]);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterGyroscopeEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandGyroscopeEventListener listener = (BandGyroscopeEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterGyroscopeEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1201,7 +1226,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1221,7 +1246,7 @@ public class Band extends CordovaPlugin {
                                                 .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
@@ -1229,20 +1254,20 @@ public class Band extends CordovaPlugin {
 
                     return cli.getSensorManager().registerHeartRateEventListener(listener);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterHeartRateEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandHeartRateEventListener listener = (BandHeartRateEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterHeartRateEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1264,7 +1289,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1283,7 +1308,7 @@ public class Band extends CordovaPlugin {
                                                 .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
@@ -1291,20 +1316,20 @@ public class Band extends CordovaPlugin {
 
                     return cli.getSensorManager().registerPedometerEventListener(listener);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterPedometerEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandPedometerEventListener listener = (BandPedometerEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterPedometerEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1326,7 +1351,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }            
@@ -1345,7 +1370,7 @@ public class Band extends CordovaPlugin {
                                                 .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
@@ -1353,20 +1378,20 @@ public class Band extends CordovaPlugin {
 
                     return cli.getSensorManager().registerSkinTemperatureEventListener(listener);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterSkinTemperatureEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandSkinTemperatureEventListener listener = (BandSkinTemperatureEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterSkinTemperatureEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1388,7 +1413,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1407,7 +1432,7 @@ public class Band extends CordovaPlugin {
                                                 .put("timestamp", (new Date()).getTime())
                                 );
                             } catch (JSONException ex) {
-                                error(callbackContext, "JSONException");
+                                error(callbackContext, exceptionStacktraceToString(ex));
                             }
                         }
                     };
@@ -1415,20 +1440,20 @@ public class Band extends CordovaPlugin {
 
                     return cli.getSensorManager().registerUVEventListener(listener);
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
             case "unregisterUVEventListener": {
                 try {
                     final BandClient cli = lookupClient(args);
-                    Integer key = args.getInt(1);
+                    Integer key = new Integer(args.getString(1));
                     BandUVEventListener listener = (BandUVEventListener)listeners.get(key);
                     cli.getSensorManager().unregisterUVEventListener(listener);
                     listeners.remove(key);
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }
@@ -1450,7 +1475,7 @@ public class Band extends CordovaPlugin {
                     }
                     return true;
                 } catch(BandException ex) {
-                    error(callbackContext, "BandException");
+                    error(callbackContext, exceptionStacktraceToString(ex));
                 }
                 return false;
             }

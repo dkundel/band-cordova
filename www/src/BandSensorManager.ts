@@ -66,7 +66,7 @@ module BandPlugin {
         callback(error);
       }
       
-      this.exec(success, error, "registerGyroscopeEventListener", [SampleRate[reportingInterval]]);
+      this.exec(success, error, "registerGyroscopeEventListener", [reportingInterval.toString()]);
     }
     
     registerHeartRateEventListener(callback: (error: BandErrorMessage, event?: BandHeartRateEvent, eventId?: number) => void): void {

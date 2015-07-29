@@ -236,7 +236,7 @@ var BandPlugin;
             var error = function (errorMsg) {
                 callback(errorMsg);
             };
-            this.exec(success, error, 'sendMessage', [tileUuid, messageTitle, messageBody, date.toISOString(), BandPlugin.MessageFlags[flags]]);
+            this.exec(success, error, 'sendMessage', [tileUuid, messageTitle, messageBody, date.toISOString(), flags.toString()]);
         };
         BandNotificationManager.prototype.vibrate = function (type, callback) {
             var success = function () {
@@ -245,7 +245,7 @@ var BandPlugin;
             var error = function (errorMsg) {
                 callback(errorMsg);
             };
-            this.exec(success, error, 'vibrate', [BandPlugin.VibrationType[type]]);
+            this.exec(success, error, 'vibrate', [type.toString()]);
         };
         return BandNotificationManager;
     })(BandPlugin.BandManagerBase);
@@ -373,7 +373,7 @@ var BandPlugin;
             var error = function (error) {
                 callback(error);
             };
-            this.exec(success, error, "registerGyroscopeEventListener", [BandPlugin.SampleRate[reportingInterval]]);
+            this.exec(success, error, "registerGyroscopeEventListener", [reportingInterval.toString()]);
         };
         BandSensorManager.prototype.registerHeartRateEventListener = function (callback) {
             var success = function (event) {

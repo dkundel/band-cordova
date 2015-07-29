@@ -21,7 +21,7 @@ module BandPlugin {
         callback(errorMsg);
       }
       
-      this.exec(success, error, 'sendMessage', [tileUuid, messageTitle, messageBody, date.toISOString(), MessageFlags[flags]]);
+      this.exec(success, error, 'sendMessage', [tileUuid, messageTitle, messageBody, date.toISOString(), flags.toString()]);
     }
     
     vibrate(type: VibrationType, callback: (error?: BandErrorMessage) => void): void {
@@ -33,7 +33,7 @@ module BandPlugin {
         callback(errorMsg);
       }
       
-      this.exec(success, error, 'vibrate', [VibrationType[type]]);
+      this.exec(success, error, 'vibrate', [type.toString()]);
     }
   }
 }
