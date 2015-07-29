@@ -4,6 +4,8 @@ module BandPlugin {
     private firmware: string;
     private hardware: string;
     private connectionState: ConnectionState;
+    private lastErr: string;
+    private connectionStatusId: number;
     
     private sensorManager: BandSensorManager;
     private tileManager: BandTileManager;
@@ -65,8 +67,10 @@ module BandPlugin {
     }
     
     connect(callback: (error: BandErrorMessage, state?: ConnectionState) => void): void {
-      let success = (state: string) => {
-        callback(null, ConnectionState[state]);
+      let success = (state: number) => {
+        this.exec(({state, id}) => (this.connectionState = state, this.connectionStatusId = id), err => this.lastErr = err, 'registerConnectionEventListener', []);
+        this.connectionState = state;
+        callback(null, state);
       }
       
       let error = (error: BandErrorMessage) => {
@@ -78,6 +82,9 @@ module BandPlugin {
     
     disconnect(callback: (error?: BandErrorMessage) => void) {
       let success = (state: string) => {
+        if (this.connectionStatusId) {
+          this.exec(() => void 0, () => void 0, 'unregisterConnectionEventListener', [this.connectionStatusId.toString()]);
+        }
         callback(null);
       }
       

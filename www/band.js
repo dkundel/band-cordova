@@ -1,24 +1,3 @@
-/// <reference path="src/types/cordova.d.ts" />
-var BandPlugin;
-(function (BandPlugin) {
-    var util;
-    (function (util) {
-        function extend(first, second) {
-            var result = {};
-            for (var id in first) {
-                result[id] = first[id];
-            }
-            for (var id in second) {
-                result[id] = second[id];
-            }
-            return result;
-        }
-        util.extend = extend;
-    })(util = BandPlugin.util || (BandPlugin.util = {}));
-})(BandPlugin || (BandPlugin = {}));
-cordova.define('band', function (require, exports, module) {
-    module.exports = BandPlugin;
-});
 /// <reference path="types/cordova.d.ts" />
 var BandPlugin;
 (function (BandPlugin) {
@@ -68,8 +47,14 @@ var BandPlugin;
             cordova.exec(success, error, 'Band', action, [this.index.toString()].concat(args));
         };
         BandClient.prototype.connect = function (callback) {
+            var _this = this;
             var success = function (state) {
-                callback(null, BandPlugin.ConnectionState[state]);
+                _this.exec(function (_a) {
+                    var state = _a.state, id = _a.id;
+                    return (_this.connectionState = state, _this.connectionStatusId = id);
+                }, function (err) { return _this.lastErr = err; }, 'registerConnectionEventListener', []);
+                _this.connectionState = state;
+                callback(null, state);
             };
             var error = function (error) {
                 callback(error);
@@ -77,7 +62,11 @@ var BandPlugin;
             this.exec(success, error, 'connect', []);
         };
         BandClient.prototype.disconnect = function (callback) {
+            var _this = this;
             var success = function (state) {
+                if (_this.connectionStatusId) {
+                    _this.exec(function () { return void 0; }, function () { return void 0; }, 'unregisterConnectionEventListener', [_this.connectionStatusId.toString()]);
+                }
                 callback(null);
             };
             var error = function (error) {
@@ -1751,4 +1740,23 @@ var BandPlugin;
     })(BandPlugin.BandSensorEvent);
     BandPlugin.BandUVEvent = BandUVEvent;
 })(BandPlugin || (BandPlugin = {}));
+/// <reference path="src/types/cordova.d.ts" />
+var BandPlugin;
+(function (BandPlugin) {
+    var util;
+    (function (util) {
+        function extend(first, second) {
+            var result = {};
+            for (var id in first) {
+                result[id] = first[id];
+            }
+            for (var id in second) {
+                result[id] = second[id];
+            }
+            return result;
+        }
+        util.extend = extend;
+    })(util = BandPlugin.util || (BandPlugin.util = {}));
+})(BandPlugin || (BandPlugin = {}));
+module.exports = BandPlugin;
 //# sourceMappingURL=band.js.map

@@ -631,12 +631,25 @@ public class Band extends CordovaPlugin {
             }
             case "registerConnectionEventListener": {
                 final BandClient cli = lookupClient(args);
-                cli.registerConnectionCallback(new BandConnectionCallback() {
+                final Integer l = listenersId++;
+
+                BandConnectionCallback listener = new BandConnectionCallback() {
                     @Override
-                    public void onStateChanged(ConnectionState connectionState) {
-                        callbackContext.success(connectionState.ordinal());
+                    public void onStateChanged(ConnectionState state) {
+                        try {
+                            success(callbackContext, new JSONObject()
+                                .put("state", state.ordinal())
+                                .put("id", l)
+                                .put("timestamp", (new Date()).getTime())
+                            );
+                        } catch (JSONException ex) {
+                            error(callbackContext, exceptionStacktraceToString(ex));
+                        }
                     }
-                });
+                };
+                listeners.put(l, listener);
+
+                cli.registerConnectionCallback(listener);
                 return true;
             }
             case "unregisterConnectionEventListeners": {

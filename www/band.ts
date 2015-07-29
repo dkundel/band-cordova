@@ -15,6 +15,5 @@ module BandPlugin {
 	}
 }
 
-cordova.define('band', (require, exports, module) => {
-	module.exports = BandPlugin;
-});
+declare var module: any;
+module.exports = BandPlugin;

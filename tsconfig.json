@@ -10,7 +10,6 @@
     "target": "ES5"
   },
   "files": [
-    "www/band.ts",
     "www/src/BandClient.ts",
     "www/src/BandClientManager.ts",
     "www/src/BandManagerBase.ts",
@@ -53,6 +52,7 @@
     "www/src/events/BandHeartRateEvent.ts",
     "www/src/events/BandPedometerEvent.ts",
     "www/src/events/BandSkinTemperatureEvent.ts",
-    "www/src/events/BandUVEvent.ts"
+    "www/src/events/BandUVEvent.ts",
+    "www/band.ts"
   ]
 }

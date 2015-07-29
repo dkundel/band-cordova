@@ -1,15 +1,12 @@
 /// <reference path="src/types/cordova.d.ts" />
 declare module BandPlugin {
-    module util {
-        function extend<T, U>(first: T, second: U): any;
-    }
-}
-declare module BandPlugin {
     class BandClient {
         private index;
         private firmware;
         private hardware;
         private connectionState;
+        private lastErr;
+        private connectionStatusId;
         private sensorManager;
         private tileManager;
         private notificationManager;
@@ -808,3 +805,9 @@ declare module BandPlugin {
         getUVIndexLevel(): UVIndexLevel;
     }
 }
+declare module BandPlugin {
+    module util {
+        function extend<T, U>(first: T, second: U): any;
+    }
+}
+declare var module: any;
