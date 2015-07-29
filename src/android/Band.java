@@ -114,6 +114,16 @@ public class Band extends CordovaPlugin {
             }
         });
     }
+    
+    private void callbackEvent(final CallbackContext callbackContext, final JSONObject o) {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                PluginResult res = new PluginResult(PluginResult.Status.OK, o);
+                res.setKeepCallback(true);
+                callbackContext.sendPluginResult(res);
+            }
+        });
+    }    
 
     private void error(final CallbackContext callbackContext, final JSONObject obj) {
         cordova.getActivity().runOnUiThread(new Runnable() {
@@ -637,7 +647,7 @@ public class Band extends CordovaPlugin {
                     @Override
                     public void onStateChanged(ConnectionState state) {
                         try {
-                            success(callbackContext, new JSONObject()
+                            callbackEvent(callbackContext, new JSONObject()
                                 .put("state", state.ordinal())
                                 .put("id", l)
                                 .put("timestamp", (new Date()).getTime())
@@ -926,7 +936,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandAccelerometerChanged(BandAccelerometerEvent bandAccelerometerEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                     .put("acceleration", new JSONObject()
                                         .put("x", bandAccelerometerEvent.getAccelerationX())
                                         .put("y", bandAccelerometerEvent.getAccelerationY())
@@ -992,7 +1002,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandCaloriesChanged(BandCaloriesEvent bandCaloriesEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                     .put("calories", bandCaloriesEvent.getCalories())
                                     .put("id", l)
                                     .put("timestamp", (new Date()).getTime())
@@ -1054,7 +1064,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandContactChanged(BandContactEvent bandContactEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                     .put("contact", bandContactEvent.getContactState().ordinal())
                                     .put("id", l)
                                     .put("timestamp", (new Date()).getTime())
@@ -1116,7 +1126,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandDistanceChanged(BandDistanceEvent bandDistanceEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                     .put("motionType", bandDistanceEvent.getMotionType().ordinal())
                                     .put("pace", bandDistanceEvent.getPace())
                                     .put("speed", bandDistanceEvent.getSpeed())
@@ -1181,7 +1191,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandGyroscopeChanged(BandGyroscopeEvent bandGyroscopeEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                     .put("acceleration", new JSONObject()
                                                     .put("x", bandGyroscopeEvent.getAccelerationX())
                                                     .put("y", bandGyroscopeEvent.getAccelerationY())
@@ -1252,7 +1262,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandHeartRateChanged(BandHeartRateEvent bandHeartRateEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                                 .put("heartRate", bandHeartRateEvent.getHeartRate())
                                                 .put("quality", bandHeartRateEvent.getQuality().ordinal())
                                                 .put("id", l)
@@ -1315,7 +1325,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandPedometerChanged(BandPedometerEvent bandPedometerEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                                 .put("totalSteps", bandPedometerEvent.getTotalSteps())
                                                 .put("id", l)
                                                 .put("timestamp", (new Date()).getTime())
@@ -1377,7 +1387,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandSkinTemperatureChanged(BandSkinTemperatureEvent bandSkinTemperatureEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                                 .put("skinTemperature", bandSkinTemperatureEvent.getTemperature())
                                                 .put("id", l)
                                                 .put("timestamp", (new Date()).getTime())
@@ -1439,7 +1449,7 @@ public class Band extends CordovaPlugin {
                         @Override
                         public void onBandUVChanged(BandUVEvent bandUVEvent) {
                             try {
-                                success(callbackContext, new JSONObject()
+                                callbackEvent(callbackContext, new JSONObject()
                                                 .put("uvIndexLevel", bandUVEvent.getUVIndexLevel().ordinal())
                                                 .put("id", l)
                                                 .put("timestamp", (new Date()).getTime())
