@@ -7,7 +7,7 @@
 	<repo>https://github.com/dkundel/band-cordova.git</repo>
 	<issue>https://github.com/dkundel/band-cordova/issues</issue>
 	<js-module src="www/band.js" name="band">
-		<clobbers target="cordova.plugins.band" />
+		<clobbers target="BandPlugin" />
 	</js-module>
 	<!-- android -->
 	<platform name="android">
@@ -17,6 +17,16 @@
 				<param name="onload" value="true" />
 			</feature>
 		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.BLUETOOTH"/>
+			<uses-permission android:name="com.microsoft.band.service.access.BIND_BAND_SERVICE" />
+			 <intent-filter>
+				 <action android:name="com.microsoft.band.action.ACTION_TILE_OPENED" />
+				 <action android:name="com.microsoft.band.action.ACTION_TILE_BUTTON_PRESSED" />
+				 <action android:name="com.microsoft.band.action.ACTION_TILE_CLOSED" />
+			 </intent-filter>
+		</config-file>
 		<source-file src="src/android/Band.java" target-dir="src/co/kundel/band" />
+		<source-file src="src/android/libs/microsoft-band-1.3.10622.3.jar" target-dir="libs" />
 	</platform>
 </plugin>

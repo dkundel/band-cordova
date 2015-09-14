@@ -1,11 +1,5 @@
-/// <reference path="BandTile" />
-/// <reference path="types/cordova" />
-/// <reference path="interfaces" />
-/// <reference path="layout/_all" />
-
-
-module BandCordova {
-  export class BandTileManager {
+module BandPlugin {
+  export class BandTileManager extends BandManagerBase {
     addTitle(tile: BandTile, callback: (error: BandErrorMessage) => void): void {
       var success = () => {
         callback(null);
@@ -15,7 +9,7 @@ module BandCordova {
         callback(error);
       }
       
-      cordova.exec(success, error, 'Band', 'addTile', [tile.toString()])
+      this.exec(success, error, 'addTile', [tile.toString()])
     }
     
     getRemainingTileCapacity(callback: (error: BandErrorMessage, capacity?: number) => void): void {
@@ -27,7 +21,7 @@ module BandCordova {
         callback(error);
       }
       
-      cordova.exec(success, error, 'Band', 'getRemainingTileCapacity', [])
+      this.exec(success, error, 'getRemainingTileCapacity', [])
     }
     
     getTiles(callback: (error: BandErrorMessage, tiles?: BandTile[]) => void): void {
@@ -44,7 +38,7 @@ module BandCordova {
         callback(error);
       }
       
-      cordova.exec(success, error, 'Band', 'getTiles', [])
+      this.exec(success, error, 'getTiles', [])
     }
     
     removePages(tileId: string, callback: (error: BandErrorMessage) => void): void {
@@ -56,7 +50,7 @@ module BandCordova {
         callback(error);
       }
       
-      cordova.exec(success, error, 'Band', 'removePages', [tileId])
+      this.exec(success, error, 'removePages', [tileId])
     }
     
     removeTile(tile: BandTile, callback: (error: BandErrorMessage) => void): void {
@@ -68,7 +62,7 @@ module BandCordova {
         callback(error);
       }
       
-      cordova.exec(success, error, 'Band', 'addTile', [tile.toString()])
+      this.exec(success, error, 'removeTile', [tile.uuid])
     }
     
     setPages(tileId: string, pageData: PageData[], callback: (error: BandErrorMessage) => void): void {
@@ -80,7 +74,7 @@ module BandCordova {
         callback(error);
       }
       
-      cordova.exec(success, error, 'Band', 'setPages', [tileId, pageData.toString()])
+      this.exec(success, error, 'setPages', [tileId, pageData.toString()])
     }
   }
 }

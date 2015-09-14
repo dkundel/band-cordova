@@ -1,29 +1,30 @@
-interface FilledPanelAttributes extends PagePanelAttributes {
-  backgroundColor: string;
-  backgroundColorSource: ElementColorSource;
-}
-
-class FilledPanel extends PagePanel<FilledPanelAttributes> {
-  constructor(elementId: number, rect: PageRect, backgroundColorSource: ElementColorSource, backgroundColor: string, ...elements: PageElement<PageElementAttributes>[]) {
-    super(elementId, rect, ...elements);
-    this.attributes.backgroundColorSource = backgroundColorSource;
-    this.attributes.backgroundColor = backgroundColor;
+module BandPlugin {
+  export interface FilledPanelAttributes extends PagePanelAttributes {
+    backgroundColor: number;
+    backgroundColorSource: ElementColorSource;
   }
   
-  toJson(): IFilledPanelElement {
-    var json = <IFilledPanelElement> super.toJson()
-    json.backgroundColor = this.attributes.backgroundColor;
-    json.backgroundColorSource = ElementColorSource[this.attributes.backgroundColorSource];
-    json.type = PageElementTypes[PageElementTypes.FILLED_PANEL];
+  export class FilledPanel extends PagePanel<FilledPanelAttributes> {
+    constructor(elementId: number, rect: PageRect, backgroundColorSource: ElementColorSource, backgroundColor: number, ...elements: PageElement<PageElementAttributes>[]) {
+      super(elementId, rect, ...elements);
+      this.attributes.backgroundColorSource = backgroundColorSource;
+      this.attributes.backgroundColor = backgroundColor;
+    }
     
-    return json;
-  }
-  
-  static fromJson(json: IFilledPanelElement) {
-    var panel: FilledPanel = <FilledPanel> PageElement.fromJson(json);
-    panel.attributes.backgroundColor = json.backgroundColor;
-    panel.attributes.backgroundColorSource = ElementColorSource[json.backgroundColorSource];
+    toJson(): IFilledPanelElement {
+      return util.extend(super.toJson(), {
+        backgroundColor: this.attributes.backgroundColor,
+        backgroundColorSource: this.attributes.backgroundColorSource,
+        type: PageElementTypes.FILLED_PANEL
+      });
+    }
     
-    return panel;
+    static fromJson(json: IFilledPanelElement) {
+      var panel: FilledPanel = <FilledPanel> PageElement.fromJson(json);
+      panel.attributes.backgroundColor = json.backgroundColor;
+      panel.attributes.backgroundColorSource = json.backgroundColorSource;
+      
+      return panel;
+    }
   }
 }

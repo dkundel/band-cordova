@@ -1,16 +1,10 @@
-/// <reference path="BandIcon" />
-/// <reference path="BandTheme" />
-/// <reference path="BandTileBuilder" />
-
-
-module BandCordova {
+module BandPlugin {
   export class BandTile {
-    private uuid: string;
+    public uuid: string;
     private pageIcons: BandIcon[];
     private pageLayouts: PageLayout[];
     private theme: BandTheme;
     private tileIcon: BandIcon;
-    private tileId: string;
     private tileName: string;
     private tileSmallIcon: BandIcon;
     private badgingEnabled: boolean;
@@ -33,10 +27,9 @@ module BandCordova {
       this.pageLayouts = layouts;
       this.theme = BandTheme.fromJson(json.theme);
       this.tileIcon = BandIcon.fromJson(json.tileIcon);
-      this.tileId = json.tileId;
       this.tileName = json.tileName;
       this.tileSmallIcon = BandIcon.fromJson(json.tileSmallIcon);
-      this.badgingEnabled = json.badingEnabled;
+      this.badgingEnabled = json.badgingEnabled;
     }
     
     toJson(): IBandTile {
@@ -55,10 +48,9 @@ module BandCordova {
         pageLayouts: layouts,
         theme: this.theme.toJson(),
         tileIcon: this.tileIcon.toJson(),
-        tileId: this.tileId,
         tileName: this.tileName,
         tileSmallIcon: this.tileSmallIcon.toJson(),
-        badingEnabled: this.badgingEnabled
+        badgingEnabled: this.badgingEnabled
       };
     }
     

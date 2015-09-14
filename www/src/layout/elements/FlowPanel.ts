@@ -1,25 +1,26 @@
-interface FlowPanelAttributes extends PagePanelAttributes {
-  orientation: Orientation;
-}
-
-class FlowPanel extends PagePanel<FlowPanelAttributes> {
-  constructor(elementId: number, rect: PageRect, orientation: Orientation, ...elements: PageElement<PageElementAttributes>[]) {
-    super(elementId, rect, ...elements);
-    this.attributes.orientation = orientation;
+module BandPlugin {
+  export interface FlowPanelAttributes extends PagePanelAttributes {
+    orientation: Orientation;
   }
   
-  toJson(): IFlowPanelElement {
-    var json = <IFlowPanelElement> super.toJson()
-    json.orientation = Orientation[this.attributes.orientation];
-    json.type = PageElementTypes[PageElementTypes.FLOW_PANEL];
+  export class FlowPanel extends PagePanel<FlowPanelAttributes> {
+    constructor(elementId: number, rect: PageRect, orientation: Orientation, ...elements: PageElement<PageElementAttributes>[]) {
+      super(elementId, rect, ...elements);
+      this.attributes.orientation = orientation;
+    }
     
-    return json;
-  }
-  
-  static fromJson(json: IFlowPanelElement) {
-    var panel: FlowPanel = <FlowPanel> PageElement.fromJson(json);
-    panel.attributes.orientation = Orientation[json.orientation];
+    toJson(): IFlowPanelElement {
+      return util.extend(super.toJson(),{
+        orientation: this.attributes.orientation,
+        type: PageElementTypes.FLOW_PANEL
+      });
+    }
     
-    return panel;
+    static fromJson(json: IFlowPanelElement) {
+      var panel: FlowPanel = <FlowPanel> PageElement.fromJson(json);
+      panel.attributes.orientation = json.orientation;
+      
+      return panel;
+    }
   }
 }
